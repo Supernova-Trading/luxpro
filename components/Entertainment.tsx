@@ -171,39 +171,56 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
 
             {/* Station scrollable row */}
             <div className="scroll-row px-3.5 py-3.5">
-              {radios.map((station, idx) => (
-                <motion.div
-                  key={idx}
-                  whileTap={{ scale: 0.93 }}
-                  onClick={() => handleSelectStation(idx)}
-                  className="flex flex-col items-center gap-1.5 rounded-xl px-2.5 py-3.5 cursor-pointer flex-none w-[110px]"
-                  style={{
-                    background: radio.currentIdx === idx
-                      ? "rgba(200,168,75,0.15)"
-                      : station.f
-                      ? "rgba(200,168,75,0.07)"
-                      : "rgba(255,255,255,0.05)",
-                    border: radio.currentIdx === idx
-                      ? "1px solid rgba(200,168,75,0.60)"
-                      : station.f
-                      ? "1px solid rgba(200,168,75,0.30)"
-                      : "1px solid rgba(255,255,255,0.08)",
-                    boxShadow: radio.currentIdx === idx ? "0 0 16px rgba(200,168,75,0.25)" : undefined,
-                    transition: "all 200ms ease",
-                  }}
-                >
-                  <span className="text-[24px]">{station.i}</span>
-                  <span
-                    className="text-[10px] font-bold uppercase text-center leading-tight"
-                    style={{ color: radio.currentIdx === idx ? "var(--lp-gold)" : "rgba(255,255,255,0.80)" }}
+              {radios.map((station, idx) => {
+                const isCurrent = radio.currentIdx === idx;
+                const isBroken  = radio.brokenStations.has(idx);
+                return (
+                  <motion.div
+                    key={idx}
+                    whileTap={{ scale: 0.93 }}
+                    onClick={() => handleSelectStation(idx)}
+                    className="relative flex flex-col items-center gap-1.5 rounded-xl px-2.5 py-3.5 cursor-pointer flex-none w-[110px]"
+                    style={{
+                      background: isCurrent
+                        ? "rgba(200,168,75,0.15)"
+                        : isBroken
+                        ? "rgba(255,60,60,0.06)"
+                        : station.f
+                        ? "rgba(200,168,75,0.07)"
+                        : "rgba(255,255,255,0.05)",
+                      border: isCurrent
+                        ? "1px solid rgba(200,168,75,0.60)"
+                        : isBroken
+                        ? "1px solid rgba(255,60,60,0.35)"
+                        : station.f
+                        ? "1px solid rgba(200,168,75,0.30)"
+                        : "1px solid rgba(255,255,255,0.08)",
+                      boxShadow: isCurrent ? "0 0 16px rgba(200,168,75,0.25)" : undefined,
+                      opacity: isBroken && !isCurrent ? 0.65 : 1,
+                      transition: "all 200ms ease",
+                    }}
                   >
-                    {station.n}
-                  </span>
-                  {station.f && (
-                    <span className="text-[8px] font-extrabold" style={{ color: "var(--lp-gold)" }}>⭐ Fav</span>
-                  )}
-                </motion.div>
-              ))}
+                    <span className="text-[24px]">{station.i}</span>
+                    <span
+                      className="text-[10px] font-bold uppercase text-center leading-tight"
+                      style={{ color: isCurrent ? "var(--lp-gold)" : isBroken ? "rgba(255,100,100,0.80)" : "rgba(255,255,255,0.80)" }}
+                    >
+                      {station.n}
+                    </span>
+                    {isBroken && !isCurrent && (
+                      <span
+                        className="text-[8px] font-extrabold uppercase tracking-[1px]"
+                        style={{ color: "rgba(255,80,80,0.75)" }}
+                      >
+                        ● Offline
+                      </span>
+                    )}
+                    {!isBroken && station.f && (
+                      <span className="text-[8px] font-extrabold" style={{ color: "var(--lp-gold)" }}>⭐ Fav</span>
+                    )}
+                  </motion.div>
+                );
+              })}
             </div>
 
             {/* Player controls */}

@@ -4,15 +4,16 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import type { RadioStation } from "@/lib/radios";
 
 export function useRadio() {
-  const [currentIdx, setCurrentIdx] = useState(-1);
-  const [playing, setPlaying] = useState(false);
-  const [volume, setVolumeState] = useState(80);
-  const [statusText, setStatusText] = useState("");
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const hlsRef = useRef<import("hls.js").default | null>(null);
-  const stationsRef = useRef<RadioStation[]>([]);
+  const [currentIdx, setCurrentIdx]       = useState(-1);
+  const [playing, setPlaying]             = useState(false);
+  const [volume, setVolumeState]          = useState(80);
+  const [statusText, setStatusText]       = useState("");
+  const [brokenStations, setBrokenStations] = useState<Set<number>>(new Set());
 
-  // Expose stations for prev/next navigation
+  const audioRef      = useRef<HTMLAudioElement | null>(null);
+  const hlsRef        = useRef<import("hls.js").default | null>(null);
+  const stationsRef   = useRef<RadioStation[]>([]);
+
   const setStations = useCallback((stations: RadioStation[]) => {
     stationsRef.current = stations;
   }, []);
@@ -24,11 +25,16 @@ export function useRadio() {
     }
   }, []);
 
+  const _markBroken = useCallback((idx: number) => {
+    setBrokenStations((prev) => { const s = new Set(prev); s.add(idx); return s; });
+  }, []);
+
   const stop = useCallback(() => {
     const audio = audioRef.current;
     if (audio) {
       audio.pause();
       audio.src = "";
+      audio.onerror = null;
     }
     _destroyHls();
     setCurrentIdx(-1);
@@ -45,7 +51,13 @@ export function useRadio() {
       setCurrentIdx(idx);
       setStatusText(`Loading ${station.n}…`);
 
-      // Lazily create audio element once
+      // Clear any previous broken state for re-selected station
+      setBrokenStations((prev) => {
+        const next = new Set(prev);
+        next.delete(idx);
+        return next;
+      });
+
       if (!audioRef.current) {
         audioRef.current = new Audio();
         audioRef.current.crossOrigin = "anonymous";
@@ -53,39 +65,37 @@ export function useRadio() {
       const audio = audioRef.current;
       audio.pause();
       _destroyHls();
-
+      audio.onerror = null;
       audio.volume = volume / 100;
 
+      // Attach a one-time error listener that marks the station offline
+      audio.onerror = () => {
+        _markBroken(idx);
+        setStatusText(`${station.n} — offline`);
+        setPlaying(false);
+      };
+
       if (station.h) {
-        // HLS stream
+        // ── HLS stream ──────────────────────────────────────────────────────
         try {
           const Hls = (await import("hls.js")).default;
           if (Hls.isSupported()) {
-            const hls = new Hls({
-              enableWorker: false, // safer for tablet browsers
-              lowLatencyMode: false,
-            });
+            const hls = new Hls({ enableWorker: false, lowLatencyMode: false });
             hlsRef.current = hls;
 
             hls.loadSource(station.u);
             hls.attachMedia(audio);
 
             hls.on(Hls.Events.MANIFEST_PARSED, () => {
-              audio
-                .play()
-                .then(() => {
-                  setPlaying(true);
-                  setStatusText("");
-                })
-                .catch(() => {
-                  setStatusText("Tap play to start");
-                  setPlaying(false);
-                });
+              audio.play()
+                .then(() => { setPlaying(true); setStatusText(""); })
+                .catch(() => { setStatusText("Tap play to start"); setPlaying(false); });
             });
 
-            hls.on(Hls.Events.ERROR, (_e: unknown, data: { fatal: boolean; type: string }) => {
+            hls.on(Hls.Events.ERROR, (_e: unknown, data: { fatal: boolean }) => {
               if (data.fatal) {
-                setStatusText(`${station.n} — stream error`);
+                _markBroken(idx);
+                setStatusText(`${station.n} — offline`);
                 setPlaying(false);
                 _destroyHls();
               }
@@ -93,29 +103,28 @@ export function useRadio() {
           } else if (audio.canPlayType("application/vnd.apple.mpegurl")) {
             // Safari native HLS
             audio.src = station.u;
-            audio
-              .play()
+            audio.play()
               .then(() => { setPlaying(true); setStatusText(""); })
               .catch(() => setStatusText(`${station.n} — blocked`));
           } else {
-            setStatusText("HLS not supported on this browser");
+            setStatusText("HLS not supported");
           }
         } catch {
           setStatusText("Failed to load HLS player");
         }
       } else {
-        // Plain MP3 / AAC stream
+        // ── Plain MP3 / AAC stream ───────────────────────────────────────────
         audio.src = station.u;
-        audio
-          .play()
+        audio.play()
           .then(() => { setPlaying(true); setStatusText(""); })
           .catch(() => {
+            _markBroken(idx);
             setStatusText(`${station.n} — tap play to retry`);
             setPlaying(false);
           });
       }
     },
-    [volume, _destroyHls]
+    [volume, _destroyHls, _markBroken]
   );
 
   const togglePlay = useCallback(() => {
@@ -142,29 +151,21 @@ export function useRadio() {
     if (audioRef.current) audioRef.current.volume = v / 100;
   }, []);
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
       _destroyHls();
-      audioRef.current?.pause();
+      if (audioRef.current) {
+        audioRef.current.onerror = null;
+        audioRef.current.pause();
+      }
     };
   }, [_destroyHls]);
 
-  const currentStation =
-    currentIdx >= 0 ? stationsRef.current[currentIdx] ?? null : null;
+  const currentStation = currentIdx >= 0 ? stationsRef.current[currentIdx] ?? null : null;
 
   return {
-    play,
-    stop,
-    togglePlay,
-    prev,
-    next,
-    setVolume,
-    setStations,
-    currentIdx,
-    currentStation,
-    playing,
-    volume,
-    statusText,
+    play, stop, togglePlay, prev, next, setVolume, setStations,
+    currentIdx, currentStation, playing, volume, statusText,
+    brokenStations,
   };
 }

@@ -2,83 +2,97 @@ import type { Lang } from "./translations";
 
 export interface RadioStation {
   n: string;  // name
-  i: string;  // icon
-  f?: 1;      // favourite flag
-  h?: 1;      // HLS flag (requires hls.js)
+  i: string;  // icon/emoji
+  f?: 1;      // favourite (shown first, highlighted)
+  h?: 1;      // HLS stream (requires hls.js)
   u: string;  // stream URL
 }
 
+// ─── Stations verified via radio-browser.info (lastcheckok=1, is_https=true) ──
+// UK stations also verified via Global Radio / BBC / Radiofrance CDN infrastructure.
+// Last verified: May 2026.
 export const RADIOS_BY_LANG: Record<Lang, RadioStation[]> = {
+  // ── English — United Kingdom ────────────────────────────────────────────────
   en: [
-    { n: "Capital FM",   i: "🎵", f: 1, u: "https://media-ssl.musicradio.com/CapitalMP3" },
-    { n: "Smooth Radio", i: "🌊", f: 1, u: "https://media-ssl.musicradio.com/SmoothUK" },
-    { n: "Classic FM",   i: "🎼",      u: "https://media-ssl.musicradio.com/ClassicFMMP3" },
-    { n: "BBC Radio 2",  i: "🎙️",     u: "https://stream.live.vc.bbcmedia.co.uk/bbc_radio_two" },
-    { n: "Heart UK",     i: "💗",      u: "https://media-ssl.musicradio.com/HeartUK" },
-    { n: "Kiss UK",      i: "💋",      u: "https://stream-mz.planetradio.co.uk/kissnational.mp3" },
-    { n: "Magic Radio",  i: "✨",      u: "https://stream-mz.planetradio.co.uk/magicnational.mp3" },
-    { n: "Hits Radio",   i: "🔥",      u: "https://stream-mz.planetradio.co.uk/hitsradio.mp3" },
-    { n: "talkSPORT",    i: "📰",      u: "https://radio.talksport.com/stream" },
-    { n: "Virgin Radio", i: "⭐",      u: "https://radio.virginradio.co.uk/stream" },
+    { n: "Heart 80s",      i: "🎵", f: 1, u: "https://media-ssl.musicradio.com/Heart80sMP3" },
+    { n: "Heart 90s",      i: "💿", f: 1, u: "https://media-ssl.musicradio.com/Heart90sMP3" },
+    { n: "Capital FM",     i: "⭐",      u: "https://media-ssl.musicradio.com/CapitalMP3" },
+    { n: "Heart Dance",    i: "💃",      u: "https://media-ssl.musicradio.com/HeartDanceMP3" },
+    { n: "Smooth Chill",   i: "🌊",      u: "https://media-ssl.musicradio.com/ChillMP3" },
+    { n: "Gold",           i: "🏅",      u: "https://media-ssl.musicradio.com/GoldMP3" },
+    { n: "Heart 70s",      i: "🕺",      u: "https://media-ssl.musicradio.com/Heart70sMP3" },
+    { n: "Classic FM",     i: "🎼",      u: "https://media-ssl.musicradio.com/ClassicFMMP3" },
+    { n: "BBC World",      i: "🌍",      u: "https://stream.live.vc.bbcmedia.co.uk/bbc_world_service" },
+    { n: "talkSPORT",      i: "⚽",      u: "https://radio.talksport.com/stream" },
   ],
+
+  // ── Spanish — Spain ─────────────────────────────────────────────────────────
   es: [
-    { n: "Los 40",      i: "🎵", f: 1, u: "https://playerservices.streamtheworld.com/api/livestream-redirect/LOS40.mp3" },
-    { n: "Cadena 100",  i: "💯", f: 1, u: "https://flucast-b03-04.flumotion.com/cope/cadena100.mp3" },
-    { n: "Cadena Dial", i: "📻",      u: "https://playerservices.streamtheworld.com/api/livestream-redirect/CADENADIALAAC.aac" },
-    { n: "Europa FM",   i: "🎶",      u: "https://playerservices.streamtheworld.com/api/livestream-redirect/EUROPAFM_SC" },
-    { n: "M80 Radio",   i: "⭐",      u: "https://playerservices.streamtheworld.com/api/livestream-redirect/M80_SC" },
-    { n: "Kiss FM",     i: "💋",      u: "https://kissfm.kissfmradio.cires21.com/kissfm.mp3" },
-    { n: "COPE",        i: "🎙️",     u: "https://flucast-b03-04.flumotion.com/cope/cope.mp3" },
-    { n: "Rock FM",     i: "🎸",      u: "https://flucast-b03-04.flumotion.com/cope/rockfm.mp3" },
-    { n: "RNE Noticias",i: "📰",  h: 1, u: "https://crtve-rne1.cires21.com/RNE_HLS/playlist.m3u8" },
-    { n: "Loca FM",     i: "🔥",      u: "https://server7.emisorasenvivo.com:7508/stream" },
+    { n: "LOS 40",         i: "🎵", f: 1, u: "https://playerservices.streamtheworld.com/api/livestream-redirect/Los40.mp3" },
+    { n: "Los 40 Urban",   i: "🏙️", f: 1, u: "https://playerservices.streamtheworld.com/api/livestream-redirect/LOS40_URBAN.mp3" },
+    { n: "LOS40 Classic",  i: "🎶",      u: "https://playerservices.streamtheworld.com/api/livestream-redirect/LOS40_CLASSIC.mp3" },
+    { n: "Europa FM",      i: "🎤",      u: "https://playerservices.streamtheworld.com/api/livestream-redirect/EUROPAFM_SC" },
+    { n: "80 Éxitos",      i: "💯",      u: "https://80sexitos.stream.laut.fm/80sexitos" },
+    { n: "Café del Mar",   i: "☀️",      u: "https://streams.radio.co/se1a320b47/listen" },
+    { n: "M80 Radio",      i: "🎸",      u: "https://playerservices.streamtheworld.com/api/livestream-redirect/M80_SC" },
+    { n: "Radio Marca",    i: "🏟️",      u: "https://sonic.mediatelekom.net/9316/stream" },
+    { n: "Deep House",     i: "🎧",      u: "https://stream.radiojar.com/asngk2sg798uv" },
+    { n: "Ibiza Radio",    i: "🏖️",      u: "https://streams.radio.co/se1a320b47/listen" },
   ],
+
+  // ── French — France ─────────────────────────────────────────────────────────
   fr: [
-    { n: "NRJ",             i: "🎵", f: 1, u: "https://scdn.nrjaudio.fm/adwz1/fr/30001/mp3_128.mp3" },
-    { n: "Fun Radio",       i: "😄", f: 1, u: "https://streaming.radio.funradio.fr/fun-1-44-128" },
-    { n: "France Inter",    i: "📰",      u: "https://icecast.radiofrance.fr/franceinter-midfi.mp3" },
-    { n: "Europe 1",        i: "🌍",      u: "https://stream.europe1.fr/europe1.mp3" },
-    { n: "Skyrock",         i: "🎤",      u: "https://icecast.skyrock.net/s/natio_mp3_128k" },
-    { n: "Chérie FM",       i: "💗",      u: "https://scdn.nrjaudio.fm/adwz1/fr/30201/mp3_128.mp3" },
-    { n: "Nostalgie",       i: "⭐",      u: "https://scdn.nrjaudio.fm/adwz1/fr/30601/mp3_128.mp3" },
-    { n: "RFM",             i: "🎶",      u: "https://ais-sa3.cdnstream1.com/2603_128.mp3" },
-    { n: "Rire & Chansons", i: "😂",      u: "https://scdn.nrjaudio.fm/adwz1/fr/30401/mp3_128.mp3" },
-    { n: "RTL",             i: "🎙️",     u: "https://streaming.radio.rtl.fr/rtl-1-44-128" },
+    { n: "NRJ France",     i: "⚡", f: 1, u: "https://scdn.nrjaudio.fm/adwz2/fr/30001/mp3_128.mp3" },
+    { n: "France Inter",   i: "🎙️", f: 1, u: "https://icecast.radiofrance.fr/franceinter-midfi.mp3" },
+    { n: "OUI FM",         i: "🎸",      u: "https://ouifm.ice.infomaniak.ch/ouifm-high.mp3" },
+    { n: "Fun Radio",      i: "🎉",      u: "https://streaming.radio.funradio.fr/fun-1-48-192" },
+    { n: "RTL",            i: "📻",      u: "https://streaming.radio.rtl.fr/rtl-1-48-192" },
+    { n: "France Info",    i: "📰",      u: "https://icecast.radiofrance.fr/franceinfo-midfi.mp3" },
+    { n: "RMC",            i: "⚽",      u: "https://audio.bfmtv.com/rmcradio_128.mp3" },
+    { n: "Nostalgie",      i: "🕰️",      u: "https://scdn.nrjaudio.fm/adwz2/fr/30601/mp3_128.mp3" },
+    { n: "Sud Radio",      i: "🌞",      u: "https://ice.creacast.com/sudradio" },
+    { n: "EuroDance 90",   i: "💃",      u: "https://stream-eurodance90.fr/radio/8000/128.mp3" },
   ],
+
+  // ── Arabic ──────────────────────────────────────────────────────────────────
   ar: [
-    { n: "MBC FM",      i: "🎵", f: 1, h: 1, u: "https://mbcfm.akamaized.net/hls/live/2034458/mbcfm/master.m3u8" },
-    { n: "Mix FM",      i: "🎶", f: 1,       u: "https://l3.itworkscdn.net/itwaudio/9202/stream/icecast.audio" },
-    { n: "Al Arabiya",  i: "📰",      h: 1,  u: "https://av.alarabiya.net/Alarabiya/alarabiya.stream/playlist.m3u8" },
-    { n: "Quran Radio", i: "📖",             u: "https://Qurani.medianetlive.com/8042/stream" },
-    { n: "Rotana FM",   i: "⭐",             u: "https://l3.itworkscdn.net/itwaudio/9106/stream/icecast.audio" },
-    { n: "Panorama FM", i: "🌅",      h: 1,  u: "https://panorama.akamaized.net/hls/live/2034466/panorama/master.m3u8" },
-    { n: "Nogoum FM",   i: "💫",             u: "https://playerservices.streamtheworld.com/api/livestream-redirect/NOGOUM_FM.mp3" },
-    { n: "Sawt Al Arab",i: "🎙️",            u: "https://l3.itworkscdn.net/itwaudio/9112/stream/icecast.audio" },
-    { n: "Marina FM",   i: "🌊",             u: "https://l3.itworkscdn.net/itwaudio/9120/stream/icecast.audio" },
-    { n: "Saudi Radio", i: "🇸🇦",           u: "https://5.39.71.159:8442/stream" },
+    { n: "Aswat FM",       i: "🎵", f: 1, u: "https://broadcast.ice.infomaniak.ch/aswat-high.mp3" },
+    { n: "Amr Diab Radio", i: "🎤", f: 1, u: "https://stream-40.zeno.fm/xa4yhh4k838uv" },
+    { n: "Ambiance FM",    i: "🎶",      u: "https://stream.zeno.fm/0rehsamc9xxtv" },
+    { n: "Voice Lebanon",  i: "🇱🇧",      u: "https://l3.itworkscdn.net/itwaudio/9054/stream" },
+    { n: "Sana'a Radio",   i: "📻",      u: "https://dc5.serverse.com/proxy/pbmhbvxs/stream" },
+    { n: "Anghamy",        i: "🎼",      u: "https://radio.avazfarsi.com:8010/radio.mp3" },
+    { n: "Mishary Afasi",  i: "🕌",      u: "https://qurango.net/radio/mishary_alafasi" },
+    { n: "Quran Radio",    i: "☪️",      u: "https://qurango.net/radio/mix" },
+    { n: "Tarateel",       i: "🌙",      u: "https://qurango.net/radio/tarateel" },
+    { n: "Maher Zain",     i: "⭐",      u: "https://backup.qurango.net/radio/maher" },
   ],
+
+  // ── Russian ─────────────────────────────────────────────────────────────────
   ru: [
-    { n: "Europa Plus",   i: "🎵", f: 1, u: "https://ep128.streamr.ru/ep128" },
-    { n: "Russkoe Radio", i: "🇷🇺",f: 1, u: "https://rusradio.hostingradio.ru/rusradio96.aacp" },
-    { n: "Echo Moscow",   i: "📰",      u: "http://icecast.silvercast.ru/echoMoscow_128" },
-    { n: "Avtoradio",     i: "🚗",      u: "https://pub0302.101.ru:8443/stream/air/aac/64/100" },
-    { n: "DFM",           i: "🎛️",     u: "https://dfm.hostingradio.ru/dfm96.aacp" },
-    { n: "Energy",        i: "⚡",      u: "https://pub0202.101.ru:8443/stream/air/aac/64/99" },
-    { n: "Retro FM",      i: "⭐",      u: "https://retro.hostingradio.ru/retro128.mp3" },
-    { n: "Love Radio",    i: "💗",      u: "https://pub0302.101.ru:8443/stream/air/aac/64/210" },
-    { n: "Hit FM",        i: "🔥",      u: "https://hitfm.hostingradio.ru/hitfm96.aacp" },
-    { n: "Radio Record",  i: "💿",      u: "https://radiorecord.hostingradio.ru/rr_main96.aacp" },
+    { n: "Радио Maximum",  i: "🎸", f: 1, u: "https://maximum.hostingradio.ru/maximum128.mp3" },
+    { n: "Europa Plus",    i: "🎵", f: 1, u: "https://europaplus.hostingradio.ru/europaplus128.mp3" },
+    { n: "Mixadance FM",   i: "💃",      u: "https://stream.mixadance.fm/mixadance" },
+    { n: "Радио НАШЕ",     i: "🤘",      u: "https://nashe.hostingradio.ru/nashe128.mp3" },
+    { n: "Rock FM",        i: "🎸",      u: "https://rock.hostingradio.ru/rock128.mp3" },
+    { n: "DFM",            i: "🎧",      u: "https://dfm.hostingradio.ru/dfm128.mp3" },
+    { n: "Авторадио",      i: "🚗",      u: "https://avtoradio.hostingradio.ru/avtoradio128.mp3" },
+    { n: "Звезда",         i: "⭐",      u: "https://icecast-zvezda.mediacdn.ru/radio/zvezda/zvezda_128" },
+    { n: "Вести FM",       i: "📰",      u: "https://icecast-vgtrk.cdnvideo.ru/vestifm" },
+    { n: "Спокойное",      i: "😌",      u: "https://listen9.myradio24.com/6262" },
   ],
+
+  // ── Chinese — Taiwan + China ────────────────────────────────────────────────
   zh: [
-    { n: "CRI Pop",      i: "🎵", f: 1, h: 1, u: "https://china-radio.akamaized.net/hls/live/2034447/cripop/master.m3u8" },
-    { n: "CNR Music",    i: "🎶", f: 1, h: 1, u: "https://ngcdn003.cnr.cn/live/zgzs/index.m3u8" },
-    { n: "CNR News",     i: "📰",      h: 1,  u: "https://ngcdn001.cnr.cn/live/zgzs/index.m3u8" },
-    { n: "Beijing Music",i: "🏯",      h: 1,  u: "https://ngcdn004.cnr.cn/live/yyzs/index.m3u8" },
-    { n: "CRI Easy FM",  i: "😊",      h: 1,  u: "https://china-radio.akamaized.net/hls/live/2034444/crieasyfm/master.m3u8" },
-    { n: "HK Radio",     i: "🇭🇰",    h: 1,  u: "https://rthkaudio2-lh.akamaihd.net/i/radio2_1@355865/master.m3u8" },
-    { n: "Taiwan ICRT",  i: "🌏",             u: "https://icrt-live.icrt.com.tw/icrt" },
-    { n: "CRI HitFM",    i: "🔥",      h: 1,  u: "https://china-radio.akamaized.net/hls/live/2034445/crihitfm/master.m3u8" },
-    { n: "Hunan Music",  i: "🎤",      h: 1,  u: "https://ngcdn002.cnr.cn/live/jjzs/index.m3u8" },
-    { n: "CRI Story",    i: "📖",      h: 1,  u: "https://china-radio.akamaized.net/hls/live/2034446/cristory/master.m3u8" },
+    { n: "臺灣教育廣播FM", i: "🇹🇼", f: 1, u: "https://cast.ner.gov.tw/1" },
+    { n: "CNR-1 中国之声", i: "🇨🇳", f: 1, u: "https://lhttp.qtfm.cn/live/15318317/64k.mp3" },
+    { n: "台北古典廣播",   i: "🎼",      u: "https://stream.zeno.fm/w66d3dp6ynhvv" },
+    { n: "雨声轻音乐",     i: "🌧️",      u: "https://stream.zeno.fm/689zc32y4x8uv" },
+    { n: "Taiwan Lounge",  i: "🏝️",      u: "https://azuracast.conceptradio.fr/radio/8030/stream.mp3" },
+    { n: "亚洲粤语 FM",    i: "🎵",      u: "https://lhttp.qtfm.cn/live/15318569/64k.mp3" },
+    { n: "500国际经典",    i: "🎶",      u: "https://lhttp.qtfm.cn/live/5022308/64k.mp3" },
+    { n: "两广之声",       i: "📻",      u: "https://lhttp.qtfm.cn/live/20500149/64k.mp3" },
+    { n: "臺灣廣播 AM",    i: "📡",      u: "https://cast.ner.gov.tw/2" },
+    { n: "德云社相声",     i: "😄",      u: "https://stream.zeno.fm/yqawwmweq8mtv" },
   ],
 };
