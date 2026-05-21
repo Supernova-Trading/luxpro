@@ -2,26 +2,254 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* ─── LuxPro 4.1 design tokens — three-layer architecture ──────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* ── Primitive layer (raw values, never used directly in components) ──── */
+  --prim-obsidian-950: #0D1117;
+  --prim-obsidian-900: #151B23;
+  --prim-obsidian-800: #1A2330;
+  --prim-obsidian-700: #22303F;
+  --prim-obsidian-600: #2C3D4F;
+  --prim-gold-500:     #C8A84B;
+  --prim-gold-400:     #D9BB6A;
+  --prim-gold-300:     #E5C97D;
+  --prim-gold-200:     #F0DCA0;
+  --prim-warm-500:     #F97316;
+  --prim-cold-500:     #0EA5E9;
+  --prim-navy-900:     #0A1F3F;
+  --prim-navy-700:     #1565C0;
+  --prim-blue-400:     #42A5F5;
+  --prim-white:        #FFFFFF;
+
+  /* ── Semantic layer (purpose aliases) ───────────────────────────────────── */
+  --lp-bg:          var(--prim-obsidian-900);
+  --lp-bg2:         var(--prim-obsidian-800);
+  --lp-bg3:         var(--prim-obsidian-700);
+  --lp-surface:     rgba(255, 255, 255, 0.05);
+  --lp-surface-mid: rgba(255, 255, 255, 0.08);
+  --lp-surface-hi:  rgba(255, 255, 255, 0.12);
+  --lp-card:        var(--prim-white);
+  --lp-text:        #1A1A1A;
+  --lp-text-mid:    #3D3D3D;
+  --lp-text-dim:    #6B7280;
+  --lp-border:      rgba(255, 255, 255, 0.08);
+  --lp-border-gold: rgba(200, 168, 75, 0.30);
+  --lp-border-card: rgba(0, 0, 0, 0.08);
+  --lp-warm:        var(--prim-warm-500);
+  --lp-cold:        var(--prim-cold-500);
+  --lp-gold:        var(--prim-gold-500);
+  --lp-gold-soft:   var(--prim-gold-300);
+  --lp-navy:        var(--prim-navy-900);
+  --lp-navy2:       var(--prim-navy-700);
+  --lp-blue2:       var(--prim-blue-400);
+
+  /* ── Glow tokens ─────────────────────────────────────────────────────────── */
+  --glow-gold:   0 0 20px rgba(200, 168, 75, 0.35), 0 0 40px rgba(200, 168, 75, 0.15);
+  --glow-warm:   0 0 20px rgba(249, 115, 22, 0.40), 0 0 40px rgba(249, 115, 22, 0.18);
+  --glow-cold:   0 0 20px rgba(14, 165, 233, 0.40), 0 0 40px rgba(14, 165, 233, 0.18);
+  --glow-subtle: 0 0 12px rgba(200, 168, 75, 0.18);
+
+  /* ── Shadow tokens ───────────────────────────────────────────────────────── */
+  --lp-shadow:    0 4px 24px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(0, 0, 0, 0.25);
+  --lp-shadow-lg: 0 12px 48px rgba(0, 0, 0, 0.55), 0 4px 16px rgba(0, 0, 0, 0.35);
+  --lp-shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.40), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+  /* ── Component layer ─────────────────────────────────────────────────────── */
+  --card-bg:      var(--lp-surface);
+  --card-border:  var(--lp-border);
+  --card-blur:    blur(24px);
+  --card-shadow:  var(--lp-shadow-glass);
+  --overlay-bg:   rgba(13, 17, 23, 0.88);
+  --overlay-blur: blur(40px);
+  --btn-active-bg: var(--lp-gold);
+
+  /* ── Radius ──────────────────────────────────────────────────────────────── */
+  --lp-radius-sm: 10px;
+  --lp-radius-lg: 18px;
+  --lp-radius-xl: 22px;
+  --lp-radius-2xl: 28px;
+
+  /* shadcn compat tokens */
+  --background:   var(--prim-obsidian-900);
+  --foreground:   #ffffff;
+  --border:       rgba(255, 255, 255, 0.08);
+  --ring:         var(--prim-gold-500);
+  --radius:       0.625rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ─── Global reset / body ───────────────────────────────────────────────────── */
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
   }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    background: var(--lp-bg);
+    color: #fff;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    letter-spacing: -0.01em;
+    user-select: none;
+  }
+
+  /* Hide scrollbars but allow scrolling */
+  ::-webkit-scrollbar { display: none; }
+  * { scrollbar-width: none; }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-}
-
+/* ─── Utility classes ──────────────────────────────────────────────────────── */
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
+  .font-cormorant { font-family: "Cormorant Garamond", serif; }
+
+  .text-gold      { color: var(--lp-gold); }
+  .text-gold-soft { color: var(--lp-gold-soft); }
+
+  /* Glass surface — the core 4.1 card treatment */
+  .glass {
+    background: var(--card-bg);
+    backdrop-filter: var(--card-blur);
+    -webkit-backdrop-filter: var(--card-blur);
+    border: 1px solid var(--card-border);
+    box-shadow: var(--card-shadow);
+    transition: border-color 200ms ease, box-shadow 200ms ease;
+  }
+  .glass-mid {
+    background: var(--lp-surface-mid);
+    backdrop-filter: var(--card-blur);
+    -webkit-backdrop-filter: var(--card-blur);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    box-shadow: var(--card-shadow);
+    transition: border-color 200ms ease, box-shadow 200ms ease;
+  }
+  .glass-gold {
+    background: rgba(200, 168, 75, 0.08);
+    backdrop-filter: var(--card-blur);
+    -webkit-backdrop-filter: var(--card-blur);
+    border: 1px solid var(--lp-border-gold);
+    box-shadow: var(--lp-shadow-glass);
+    transition: border-color 200ms ease, box-shadow 200ms ease;
+  }
+
+  /* Hover/active glow states */
+  .hover-glow-gold:hover { box-shadow: var(--glow-gold); border-color: rgba(200,168,75,0.50) !important; }
+  .active-glow-gold      { box-shadow: var(--glow-gold); border-color: rgba(200,168,75,0.60) !important; }
+  .active-glow-warm      { box-shadow: var(--glow-warm); }
+  .active-glow-cold      { box-shadow: var(--glow-cold); }
+
+  /* Obsidian gradient backgrounds */
+  .bg-lux-dark   { background: linear-gradient(135deg, var(--prim-obsidian-800), var(--prim-obsidian-700)); }
+  .bg-lux-darker { background: linear-gradient(135deg, var(--prim-obsidian-900), var(--prim-obsidian-800)); }
+  .bg-obsidian   { background: var(--prim-obsidian-950); }
+
+  /* Spotlight radial — used on Header */
+  .bg-spotlight-gold {
+    background: radial-gradient(ellipse at 30% 60%, rgba(200,168,75,0.10) 0%, transparent 65%),
+                linear-gradient(135deg, var(--prim-obsidian-800), var(--prim-obsidian-900));
+  }
+
+  .border-gold-subtle { border-color: rgba(200, 168, 75, 0.30); }
+  .border-gold        { border-color: var(--lp-gold); }
+
+  /* RTL */
+  .dir-rtl { direction: rtl; }
+
+  /* Gold shimmer top border via pseudo */
+  .gold-top-line { position: relative; overflow: hidden; }
+  .gold-top-line::before {
+    content: "";
+    position: absolute;
+    top: 0; left: -100%; right: -100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, var(--lp-gold) 50%, transparent 100%);
+    animation: shimmer-line 4s ease-in-out infinite;
+  }
+
+  @keyframes shimmer-line {
+    0%   { transform: translateX(-60%); }
+    100% { transform: translateX(60%); }
+  }
+
+  /* Scrollable horizontal row */
+  .scroll-row {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+  .scroll-row > * { scroll-snap-align: start; }
+
+  /* ── Animated waveform bars ──────────────────────────────────────────────── */
+  @keyframes wave {
+    0%, 100% { height: 2px;  opacity: 0.15; }
+    50%       { height: 16px; opacity: 1; }
+  }
+
+  .wave-bar {
+    display: block;
+    background: var(--lp-gold);
+    border-radius: 3px;
+    height: 2px;
+    opacity: 0.15;
+    transition: filter 300ms ease;
+  }
+  /* Diamond width profile: narrow-mid-wide-mid-narrow-mid-wide */
+  .wave-bar:nth-child(1) { width: 3px; }
+  .wave-bar:nth-child(2) { width: 4px; }
+  .wave-bar:nth-child(3) { width: 5px; }
+  .wave-bar:nth-child(4) { width: 4px; }
+  .wave-bar:nth-child(5) { width: 5px; }
+  .wave-bar:nth-child(6) { width: 4px; }
+  .wave-bar:nth-child(7) { width: 3px; }
+
+  .wave-bar.speaking {
+    animation: wave 0.7s ease-in-out infinite;
+    opacity: 1;
+    filter: drop-shadow(0 0 4px var(--lp-gold));
+  }
+  .wave-bar:nth-child(1).speaking { animation-delay: 0.00s; }
+  .wave-bar:nth-child(2).speaking { animation-delay: 0.10s; }
+  .wave-bar:nth-child(3).speaking { animation-delay: 0.20s; }
+  .wave-bar:nth-child(4).speaking { animation-delay: 0.05s; }
+  .wave-bar:nth-child(5).speaking { animation-delay: 0.15s; }
+  .wave-bar:nth-child(6).speaking { animation-delay: 0.25s; }
+  .wave-bar:nth-child(7).speaking { animation-delay: 0.35s; }
+
+  /* ── Enter / exit animations (framer-motion supplements) ─────────────────── */
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeSlideOut {
+    from { opacity: 1; transform: translateY(0); }
+    to   { opacity: 0; transform: translateY(4px); }
+  }
+
+  /* ── Interactive tap scale (applied by framer-motion whileTap) ───────────── */
+  /* CSS fallback for environments without JS animation */
+  .tap-scale:active { transform: scale(0.96); transition: transform 80ms ease; }
+
+  /* ── Gold stars row ──────────────────────────────────────────────────────── */
+  .stars-gold { color: var(--lp-gold); letter-spacing: 4px; font-size: 14px; }
+
+  /* ── Version badge ───────────────────────────────────────────────────────── */
+  .version-badge {
+    font-size: 8px;
+    letter-spacing: 2px;
+    color: var(--lp-gold);
+    opacity: 0.7;
+    text-transform: uppercase;
+    font-weight: 700;
   }
 }

@@ -1,0 +1,341 @@
+"use client";
+
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import SectionHeader from "./SectionHeader";
+import type { Translation } from "@/lib/translations";
+import type { RadioStation } from "@/lib/radios";
+import type { Playlist } from "@/lib/playlists";
+import { PLAYLISTS } from "@/lib/playlists";
+import type { useRadio as UseRadioType } from "@/hooks/useRadio";
+
+const panelVariants = {
+  hidden: { opacity: 0, height: 0, overflow: "hidden" },
+  visible: { opacity: 1, height: "auto", overflow: "visible" },
+};
+
+// Shared glass panel style for expanded panels
+const glassPanelStyle: React.CSSProperties = {
+  background:
+    "rgba(13,17,23,0.75)",
+  backdropFilter: "blur(32px)",
+  WebkitBackdropFilter: "blur(32px)",
+  border: "1px solid rgba(255,255,255,0.10)",
+  boxShadow: "0 12px 48px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.06)",
+};
+
+// Panel header style (dark strip inside glass panel)
+const panelHeaderStyle: React.CSSProperties = {
+  background: "rgba(255,255,255,0.05)",
+  borderBottom: "1px solid rgba(255,255,255,0.08)",
+};
+
+interface Props {
+  t: Translation;
+  radios: RadioStation[];
+  radio: ReturnType<typeof UseRadioType>;
+  onSpeak: (text: string) => void;
+  onShowBT: () => void;
+}
+
+type Panel = "bt" | "radio" | "playlist" | null;
+
+export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: Props) {
+  const [open, setOpen] = useState<Panel>(null);
+  const [activePL, setActivePL] = useState<number>(-1);
+  const [plUrl, setPlUrl] = useState("");
+
+  function togglePanel(panel: Panel) {
+    if (open === panel) {
+      setOpen(null);
+      if (panel === "radio") radio.stop();
+      if (panel === "playlist") {
+        setActivePL(-1);
+        setPlUrl("");
+      }
+    } else {
+      if (open === "radio") radio.stop();
+      if (open === "playlist") { setActivePL(-1); setPlUrl(""); }
+      setOpen(panel);
+      if (panel === "radio") onSpeak("Please select a radio station.");
+      if (panel === "playlist") onSpeak("Please select a playlist.");
+    }
+  }
+
+  function handleSelectStation(idx: number) {
+    radio.play(idx, radios);
+    onSpeak(`Amish, the passenger selected ${radios[idx].n}. Enjoy the radio.`);
+  }
+
+  function handleSelectPlaylist(pl: Playlist, idx: number) {
+    setActivePL(idx);
+    setPlUrl(
+      `https://w.soundcloud.com/player/?url=${encodeURIComponent(pl.u)}&color=%23000000&auto_play=true&hide_related=false&show_comments=false&show_user=true&show_reposts=false&show_teaser=false&visual=false`
+    );
+    onSpeak(`Amish, the passenger selected ${pl.n} playlist.`);
+  }
+
+  const cards: { id: Panel; icon: string; label: string }[] = [
+    { id: "bt",       icon: "📱", label: t.bluetooth },
+    { id: "radio",    icon: "📻", label: t.radio },
+    { id: "playlist", icon: "🎧", label: t.playlist },
+  ];
+
+  return (
+    <div>
+      <SectionHeader label={t.entertainment} />
+
+      {/* 3-card grid — glass treatment */}
+      <div className="grid grid-cols-3 gap-3.5">
+        {cards.map(({ id, icon, label }) => {
+          const isActive = open === id;
+          return (
+            <motion.div
+              key={id}
+              whileTap={{ scale: 0.95, transition: { duration: 0.08 } }}
+              onClick={() => {
+                if (id === "bt") { onShowBT(); return; }
+                togglePanel(id);
+              }}
+              className="relative cursor-pointer rounded-[18px] flex flex-col items-center gap-3 py-6 px-3"
+              style={{
+                background: isActive
+                  ? "rgba(200,168,75,0.10)"
+                  : "rgba(255,255,255,0.05)",
+                backdropFilter: "blur(24px)",
+                WebkitBackdropFilter: "blur(24px)",
+                border: isActive
+                  ? "1px solid rgba(200,168,75,0.55)"
+                  : "1px solid rgba(255,255,255,0.10)",
+                boxShadow: isActive
+                  ? "0 0 24px rgba(200,168,75,0.22), 0 8px 32px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.08)"
+                  : "0 8px 32px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.06)",
+                transition: "border-color 200ms ease, box-shadow 200ms ease, background 200ms ease",
+              }}
+            >
+              <div className="text-[38px] leading-none">{icon}</div>
+              <div
+                className="text-[13px] tracking-[2px] uppercase font-bold"
+                style={{ color: isActive ? "var(--lp-gold)" : "rgba(255,255,255,0.85)" }}
+              >
+                {label}
+              </div>
+              {/* Active indicator dot */}
+              <div
+                className="absolute top-3 right-3 w-2 h-2 rounded-full"
+                style={{
+                  background: "var(--lp-gold)",
+                  boxShadow: "0 0 8px rgba(200,168,75,0.7)",
+                  opacity: isActive ? 1 : 0,
+                  transition: "opacity 200ms ease",
+                }}
+              />
+            </motion.div>
+          );
+        })}
+      </div>
+
+      {/* Radio panel */}
+      <AnimatePresence>
+        {open === "radio" && (
+          <motion.div
+            key="radio-panel"
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            variants={panelVariants}
+            transition={{ duration: 0.25, ease: "easeInOut" }}
+            className="mt-3 rounded-[18px] overflow-hidden"
+            style={glassPanelStyle}
+          >
+            {/* Panel bar */}
+            <div className="flex items-center gap-3 px-5 py-3.5" style={panelHeaderStyle}>
+              <span className="text-[22px]">📻</span>
+              <div className="flex-1 ml-2">
+                <div className="text-[9px] tracking-[2.5px] text-white/50 uppercase font-semibold">{t.nowPlaying}</div>
+                <div className="text-[14px] font-bold text-white tracking-[1px] mt-0.5">
+                  {radio.currentStation ? `${radio.currentStation.n} — Live` : t.selectStation}
+                </div>
+              </div>
+              <button
+                onClick={() => radio.stop()}
+                className="rounded-lg px-3.5 py-1.5 text-white text-[11px] font-bold tracking-[1px] transition-colors"
+                style={{
+                  background: "rgba(255,255,255,0.10)",
+                  border: "1px solid rgba(255,255,255,0.20)",
+                }}
+              >
+                {t.stop}
+              </button>
+            </div>
+
+            {/* Station scrollable row */}
+            <div className="scroll-row px-3.5 py-3.5">
+              {radios.map((station, idx) => (
+                <motion.div
+                  key={idx}
+                  whileTap={{ scale: 0.93 }}
+                  onClick={() => handleSelectStation(idx)}
+                  className="flex flex-col items-center gap-1.5 rounded-xl px-2.5 py-3.5 cursor-pointer flex-none w-[110px]"
+                  style={{
+                    background: radio.currentIdx === idx
+                      ? "rgba(200,168,75,0.15)"
+                      : station.f
+                      ? "rgba(200,168,75,0.07)"
+                      : "rgba(255,255,255,0.05)",
+                    border: radio.currentIdx === idx
+                      ? "1px solid rgba(200,168,75,0.60)"
+                      : station.f
+                      ? "1px solid rgba(200,168,75,0.30)"
+                      : "1px solid rgba(255,255,255,0.08)",
+                    boxShadow: radio.currentIdx === idx ? "0 0 16px rgba(200,168,75,0.25)" : undefined,
+                    transition: "all 200ms ease",
+                  }}
+                >
+                  <span className="text-[24px]">{station.i}</span>
+                  <span
+                    className="text-[10px] font-bold uppercase text-center leading-tight"
+                    style={{ color: radio.currentIdx === idx ? "var(--lp-gold)" : "rgba(255,255,255,0.80)" }}
+                  >
+                    {station.n}
+                  </span>
+                  {station.f && (
+                    <span className="text-[8px] font-extrabold" style={{ color: "var(--lp-gold)" }}>⭐ Fav</span>
+                  )}
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Player controls */}
+            {radio.currentStation && (
+              <div
+                className="mx-3.5 mb-3.5 rounded-2xl p-3.5"
+                style={{
+                  background: "rgba(255,255,255,0.04)",
+                  border: "1px solid rgba(255,255,255,0.08)",
+                }}
+              >
+                <div className="text-center mb-3">
+                  <div className="text-[10px] tracking-[2.5px] text-white/45 uppercase mb-1 font-semibold">{t.nowPlaying}</div>
+                  <div className="text-[14px] font-bold text-white">
+                    {radio.statusText || `${radio.currentStation.n} — Live`}
+                  </div>
+                </div>
+                <div className="flex items-center justify-center gap-3">
+                  {[
+                    { fn: radio.prev,       size: 40, icon: "⏮" },
+                    { fn: radio.togglePlay, size: 52, icon: radio.playing ? "⏸" : "▶" },
+                    { fn: radio.next,       size: 40, icon: "⏭" },
+                  ].map(({ fn, size, icon }, i) => (
+                    <motion.button
+                      key={i}
+                      whileTap={{ scale: 0.92 }}
+                      onClick={fn}
+                      className="rounded-full flex items-center justify-center text-white"
+                      style={{
+                        width: size,
+                        height: size,
+                        fontSize: size > 44 ? "18px" : "14px",
+                        background: "rgba(255,255,255,0.08)",
+                        border: "1px solid rgba(255,255,255,0.15)",
+                        boxShadow: size > 44 ? "0 0 16px rgba(200,168,75,0.18)" : undefined,
+                        transition: "box-shadow 200ms ease",
+                      }}
+                    >
+                      {icon}
+                    </motion.button>
+                  ))}
+                </div>
+                <div className="flex items-center gap-2.5 mt-3">
+                  <span className="text-[10px] text-white/45 tracking-[1.5px] uppercase font-bold">{t.volume}</span>
+                  <input
+                    type="range"
+                    min={0}
+                    max={100}
+                    value={radio.volume}
+                    onChange={(e) => radio.setVolume(Number(e.target.value))}
+                    className="flex-1 h-1.5"
+                    style={{ accentColor: "var(--lp-gold)" }}
+                  />
+                </div>
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Playlist panel */}
+      <AnimatePresence>
+        {open === "playlist" && (
+          <motion.div
+            key="pl-panel"
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            variants={panelVariants}
+            transition={{ duration: 0.25, ease: "easeInOut" }}
+            className="mt-3 rounded-[18px] overflow-hidden"
+            style={glassPanelStyle}
+          >
+            <div className="flex items-center gap-3 px-5 py-3.5" style={panelHeaderStyle}>
+              <span className="text-[22px]">{activePL >= 0 ? PLAYLISTS[activePL].i : "🎵"}</span>
+              <div className="flex-1 ml-2">
+                <div className="text-[9px] tracking-[2.5px] text-white/50 uppercase font-semibold">{t.nowPlaying}</div>
+                <div className="text-[14px] font-bold text-white tracking-[1px] mt-0.5">
+                  {activePL >= 0 ? `${PLAYLISTS[activePL].i} ${PLAYLISTS[activePL].n}` : t.selectPlaylist}
+                </div>
+              </div>
+              <button
+                onClick={() => { setActivePL(-1); setPlUrl(""); }}
+                className="rounded-lg px-3.5 py-1.5 text-white text-[11px] font-bold tracking-[1px]"
+                style={{
+                  background: "rgba(255,255,255,0.10)",
+                  border: "1px solid rgba(255,255,255,0.20)",
+                }}
+              >
+                {t.stop}
+              </button>
+            </div>
+
+            <div className="scroll-row px-3.5 py-3.5">
+              {PLAYLISTS.map((pl, idx) => (
+                <motion.div
+                  key={idx}
+                  whileTap={{ scale: 0.93 }}
+                  onClick={() => handleSelectPlaylist(pl, idx)}
+                  className="flex flex-col items-center gap-1.5 rounded-xl px-2.5 py-3.5 cursor-pointer flex-none w-[110px]"
+                  style={{
+                    background: activePL === idx ? "rgba(200,168,75,0.15)" : "rgba(255,255,255,0.05)",
+                    border: activePL === idx
+                      ? "1px solid rgba(200,168,75,0.60)"
+                      : "1px solid rgba(255,255,255,0.08)",
+                    boxShadow: activePL === idx ? "0 0 16px rgba(200,168,75,0.25)" : undefined,
+                    transition: "all 200ms ease",
+                  }}
+                >
+                  <span className="text-[24px]">{pl.i}</span>
+                  <span
+                    className="text-[10px] font-bold uppercase text-center leading-tight"
+                    style={{ color: activePL === idx ? "var(--lp-gold)" : "rgba(255,255,255,0.80)" }}
+                  >
+                    {pl.n}
+                  </span>
+                </motion.div>
+              ))}
+            </div>
+
+            {plUrl && (
+              <iframe
+                src={plUrl}
+                className="mx-3.5 mb-3.5 rounded-xl border-none"
+                style={{ width: "calc(100% - 28px)", height: 200 }}
+                scrolling="no"
+                allow="autoplay"
+              />
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}

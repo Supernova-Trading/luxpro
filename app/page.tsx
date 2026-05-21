@@ -1,101 +1,210 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useState, useEffect, useCallback, useRef } from "react";
+import { motion } from "framer-motion";
+
+import Header from "@/components/Header";
+import VoiceBar from "@/components/VoiceBar";
+import Entertainment from "@/components/Entertainment";
+import TipBanner from "@/components/TipBanner";
+import ChatAndTips from "@/components/ChatAndTips";
+import Journey from "@/components/Journey";
+import ComfortItems from "@/components/ComfortItems";
+import SettingsMenu from "@/components/SettingsMenu";
+import { BluetoothModal, PhoneModal, ReplyModal, AdminModal } from "@/components/Modals";
+import Toast from "@/components/Toast";
+
+import { useLanguage } from "@/hooks/useLanguage";
+import { useVoice } from "@/hooks/useVoice";
+import { useRadio } from "@/hooks/useRadio";
+import type { Lang } from "@/lib/translations";
+
+// ─── ETA countdown: 8 minutes hardcoded ─────────────────────────────────────
+function useEta() {
+  const [eta, setEta] = useState(8 * 60);
+  useEffect(() => {
+    const id = setInterval(() => setEta((s) => (s > 0 ? s - 1 : 0)), 1000);
+    return () => clearInterval(id);
+  }, []);
+  return eta;
+}
+
+// ─── Toast helper ─────────────────────────────────────────────────────────────
+function useToast() {
+  const [msg, setMsg] = useState("");
+  const [show, setShow] = useState(false);
+  const timer = useRef<ReturnType<typeof setTimeout>>();
+
+  const toast = useCallback((m: string) => {
+    setMsg(m);
+    setShow(true);
+    clearTimeout(timer.current);
+    timer.current = setTimeout(() => setShow(false), 2400);
+  }, []);
+
+  return { toastMsg: msg, toastShow: show, toast };
+}
+
+// ─── Fullscreen ───────────────────────────────────────────────────────────────
+function useFullscreen() {
+  const [isFS, setIsFS] = useState(false);
+  useEffect(() => {
+    const handler = () => setIsFS(!!document.fullscreenElement);
+    document.addEventListener("fullscreenchange", handler);
+    return () => document.removeEventListener("fullscreenchange", handler);
+  }, []);
+
+  function toggle() {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen?.();
+    } else {
+      document.exitFullscreen?.();
+    }
+  }
+
+  return { isFS, toggle };
+}
+
+// ─── Main Page ─────────────────────────────────────────────────────────────────
+export default function LuxProPage() {
+  const { lang, setLang, t, radios, isRTL } = useLanguage();
+  const { speak, speaking, voiceMode, setVoiceMode } = useVoice(lang);
+  const radio = useRadio();
+  const eta = useEta();
+  const { toastMsg, toastShow, toast } = useToast();
+  const { isFS, toggle: toggleFS } = useFullscreen();
+
+  // Modal visibility
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [btOpen, setBtOpen] = useState(false);
+  const [phoneOpen, setPhoneOpen] = useState(false);
+  const [replyOpen, setReplyOpen] = useState(false);
+  const [adminOpen, setAdminOpen] = useState(false);
+
+  // Welcome speech on load
+  useEffect(() => {
+    const id = setTimeout(() => {
+      speak("Welcome aboard. My name is Amish. Sit back, relax, and enjoy your ride.");
+    }, 900);
+    return () => clearTimeout(id);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function handleSetLang(l: Lang) {
+    setLang(l);
+    radio.stop();
+    const labels: Record<Lang, string> = { en: "English", es: "Español", fr: "Français", ar: "العربية", ru: "Русский", zh: "中文" };
+    toast(labels[l]);
+  }
+
+  function handleShowBT() {
+    speak("To connect Bluetooth, find My Volvo Car in your phone settings.");
+    setBtOpen(true);
+  }
+
+  function handleShowPhone() {
+    speak("Connecting you to Amish now.");
+    setPhoneOpen(true);
+  }
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <div
+      className={`flex flex-col h-screen overflow-hidden relative ${isRTL ? "dir-rtl" : ""}`}
+      style={{ background: "var(--lp-bg)" }}
+    >
+      {/* Header */}
+      <Header
+        lang={lang}
+        t={t}
+        eta={eta}
+        onSetLang={handleSetLang}
+        onOpenSettings={() => setSettingsOpen((v) => !v)}
+      />
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
+      {/* Settings dropdown (positioned absolutely over main) */}
+      <SettingsMenu
+        open={settingsOpen}
+        t={t}
+        voiceMode={voiceMode}
+        onClose={() => setSettingsOpen(false)}
+        onShowPhone={handleShowPhone}
+        onShowReply={() => setReplyOpen(true)}
+        onShowAdmin={() => setAdminOpen(true)}
+        onToggleFS={toggleFS}
+        onSetVoiceMode={setVoiceMode}
+        isFullscreen={isFS}
+      />
+
+      {/* Voice bar */}
+      <VoiceBar speaking={speaking} text={speaking ? "" : t.vr} />
+
+      {/* Scrollable main content */}
+      <main
+        className="flex-1 overflow-y-auto"
+        style={{ padding: "18px 22px 28px", display: "flex", flexDirection: "column", gap: 18, background: "var(--lp-bg)" }}
+      >
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, ease: "easeOut" }}
+        >
+          <Entertainment
+            t={t}
+            radios={radios}
+            radio={radio}
+            onSpeak={speak}
+            onShowBT={handleShowBT}
+          />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, ease: "easeOut", delay: 0.05 }}
+        >
+          <TipBanner t={t} />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, ease: "easeOut", delay: 0.1 }}
+        >
+          <ChatAndTips t={t} onSpeak={speak} />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, ease: "easeOut", delay: 0.15 }}
+        >
+          <Journey t={t} onSpeak={speak} />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, ease: "easeOut", delay: 0.2 }}
+        >
+          <ComfortItems t={t} onSpeak={speak} />
+        </motion.div>
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+      {/* Modals */}
+      <BluetoothModal show={btOpen}    t={t} onClose={() => setBtOpen(false)} />
+      <PhoneModal     show={phoneOpen} t={t} onClose={() => setPhoneOpen(false)} />
+      <ReplyModal     show={replyOpen} t={t} onClose={() => setReplyOpen(false)} onSpeak={speak} />
+      <AdminModal
+        show={adminOpen}
+        t={t}
+        voiceMode={voiceMode}
+        onClose={() => setAdminOpen(false)}
+        onSetVoiceMode={setVoiceMode}
+        onToast={toast}
+      />
+
+      {/* Toast */}
+      <Toast message={toastMsg} show={toastShow} />
     </div>
   );
 }
