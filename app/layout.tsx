@@ -17,7 +17,7 @@ const cormorant = Cormorant_Garamond({
 });
 
 export const metadata: Metadata = {
-  title: "LuxPro 4.1",
+  title: "LuxPro 4.1", // v4.1.1 — auto-deploy test
   description: "Premium passenger entertainment interface",
 };
 
