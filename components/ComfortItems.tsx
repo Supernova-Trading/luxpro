@@ -43,7 +43,7 @@ export default function ComfortItems({ t, onSpeak }: Props) {
         whileTap={{ scale: 0.98, transition: { duration: 0.08 } }}
         whileHover={{ y: -2, transition: { type: "tween", duration: 0.2, ease: [0.16, 1, 0.3, 1] } }}
         onClick={() => toggle(0, items[0].msg)}
-        className="relative flex items-center gap-5 rounded-[18px] cursor-pointer py-5 px-6 mb-2.5"
+        className="relative flex items-center gap-4 rounded-[18px] cursor-pointer py-3 px-4 mb-2"
         style={{
           ...glassCard,
           background: isChargerActive ? "rgba(200,168,75,0.10)" : "rgba(255,255,255,0.05)",
@@ -51,7 +51,7 @@ export default function ComfortItems({ t, onSpeak }: Props) {
           boxShadow: isChargerActive ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
         }}
       >
-        <div className="text-[36px] leading-none">{items[0].icon}</div>
+        <div className="text-[26px] leading-none">{items[0].icon}</div>
         <div
           className="text-[12px] tracking-[2px] uppercase font-bold"
           style={{ color: isChargerActive ? "var(--lp-gold)" : "rgba(255,255,255,0.80)" }}
@@ -70,7 +70,7 @@ export default function ComfortItems({ t, onSpeak }: Props) {
       </motion.div>
 
       {/* Snacks | Wipes | Mints — 3-col strip */}
-      <div className="grid grid-cols-3 gap-2.5">
+      <div className="grid grid-cols-3 gap-2">
         {items.slice(1).map(({ icon, labelKey, msg }, i) => {
           const idx = i + 1;
           const isActive = !!active[idx];
@@ -80,7 +80,7 @@ export default function ComfortItems({ t, onSpeak }: Props) {
               whileTap={{ scale: 0.95, transition: { duration: 0.08 } }}
               whileHover={{ y: -2, transition: { type: "tween", duration: 0.2, ease: [0.16, 1, 0.3, 1] } }}
               onClick={() => toggle(idx, msg)}
-              className="relative flex flex-col items-center gap-3 py-4 px-2 rounded-[18px] cursor-pointer"
+              className="relative flex flex-col items-center gap-2 py-3 px-2 rounded-[18px] cursor-pointer"
               style={{
                 ...glassCard,
                 background: isActive ? "rgba(200,168,75,0.10)" : "rgba(255,255,255,0.05)",
@@ -90,7 +90,7 @@ export default function ComfortItems({ t, onSpeak }: Props) {
                 boxShadow: isActive ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
               }}
             >
-              <div className="text-[36px] leading-none">{icon}</div>
+              <div className="text-[26px] leading-none">{icon}</div>
               <div
                 className="text-[12px] tracking-[2px] uppercase font-bold text-center"
                 style={{ color: isActive ? "var(--lp-gold)" : "rgba(255,255,255,0.80)" }}

@@ -149,7 +149,7 @@ export default function LuxProPage() {
       {/* Scrollable main content */}
       <main
         className="flex-1 overflow-y-auto"
-        style={{ padding: "18px 22px 28px", display: "flex", flexDirection: "column", gap: 18, background: "var(--lp-bg)" }}
+        style={{ padding: "10px 22px 12px", display: "flex", flexDirection: "column", gap: 8, background: "var(--lp-bg)" }}
       >
         <motion.div
           initial={{ opacity: 0, y: 12 }}
@@ -168,6 +168,14 @@ export default function LuxProPage() {
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.06 }}
+        >
+          <TipBanner t={t} />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.12 }}
         >
           <ChatAndTips t={t} onSpeak={speak} content={content} />
@@ -176,7 +184,7 @@ export default function LuxProPage() {
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.24 }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.18 }}
         >
           <Journey t={t} onSpeak={speak} />
         </motion.div>
@@ -184,17 +192,9 @@ export default function LuxProPage() {
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.36 }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.24 }}
         >
           <ComfortItems t={t} onSpeak={speak} />
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.48 }}
-        >
-          <TipBanner t={t} />
         </motion.div>
       </main>
 

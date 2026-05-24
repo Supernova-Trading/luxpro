@@ -78,7 +78,7 @@ export default function Journey({ t, onSpeak }: Props) {
 
       {/* WARM + COLD — dominant merged card */}
       <div
-        className="flex rounded-[18px] overflow-hidden mb-2.5"
+        className="flex rounded-[18px] overflow-hidden mb-2"
         style={{
           background: "rgba(255,255,255,0.03)",
           border: "1px solid rgba(255,255,255,0.10)",
@@ -89,7 +89,7 @@ export default function Journey({ t, onSpeak }: Props) {
           whileTap={{ scale: 0.97, transition: { duration: 0.08 } }}
           whileHover={{ y: -2, transition: { type: "tween", duration: 0.2, ease: [0.16, 1, 0.3, 1] } }}
           onClick={() => selectTemp("warm")}
-          className="flex-1 flex flex-col items-center gap-2 text-center cursor-pointer py-6 px-2"
+          className="flex-1 flex flex-col items-center gap-2 text-center cursor-pointer py-3 px-2"
           style={{
             ...glassCard,
             border: "none",
@@ -97,7 +97,7 @@ export default function Journey({ t, onSpeak }: Props) {
             boxShadow: temp === "warm" ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
           }}
         >
-          <div className="text-[30px] leading-none">🔥</div>
+          <div className="text-[24px] leading-none">🔥</div>
           <div
             className="text-[12px] tracking-[1.5px] font-bold uppercase"
             style={{ color: temp === "warm" ? "var(--lp-gold)" : "rgba(255,255,255,0.80)" }}
@@ -114,7 +114,7 @@ export default function Journey({ t, onSpeak }: Props) {
           whileTap={{ scale: 0.97, transition: { duration: 0.08 } }}
           whileHover={{ y: -2, transition: { type: "tween", duration: 0.2, ease: [0.16, 1, 0.3, 1] } }}
           onClick={() => selectTemp("cold")}
-          className="flex-1 flex flex-col items-center gap-2 text-center cursor-pointer py-6 px-2"
+          className="flex-1 flex flex-col items-center gap-2 text-center cursor-pointer py-3 px-2"
           style={{
             ...glassCard,
             border: "none",
@@ -122,7 +122,7 @@ export default function Journey({ t, onSpeak }: Props) {
             boxShadow: temp === "cold" ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
           }}
         >
-          <div className="text-[30px] leading-none">🧊</div>
+          <div className="text-[24px] leading-none">🧊</div>
           <div
             className="text-[12px] tracking-[1.5px] font-bold uppercase"
             style={{ color: temp === "cold" ? "var(--lp-gold)" : "rgba(255,255,255,0.80)" }}
@@ -133,13 +133,13 @@ export default function Journey({ t, onSpeak }: Props) {
       </div>
 
       {/* Fast Route | Change Dest | Quiet Ride — 3-col strip */}
-      <div className="grid grid-cols-3 gap-2.5">
+      <div className="grid grid-cols-3 gap-2">
         {/* Fast Route */}
         <motion.div
           whileTap={{ scale: 0.95, transition: { duration: 0.08 } }}
           whileHover={{ y: -2, transition: { type: "tween", duration: 0.2, ease: [0.16, 1, 0.3, 1] } }}
           onClick={toggleFastRoute}
-          className="flex flex-col items-center gap-2 text-center rounded-[18px] cursor-pointer py-5 px-2"
+          className="flex flex-col items-center gap-2 text-center rounded-[18px] cursor-pointer py-3 px-2"
           style={{
             ...glassCard,
             background: fastRoute ? "rgba(200,168,75,0.12)" : "rgba(255,255,255,0.05)",
@@ -147,7 +147,7 @@ export default function Journey({ t, onSpeak }: Props) {
             boxShadow: fastRoute ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
           }}
         >
-          <div className="text-[30px] leading-none">⚡</div>
+          <div className="text-[24px] leading-none">⚡</div>
           <div
             className="text-[12px] tracking-[1.5px] font-bold uppercase"
             style={{ color: fastRoute ? "var(--lp-gold)" : "rgba(255,255,255,0.80)" }}
@@ -161,7 +161,7 @@ export default function Journey({ t, onSpeak }: Props) {
           whileTap={{ scale: 0.95, transition: { duration: 0.08 } }}
           whileHover={{ y: -2, transition: { type: "tween", duration: 0.2, ease: [0.16, 1, 0.3, 1] } }}
           onClick={() => onSpeak("Amish, the passenger would like to change the destination.")}
-          className="flex flex-col items-center gap-2 text-center rounded-[18px] cursor-pointer py-5 px-2"
+          className="flex flex-col items-center gap-2 text-center rounded-[18px] cursor-pointer py-3 px-2"
           style={{
             ...glassCard,
             background: "rgba(255,255,255,0.05)",
@@ -169,7 +169,7 @@ export default function Journey({ t, onSpeak }: Props) {
             boxShadow: "none",
           }}
         >
-          <div className="text-[30px] leading-none">📍</div>
+          <div className="text-[24px] leading-none">📍</div>
           <div className="text-[12px] tracking-[1.5px] font-bold uppercase" style={{ color: "rgba(255,255,255,0.80)" }}>
             {t.changeDest}
           </div>
@@ -180,7 +180,7 @@ export default function Journey({ t, onSpeak }: Props) {
           whileTap={{ scale: 0.95, transition: { duration: 0.08 } }}
           whileHover={{ y: -2, transition: { type: "tween", duration: 0.2, ease: [0.16, 1, 0.3, 1] } }}
           onClick={toggleQuietRide}
-          className="flex flex-col items-center gap-2 text-center rounded-[18px] cursor-pointer py-5 px-2"
+          className="flex flex-col items-center gap-2 text-center rounded-[18px] cursor-pointer py-3 px-2"
           style={{
             ...glassCard,
             background: quietRide ? "rgba(200,168,75,0.12)" : "rgba(255,255,255,0.05)",
@@ -188,7 +188,7 @@ export default function Journey({ t, onSpeak }: Props) {
             boxShadow: quietRide ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
           }}
         >
-          <div className="text-[30px] leading-none">🔇</div>
+          <div className="text-[24px] leading-none">🔇</div>
           <div
             className="text-[12px] tracking-[1.5px] font-bold uppercase"
             style={{ color: quietRide ? "var(--lp-gold)" : "rgba(255,255,255,0.80)" }}

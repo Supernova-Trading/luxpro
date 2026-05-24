@@ -90,7 +90,7 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
         whileTap={{ scale: 0.98, transition: { duration: 0.08 } }}
         whileHover={{ y: -2, transition: { type: "tween", duration: 0.2, ease: [0.16, 1, 0.3, 1] } }}
         onClick={() => togglePanel("playlist")}
-        className="relative cursor-pointer rounded-[18px] flex items-center gap-5 py-5 px-6 mb-3"
+        className="relative cursor-pointer rounded-[18px] flex items-center gap-4 py-3 px-4 mb-2"
         style={{
           ...glassCard,
           background: open === "playlist" ? "rgba(200,168,75,0.10)" : "rgba(255,255,255,0.05)",
@@ -98,7 +98,7 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
           boxShadow: open === "playlist" ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
         }}
       >
-        <div className="text-[38px] leading-none">🎧</div>
+        <div className="text-[26px] leading-none">🎧</div>
         <div
           className="text-[13px] tracking-[2px] uppercase font-bold"
           style={{ color: open === "playlist" ? "var(--lp-gold)" : "rgba(255,255,255,0.85)" }}
@@ -117,13 +117,13 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
       </motion.div>
 
       {/* BT + Radio — 2-col strip */}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-2">
         {/* Bluetooth */}
         <motion.div
           whileTap={{ scale: 0.95, transition: { duration: 0.08 } }}
           whileHover={{ y: -2, transition: { type: "tween", duration: 0.2, ease: [0.16, 1, 0.3, 1] } }}
           onClick={onShowBT}
-          className="relative cursor-pointer rounded-[18px] flex flex-col items-center gap-3 py-6 px-3"
+          className="relative cursor-pointer rounded-[18px] flex flex-col items-center gap-2 py-3 px-3"
           style={{
             ...glassCard,
             background: "rgba(255,255,255,0.05)",
@@ -131,7 +131,7 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
             boxShadow: "none",
           }}
         >
-          <div className="text-[38px] leading-none">📱</div>
+          <div className="text-[26px] leading-none">📱</div>
           <div
             className="text-[13px] tracking-[2px] uppercase font-bold"
             style={{ color: "rgba(255,255,255,0.85)" }}
@@ -145,7 +145,7 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
           whileTap={{ scale: 0.95, transition: { duration: 0.08 } }}
           whileHover={{ y: -2, transition: { type: "tween", duration: 0.2, ease: [0.16, 1, 0.3, 1] } }}
           onClick={() => togglePanel("radio")}
-          className="relative cursor-pointer rounded-[18px] flex flex-col items-center gap-3 py-6 px-3"
+          className="relative cursor-pointer rounded-[18px] flex flex-col items-center gap-2 py-3 px-3"
           style={{
             ...glassCard,
             background: open === "radio" ? "rgba(200,168,75,0.10)" : "rgba(255,255,255,0.05)",
@@ -153,7 +153,7 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
             boxShadow: open === "radio" ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
           }}
         >
-          <div className="text-[38px] leading-none">📻</div>
+          <div className="text-[26px] leading-none">📻</div>
           <div
             className="text-[13px] tracking-[2px] uppercase font-bold"
             style={{ color: open === "radio" ? "var(--lp-gold)" : "rgba(255,255,255,0.85)" }}
