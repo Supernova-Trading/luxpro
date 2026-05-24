@@ -67,12 +67,18 @@ function useFullscreen() {
 
 // ─── Main Page ─────────────────────────────────────────────────────────────────
 export default function LuxProPage() {
-  const { lang, setLang, t, radios, isRTL } = useLanguage();
+  const { lang, setLang, t, radios, content, isRTL } = useLanguage();
   const { speak, speaking, voiceMode, setVoiceMode } = useVoice(lang);
   const radio = useRadio();
   const eta = useEta();
   const { toastMsg, toastShow, toast } = useToast();
   const { isFS, toggle: toggleFS } = useFullscreen();
+
+  // Theme
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+  }, [theme]);
 
   // Modal visibility
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -126,11 +132,13 @@ export default function LuxProPage() {
         open={settingsOpen}
         t={t}
         voiceMode={voiceMode}
+        theme={theme}
         onClose={() => setSettingsOpen(false)}
         onShowPhone={handleShowPhone}
         onShowReply={() => setReplyOpen(true)}
         onShowAdmin={() => setAdminOpen(true)}
         onToggleFS={toggleFS}
+        onToggleTheme={() => setTheme((v) => (v === "dark" ? "light" : "dark"))}
         onSetVoiceMode={setVoiceMode}
         isFullscreen={isFS}
       />
@@ -144,9 +152,9 @@ export default function LuxProPage() {
         style={{ padding: "18px 22px 28px", display: "flex", flexDirection: "column", gap: 18, background: "var(--lp-bg)" }}
       >
         <motion.div
-          initial={{ opacity: 0, y: 8 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35, ease: "easeOut" }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         >
           <Entertainment
             t={t}
@@ -158,35 +166,35 @@ export default function LuxProPage() {
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 8 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35, ease: "easeOut", delay: 0.05 }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.12 }}
         >
-          <TipBanner t={t} />
+          <ChatAndTips t={t} onSpeak={speak} content={content} />
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 8 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35, ease: "easeOut", delay: 0.1 }}
-        >
-          <ChatAndTips t={t} onSpeak={speak} />
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35, ease: "easeOut", delay: 0.15 }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.24 }}
         >
           <Journey t={t} onSpeak={speak} />
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 8 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35, ease: "easeOut", delay: 0.2 }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.36 }}
         >
           <ComfortItems t={t} onSpeak={speak} />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.48 }}
+        >
+          <TipBanner t={t} />
         </motion.div>
       </main>
 

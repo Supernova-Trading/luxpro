@@ -18,9 +18,7 @@ export default function TipBanner({ t }: Props) {
           "radial-gradient(ellipse at 20% -10%, rgba(200,168,75,0.10) 0%, transparent 50%), " +
           "linear-gradient(160deg, #1A2330 0%, #0D1117 100%)",
         border: "1px solid rgba(200,168,75,0.40)",
-        boxShadow:
-          "0 12px 48px rgba(0,0,0,0.55), 0 4px 16px rgba(0,0,0,0.35), " +
-          "inset 0 1px 0 rgba(255,255,255,0.06)",
+        boxShadow: "0 20px 40px rgba(0,0,0,0.12)",
         padding: "28px 28px 26px",
       }}
     >

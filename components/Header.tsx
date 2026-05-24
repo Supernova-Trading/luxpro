@@ -2,6 +2,7 @@
 
 import { LANG_FLAGS, type Lang } from "@/lib/translations";
 import type { Translation } from "@/lib/translations";
+import { Icon } from "./Icon";
 
 interface Props {
   lang: Lang;
@@ -132,7 +133,6 @@ export default function Header({ lang, t, eta, onSetLang, onOpenSettings }: Prop
               background: "rgba(255,255,255,0.07)",
               border: "1px solid rgba(255,255,255,0.15)",
               color: "rgba(255,255,255,0.80)",
-              fontSize: "16px",
               backdropFilter: "blur(8px)",
               transition: "box-shadow 200ms ease, border-color 200ms ease",
             }}
@@ -146,7 +146,7 @@ export default function Header({ lang, t, eta, onSetLang, onOpenSettings }: Prop
             }}
             title="Settings"
           >
-            ⚙
+            <Icon name="settings" size={17} />
           </button>
         </div>
 

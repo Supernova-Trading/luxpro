@@ -16,18 +16,24 @@ const panelVariants = {
 
 // Shared glass panel style for expanded panels
 const glassPanelStyle: React.CSSProperties = {
-  background:
-    "rgba(13,17,23,0.75)",
+  background: "rgba(13,17,23,0.75)",
   backdropFilter: "blur(32px)",
   WebkitBackdropFilter: "blur(32px)",
   border: "1px solid rgba(255,255,255,0.10)",
-  boxShadow: "0 12px 48px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.06)",
+  boxShadow: "0 20px 40px rgba(0,0,0,0.10), inset 0 1px 0 rgba(255,255,255,0.06)",
 };
 
 // Panel header style (dark strip inside glass panel)
 const panelHeaderStyle: React.CSSProperties = {
   background: "rgba(255,255,255,0.05)",
   borderBottom: "1px solid rgba(255,255,255,0.08)",
+};
+
+// Shared glass card base
+const glassCard: React.CSSProperties = {
+  backdropFilter: "blur(24px)",
+  WebkitBackdropFilter: "blur(24px)",
+  transition: "border-color 200ms ease, box-shadow 200ms ease, background 200ms ease",
 };
 
 interface Props {
@@ -75,64 +81,95 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
     onSpeak(`Amish, the passenger selected ${pl.n} playlist.`);
   }
 
-  const cards: { id: Panel; icon: string; label: string }[] = [
-    { id: "bt",       icon: "📱", label: t.bluetooth },
-    { id: "radio",    icon: "📻", label: t.radio },
-    { id: "playlist", icon: "🎧", label: t.playlist },
-  ];
-
   return (
     <div>
       <SectionHeader label={t.entertainment} />
 
-      {/* 3-card grid — glass treatment */}
-      <div className="grid grid-cols-3 gap-3.5">
-        {cards.map(({ id, icon, label }) => {
-          const isActive = open === id;
-          return (
-            <motion.div
-              key={id}
-              whileTap={{ scale: 0.95, transition: { duration: 0.08 } }}
-              onClick={() => {
-                if (id === "bt") { onShowBT(); return; }
-                togglePanel(id);
-              }}
-              className="relative cursor-pointer rounded-[18px] flex flex-col items-center gap-3 py-6 px-3"
-              style={{
-                background: isActive
-                  ? "rgba(200,168,75,0.10)"
-                  : "rgba(255,255,255,0.05)",
-                backdropFilter: "blur(24px)",
-                WebkitBackdropFilter: "blur(24px)",
-                border: isActive
-                  ? "1px solid rgba(200,168,75,0.55)"
-                  : "1px solid rgba(255,255,255,0.10)",
-                boxShadow: isActive
-                  ? "0 0 24px rgba(200,168,75,0.22), 0 8px 32px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.08)"
-                  : "0 8px 32px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.06)",
-                transition: "border-color 200ms ease, box-shadow 200ms ease, background 200ms ease",
-              }}
-            >
-              <div className="text-[38px] leading-none">{icon}</div>
-              <div
-                className="text-[13px] tracking-[2px] uppercase font-bold"
-                style={{ color: isActive ? "var(--lp-gold)" : "rgba(255,255,255,0.85)" }}
-              >
-                {label}
-              </div>
-              {/* Active indicator dot */}
-              <div
-                className="absolute top-3 right-3 w-2 h-2 rounded-full"
-                style={{
-                  background: "var(--lp-gold)",
-                  boxShadow: "0 0 8px rgba(200,168,75,0.7)",
-                  opacity: isActive ? 1 : 0,
-                  transition: "opacity 200ms ease",
-                }}
-              />
-            </motion.div>
-          );
-        })}
+      {/* Playlist — full-width featured card */}
+      <motion.div
+        whileTap={{ scale: 0.98, transition: { duration: 0.08 } }}
+        whileHover={{ y: -2, transition: { type: "tween", duration: 0.2, ease: [0.16, 1, 0.3, 1] } }}
+        onClick={() => togglePanel("playlist")}
+        className="relative cursor-pointer rounded-[18px] flex items-center gap-5 py-5 px-6 mb-3"
+        style={{
+          ...glassCard,
+          background: open === "playlist" ? "rgba(200,168,75,0.10)" : "rgba(255,255,255,0.05)",
+          border: open === "playlist" ? "1px solid rgba(200,168,75,0.55)" : "1px solid rgba(255,255,255,0.10)",
+          boxShadow: open === "playlist" ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
+        }}
+      >
+        <div className="text-[38px] leading-none">🎧</div>
+        <div
+          className="text-[13px] tracking-[2px] uppercase font-bold"
+          style={{ color: open === "playlist" ? "var(--lp-gold)" : "rgba(255,255,255,0.85)" }}
+        >
+          {t.playlist}
+        </div>
+        <div
+          className="absolute top-3 right-3 w-2 h-2 rounded-full"
+          style={{
+            background: "var(--lp-gold)",
+            boxShadow: "0 0 8px rgba(200,168,75,0.70)",
+            opacity: open === "playlist" ? 1 : 0,
+            transition: "opacity 200ms ease",
+          }}
+        />
+      </motion.div>
+
+      {/* BT + Radio — 2-col strip */}
+      <div className="grid grid-cols-2 gap-3">
+        {/* Bluetooth */}
+        <motion.div
+          whileTap={{ scale: 0.95, transition: { duration: 0.08 } }}
+          whileHover={{ y: -2, transition: { type: "tween", duration: 0.2, ease: [0.16, 1, 0.3, 1] } }}
+          onClick={onShowBT}
+          className="relative cursor-pointer rounded-[18px] flex flex-col items-center gap-3 py-6 px-3"
+          style={{
+            ...glassCard,
+            background: "rgba(255,255,255,0.05)",
+            border: "1px solid rgba(255,255,255,0.10)",
+            boxShadow: "none",
+          }}
+        >
+          <div className="text-[38px] leading-none">📱</div>
+          <div
+            className="text-[13px] tracking-[2px] uppercase font-bold"
+            style={{ color: "rgba(255,255,255,0.85)" }}
+          >
+            {t.bluetooth}
+          </div>
+        </motion.div>
+
+        {/* Radio */}
+        <motion.div
+          whileTap={{ scale: 0.95, transition: { duration: 0.08 } }}
+          whileHover={{ y: -2, transition: { type: "tween", duration: 0.2, ease: [0.16, 1, 0.3, 1] } }}
+          onClick={() => togglePanel("radio")}
+          className="relative cursor-pointer rounded-[18px] flex flex-col items-center gap-3 py-6 px-3"
+          style={{
+            ...glassCard,
+            background: open === "radio" ? "rgba(200,168,75,0.10)" : "rgba(255,255,255,0.05)",
+            border: open === "radio" ? "1px solid rgba(200,168,75,0.55)" : "1px solid rgba(255,255,255,0.10)",
+            boxShadow: open === "radio" ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
+          }}
+        >
+          <div className="text-[38px] leading-none">📻</div>
+          <div
+            className="text-[13px] tracking-[2px] uppercase font-bold"
+            style={{ color: open === "radio" ? "var(--lp-gold)" : "rgba(255,255,255,0.85)" }}
+          >
+            {t.radio}
+          </div>
+          <div
+            className="absolute top-3 right-3 w-2 h-2 rounded-full"
+            style={{
+              background: "var(--lp-gold)",
+              boxShadow: "0 0 8px rgba(200,168,75,0.70)",
+              opacity: open === "radio" ? 1 : 0,
+              transition: "opacity 200ms ease",
+            }}
+          />
+        </motion.div>
       </div>
 
       {/* Radio panel */}
@@ -195,7 +232,7 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
                         : station.f
                         ? "1px solid rgba(200,168,75,0.30)"
                         : "1px solid rgba(255,255,255,0.08)",
-                      boxShadow: isCurrent ? "0 0 16px rgba(200,168,75,0.25)" : undefined,
+                      boxShadow: isCurrent ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : undefined,
                       opacity: isBroken && !isCurrent ? 0.65 : 1,
                       transition: "all 200ms ease",
                     }}
@@ -326,7 +363,7 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
                     border: activePL === idx
                       ? "1px solid rgba(200,168,75,0.60)"
                       : "1px solid rgba(255,255,255,0.08)",
-                    boxShadow: activePL === idx ? "0 0 16px rgba(200,168,75,0.25)" : undefined,
+                    boxShadow: activePL === idx ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : undefined,
                     transition: "all 200ms ease",
                   }}
                 >

@@ -26,30 +26,68 @@ export default function ComfortItems({ t, onSpeak }: Props) {
     onSpeak(next ? msg : "That request has been removed.");
   }
 
+  const glassCard: React.CSSProperties = {
+    backdropFilter: "blur(20px)",
+    WebkitBackdropFilter: "blur(20px)",
+    transition: "box-shadow 200ms ease, border-color 200ms ease, background 200ms ease",
+  };
+
+  const isChargerActive = !!active[0];
+
   return (
     <div>
       <SectionHeader label={t.comfortItems} />
 
-      <div className="grid grid-cols-4 gap-2.5">
-        {items.map(({ icon, labelKey, msg }, idx) => {
+      {/* Phone Charger — full-width featured tile */}
+      <motion.div
+        whileTap={{ scale: 0.98, transition: { duration: 0.08 } }}
+        whileHover={{ y: -2, transition: { type: "tween", duration: 0.2, ease: [0.16, 1, 0.3, 1] } }}
+        onClick={() => toggle(0, items[0].msg)}
+        className="relative flex items-center gap-5 rounded-[18px] cursor-pointer py-5 px-6 mb-2.5"
+        style={{
+          ...glassCard,
+          background: isChargerActive ? "rgba(200,168,75,0.10)" : "rgba(255,255,255,0.05)",
+          border: isChargerActive ? "1px solid rgba(200,168,75,0.55)" : "1px solid rgba(255,255,255,0.10)",
+          boxShadow: isChargerActive ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
+        }}
+      >
+        <div className="text-[36px] leading-none">{items[0].icon}</div>
+        <div
+          className="text-[12px] tracking-[2px] uppercase font-bold"
+          style={{ color: isChargerActive ? "var(--lp-gold)" : "rgba(255,255,255,0.80)" }}
+        >
+          {t[items[0].labelKey]}
+        </div>
+        <div
+          className="absolute top-3 right-3 w-2 h-2 rounded-full"
+          style={{
+            background: "var(--lp-gold)",
+            boxShadow: "0 0 8px rgba(200,168,75,0.70)",
+            opacity: isChargerActive ? 1 : 0,
+            transition: "opacity 200ms ease",
+          }}
+        />
+      </motion.div>
+
+      {/* Snacks | Wipes | Mints — 3-col strip */}
+      <div className="grid grid-cols-3 gap-2.5">
+        {items.slice(1).map(({ icon, labelKey, msg }, i) => {
+          const idx = i + 1;
           const isActive = !!active[idx];
           return (
             <motion.div
               key={idx}
               whileTap={{ scale: 0.95, transition: { duration: 0.08 } }}
+              whileHover={{ y: -2, transition: { type: "tween", duration: 0.2, ease: [0.16, 1, 0.3, 1] } }}
               onClick={() => toggle(idx, msg)}
               className="relative flex flex-col items-center gap-3 py-4 px-2 rounded-[18px] cursor-pointer"
               style={{
+                ...glassCard,
                 background: isActive ? "rgba(200,168,75,0.10)" : "rgba(255,255,255,0.05)",
-                backdropFilter: "blur(20px)",
-                WebkitBackdropFilter: "blur(20px)",
                 border: isActive
                   ? "1px solid rgba(200,168,75,0.55)"
                   : "1px solid rgba(255,255,255,0.10)",
-                boxShadow: isActive
-                  ? "var(--glow-gold)"
-                  : "0 8px 24px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.06)",
-                transition: "box-shadow 200ms ease, border-color 200ms ease, background 200ms ease",
+                boxShadow: isActive ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
               }}
             >
               <div className="text-[36px] leading-none">{icon}</div>
@@ -59,7 +97,6 @@ export default function ComfortItems({ t, onSpeak }: Props) {
               >
                 {t[labelKey]}
               </div>
-              {/* Active dot */}
               <div
                 className="absolute top-3 right-3 w-2 h-2 rounded-full"
                 style={{

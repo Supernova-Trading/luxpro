@@ -37,3 +37,5 @@ next-env.d.ts
 
 # screenshots / local artifacts
 screenshot-*.png
+
+.vercel

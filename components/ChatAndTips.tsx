@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Translation } from "@/lib/translations";
-import { TOPICS, RIDDLES, QUIZ_EASY, QUIZ_MEDIUM, QUIZ_HARD, type QuizItem } from "@/lib/content";
+import type { Topic, Riddle, QuizItem } from "@/lib/content";
+import type { LangContent } from "@/lib/content-by-lang";
 
 const panelVariants = {
   hidden: { opacity: 0, height: 0, overflow: "hidden" },
@@ -31,18 +32,21 @@ function shuffle<T>(arr: T[]): T[] {
 interface Props {
   t: Translation;
   onSpeak: (text: string) => void;
+  content: LangContent;
 }
 
-export default function ChatAndTips({ t, onSpeak }: Props) {
+export default function ChatAndTips({ t, onSpeak, content }: Props) {
+  const { topics, riddles, quizEasy, quizMedium, quizHard } = content;
+
   const [active, setActive] = useState<ActivePanel>(null);
   const [chatTab, setChatTab] = useState<ChatTab>("topics");
 
-  // Topics
-  const [tPool, setTPool] = useState(() => shuffle(TOPICS));
+  // Topics — reset pool whenever language changes
+  const [tPool, setTPool] = useState<Topic[]>(() => shuffle(topics));
   const [tIdx, setTIdx] = useState(-1);
 
-  // Riddles
-  const [rPool, setRPool] = useState(() => shuffle(RIDDLES));
+  // Riddles — reset pool whenever language changes
+  const [rPool, setRPool] = useState<Riddle[]>(() => shuffle(riddles));
   const [rIdx, setRIdx] = useState(-1);
   const [showRA, setShowRA] = useState(false);
 
@@ -51,6 +55,22 @@ export default function ChatAndTips({ t, onSpeak }: Props) {
   const [qPool, setQPool] = useState<QuizItem[]>([]);
   const [qIdx, setQIdx] = useState(-1);
   const [showAns, setShowAns] = useState(false);
+
+  // Reset pools when content language changes
+  const prevTopics = useRef(topics);
+  useEffect(() => {
+    if (prevTopics.current === topics) return;
+    prevTopics.current = topics;
+    setTPool(shuffle(topics));
+    setTIdx(-1);
+    setRPool(shuffle(riddles));
+    setRIdx(-1);
+    setShowRA(false);
+    setQuizLevel(null);
+    setQPool([]);
+    setQIdx(-1);
+    setShowAns(false);
+  }, [topics, riddles]);
 
   // Tips
   const [tipChoice, setTipChoice] = useState<TipChoice>(null);
@@ -70,7 +90,7 @@ export default function ChatAndTips({ t, onSpeak }: Props) {
     let pool = tPool;
     let idx = tIdx + 1;
     if (idx >= pool.length) {
-      pool = shuffle(TOPICS);
+      pool = shuffle(topics);
       setTPool(pool);
       idx = 0;
     }
@@ -87,7 +107,7 @@ export default function ChatAndTips({ t, onSpeak }: Props) {
     let pool = rPool;
     let idx = rIdx + 1;
     if (idx >= pool.length) {
-      pool = shuffle(RIDDLES);
+      pool = shuffle(riddles);
       setRPool(pool);
       idx = 0;
     }
@@ -98,7 +118,7 @@ export default function ChatAndTips({ t, onSpeak }: Props) {
 
   // Quiz
   function setLevel(l: QuizLevel) {
-    const data = l === "easy" ? QUIZ_EASY : l === "medium" ? QUIZ_MEDIUM : QUIZ_HARD;
+    const data = l === "easy" ? quizEasy : l === "medium" ? quizMedium : quizHard;
     const pool = shuffle(data);
     setQuizLevel(l);
     setQPool(pool);
