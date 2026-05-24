@@ -85,39 +85,8 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
     <div>
       <SectionHeader label={t.entertainment} />
 
-      {/* Playlist — full-width featured card */}
-      <motion.div
-        whileTap={{ scale: 0.98, transition: { duration: 0.08 } }}
-        whileHover={{ y: -2, transition: { type: "tween", duration: 0.2, ease: [0.16, 1, 0.3, 1] } }}
-        onClick={() => togglePanel("playlist")}
-        className="relative cursor-pointer rounded-[18px] flex items-center gap-4 py-3 px-4 mb-2"
-        style={{
-          ...glassCard,
-          background: open === "playlist" ? "rgba(200,168,75,0.10)" : "rgba(255,255,255,0.05)",
-          border: open === "playlist" ? "1px solid rgba(200,168,75,0.55)" : "1px solid rgba(255,255,255,0.10)",
-          boxShadow: open === "playlist" ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
-        }}
-      >
-        <div className="text-[26px] leading-none">🎧</div>
-        <div
-          className="text-[13px] tracking-[2px] uppercase font-bold"
-          style={{ color: open === "playlist" ? "var(--lp-gold)" : "rgba(255,255,255,0.85)" }}
-        >
-          {t.playlist}
-        </div>
-        <div
-          className="absolute top-3 right-3 w-2 h-2 rounded-full"
-          style={{
-            background: "var(--lp-gold)",
-            boxShadow: "0 0 8px rgba(200,168,75,0.70)",
-            opacity: open === "playlist" ? 1 : 0,
-            transition: "opacity 200ms ease",
-          }}
-        />
-      </motion.div>
-
-      {/* BT + Radio — 2-col strip */}
-      <div className="grid grid-cols-2 gap-2">
+      {/* Bluetooth | Radio | Playlist — 3-col equal grid */}
+      <div className="grid grid-cols-3 gap-2">
         {/* Bluetooth */}
         <motion.div
           whileTap={{ scale: 0.95, transition: { duration: 0.08 } }}
@@ -166,6 +135,37 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
               background: "var(--lp-gold)",
               boxShadow: "0 0 8px rgba(200,168,75,0.70)",
               opacity: open === "radio" ? 1 : 0,
+              transition: "opacity 200ms ease",
+            }}
+          />
+        </motion.div>
+
+        {/* Playlist */}
+        <motion.div
+          whileTap={{ scale: 0.95, transition: { duration: 0.08 } }}
+          whileHover={{ y: -2, transition: { type: "tween", duration: 0.2, ease: [0.16, 1, 0.3, 1] } }}
+          onClick={() => togglePanel("playlist")}
+          className="relative cursor-pointer rounded-[18px] flex flex-col items-center gap-2 py-3 px-3"
+          style={{
+            ...glassCard,
+            background: open === "playlist" ? "rgba(200,168,75,0.10)" : "rgba(255,255,255,0.05)",
+            border: open === "playlist" ? "1px solid rgba(200,168,75,0.55)" : "1px solid rgba(255,255,255,0.10)",
+            boxShadow: open === "playlist" ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
+          }}
+        >
+          <div className="text-[26px] leading-none">🎧</div>
+          <div
+            className="text-[13px] tracking-[2px] uppercase font-bold"
+            style={{ color: open === "playlist" ? "var(--lp-gold)" : "rgba(255,255,255,0.85)" }}
+          >
+            {t.playlist}
+          </div>
+          <div
+            className="absolute top-3 right-3 w-2 h-2 rounded-full"
+            style={{
+              background: "var(--lp-gold)",
+              boxShadow: "0 0 8px rgba(200,168,75,0.70)",
+              opacity: open === "playlist" ? 1 : 0,
               transition: "opacity 200ms ease",
             }}
           />

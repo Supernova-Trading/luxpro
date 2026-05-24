@@ -19,7 +19,7 @@ export default function TipBanner({ t }: Props) {
           "linear-gradient(160deg, #1A2330 0%, #0D1117 100%)",
         border: "1px solid rgba(200,168,75,0.40)",
         boxShadow: "0 20px 40px rgba(0,0,0,0.12)",
-        padding: "28px 28px 26px",
+        padding: "12px 16px 10px",
       }}
     >
       {/* Decorative ambient glow disc */}
@@ -39,13 +39,13 @@ export default function TipBanner({ t }: Props) {
       />
 
       {/* Stars */}
-      <div className="stars-gold mb-3 tracking-[6px]">★★★★★</div>
+      <div className="stars-gold mb-1.5 tracking-[4px] text-sm">★★★★★</div>
 
       {/* Heading */}
       <h2
-        className="font-cormorant font-bold uppercase mb-3 leading-tight"
+        className="font-cormorant font-bold uppercase mb-1.5 leading-tight"
         style={{
-          fontSize: "clamp(22px, 5vw, 30px)",
+          fontSize: "1.25rem",
           color: "var(--lp-gold)",
           letterSpacing: "2px",
           textShadow: "0 0 24px rgba(200,168,75,0.45)",
@@ -61,16 +61,16 @@ export default function TipBanner({ t }: Props) {
           width: "60px",
           height: "1px",
           background: "linear-gradient(90deg, transparent, var(--lp-gold), transparent)",
-          margin: "0 auto 16px",
+          margin: "0 auto 8px",
           opacity: 0.6,
         }}
       />
 
       {/* Quote */}
       <p
-        className="font-cormorant italic leading-relaxed"
+        className="font-cormorant italic leading-snug"
         style={{
-          fontSize: "clamp(16px, 3.5vw, 20px)",
+          fontSize: "0.875rem",
           color: "rgba(255,255,255,0.90)",
           letterSpacing: "0.3px",
           maxWidth: "520px",
@@ -82,7 +82,7 @@ export default function TipBanner({ t }: Props) {
 
       {/* Sub-label */}
       <p
-        className="mt-4 uppercase font-semibold"
+        className="mt-2 uppercase font-semibold"
         style={{
           fontSize: "9px",
           letterSpacing: "3px",

@@ -32,47 +32,13 @@ export default function ComfortItems({ t, onSpeak }: Props) {
     transition: "box-shadow 200ms ease, border-color 200ms ease, background 200ms ease",
   };
 
-  const isChargerActive = !!active[0];
-
   return (
     <div>
       <SectionHeader label={t.comfortItems} />
 
-      {/* Phone Charger — full-width featured tile */}
-      <motion.div
-        whileTap={{ scale: 0.98, transition: { duration: 0.08 } }}
-        whileHover={{ y: -2, transition: { type: "tween", duration: 0.2, ease: [0.16, 1, 0.3, 1] } }}
-        onClick={() => toggle(0, items[0].msg)}
-        className="relative flex items-center gap-4 rounded-[18px] cursor-pointer py-3 px-4 mb-2"
-        style={{
-          ...glassCard,
-          background: isChargerActive ? "rgba(200,168,75,0.10)" : "rgba(255,255,255,0.05)",
-          border: isChargerActive ? "1px solid rgba(200,168,75,0.55)" : "1px solid rgba(255,255,255,0.10)",
-          boxShadow: isChargerActive ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
-        }}
-      >
-        <div className="text-[26px] leading-none">{items[0].icon}</div>
-        <div
-          className="text-[12px] tracking-[2px] uppercase font-bold"
-          style={{ color: isChargerActive ? "var(--lp-gold)" : "rgba(255,255,255,0.80)" }}
-        >
-          {t[items[0].labelKey]}
-        </div>
-        <div
-          className="absolute top-3 right-3 w-2 h-2 rounded-full"
-          style={{
-            background: "var(--lp-gold)",
-            boxShadow: "0 0 8px rgba(200,168,75,0.70)",
-            opacity: isChargerActive ? 1 : 0,
-            transition: "opacity 200ms ease",
-          }}
-        />
-      </motion.div>
-
-      {/* Snacks | Wipes | Mints — 3-col strip */}
-      <div className="grid grid-cols-3 gap-2">
-        {items.slice(1).map(({ icon, labelKey, msg }, i) => {
-          const idx = i + 1;
+      {/* 4-col equal grid */}
+      <div className="grid grid-cols-4 gap-2">
+        {items.map(({ icon, labelKey, msg }, idx) => {
           const isActive = !!active[idx];
           return (
             <motion.div

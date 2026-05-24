@@ -93,7 +93,7 @@ export default function Journey({ t, onSpeak }: Props) {
           style={{
             ...glassCard,
             border: "none",
-            background: temp === "warm" ? "rgba(200,168,75,0.10)" : "transparent",
+            background: "rgba(249,115,22,0.15)",
             boxShadow: temp === "warm" ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
           }}
         >
@@ -118,7 +118,7 @@ export default function Journey({ t, onSpeak }: Props) {
           style={{
             ...glassCard,
             border: "none",
-            background: temp === "cold" ? "rgba(200,168,75,0.10)" : "transparent",
+            background: "rgba(14,165,233,0.15)",
             boxShadow: temp === "cold" ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
           }}
         >
