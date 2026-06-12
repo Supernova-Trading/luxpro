@@ -13,7 +13,7 @@ const panelVariants = {
 
 // Glass panel style — consistent with Entertainment and Phase 2
 const glassPanelStyle: React.CSSProperties = {
-  background: "rgba(13,17,23,0.75)",
+  background: "var(--overlay-bg)",
   backdropFilter: "blur(32px)",
   WebkitBackdropFilter: "blur(32px)",
   border: "1px solid rgba(255,255,255,0.10)",
@@ -184,13 +184,13 @@ export default function ChatAndTips({ t, onSpeak, content }: Props) {
           <div className="text-[36px]">💬</div>
           <div
             className="text-[15px] tracking-[2px] font-extrabold uppercase"
-            style={{ color: active === "chat" ? "var(--lp-gold)" : "rgba(255,255,255,0.85)" }}
+            style={{ color: active === "chat" ? "var(--lp-gold)" : "var(--text-primary)" }}
           >
             {t.openChat}
           </div>
           <div
             className="text-[11px] tracking-[0.5px] font-medium"
-            style={{ color: active === "chat" ? "rgba(255,255,255,0.60)" : "rgba(255,255,255,0.45)" }}
+            style={{ color: active === "chat" ? "var(--text-secondary)" : "var(--text-muted)" }}
           >
             {t.chatSub}
           </div>
@@ -217,13 +217,13 @@ export default function ChatAndTips({ t, onSpeak, content }: Props) {
           <div className="text-[36px]">💳</div>
           <div
             className="text-[15px] tracking-[2px] font-extrabold uppercase"
-            style={{ color: active === "tips" ? "#4ADE80" : "rgba(255,255,255,0.85)" }}
+            style={{ color: active === "tips" ? "var(--accent-positive)" : "var(--text-primary)" }}
           >
             {t.tips}
           </div>
           <div
             className="text-[11px] tracking-[0.5px] font-medium"
-            style={{ color: active === "tips" ? "rgba(255,255,255,0.60)" : "rgba(255,255,255,0.45)" }}
+            style={{ color: active === "tips" ? "var(--text-secondary)" : "var(--text-muted)" }}
           >
             {t.tapToChoose}
           </div>
@@ -261,7 +261,7 @@ export default function ChatAndTips({ t, onSpeak, content }: Props) {
                   <div className="text-[32px]">{icon}</div>
                   <div
                     className="text-[13px] tracking-[1.5px] font-bold uppercase"
-                    style={{ color: tipChoice === id ? "var(--lp-gold)" : "rgba(255,255,255,0.80)" }}
+                    style={{ color: tipChoice === id ? "var(--lp-gold)" : "var(--text-primary)" }}
                   >
                     {label}
                   </div>
@@ -269,7 +269,7 @@ export default function ChatAndTips({ t, onSpeak, content }: Props) {
                     className="text-[9px] tracking-[1.5px] uppercase rounded-full px-3 py-1 font-bold"
                     style={{
                       border: `1px solid ${tipChoice === id ? "rgba(200,168,75,0.40)" : "rgba(255,255,255,0.18)"}`,
-                      color: tipChoice === id ? "var(--lp-gold-soft)" : "rgba(255,255,255,0.55)",
+                      color: tipChoice === id ? "var(--lp-gold-soft)" : "var(--text-secondary)",
                     }}
                   >
                     {badge}
@@ -306,7 +306,7 @@ export default function ChatAndTips({ t, onSpeak, content }: Props) {
                     onClick={() => setChatTab(tab)}
                     className="flex-1 py-3.5 px-2 text-center text-[12px] tracking-[1.5px] font-bold uppercase transition-all"
                     style={{
-                      color: chatTab === tab ? "var(--lp-gold)" : "rgba(255,255,255,0.45)",
+                      color: chatTab === tab ? "var(--lp-gold)" : "var(--text-muted)",
                       borderBottom: chatTab === tab ? "2px solid var(--lp-gold)" : "2px solid transparent",
                     }}
                   >
@@ -327,7 +327,7 @@ export default function ChatAndTips({ t, onSpeak, content }: Props) {
                   }}
                 >
                   <div className="text-[38px] mb-2">{curTopic?.i ?? "🎲"}</div>
-                  <div className="text-[18px] font-semibold text-white leading-relaxed">
+                  <div className="text-[18px] font-semibold text-primary leading-relaxed">
                     {curTopic?.t ?? t.tapNext}
                   </div>
                   {curTopic && (
@@ -358,7 +358,7 @@ export default function ChatAndTips({ t, onSpeak, content }: Props) {
                         border: quizLevel === l
                           ? `1px solid ${l === "easy" ? "#34D399" : l === "medium" ? "#FBBF24" : "#F87171"}`
                           : "1px solid rgba(255,255,255,0.12)",
-                        color: quizLevel === l ? "#fff" : "rgba(255,255,255,0.55)",
+                        color: quizLevel === l ? "#fff" : "var(--text-secondary)",
                       }}
                     >
                       {l === "easy" ? "😄" : l === "medium" ? "🧠" : "🔥"} {t[l]}
@@ -372,10 +372,10 @@ export default function ChatAndTips({ t, onSpeak, content }: Props) {
                     border: "1px solid rgba(255,255,255,0.08)",
                   }}
                 >
-                  <div className="text-[11px] tracking-[2.5px] uppercase mb-2 font-semibold" style={{ color: "rgba(255,255,255,0.45)" }}>
+                  <div className="text-[11px] tracking-[2.5px] uppercase mb-2 font-semibold" style={{ color: "var(--text-muted)" }}>
                     {curQ ? `Question ${qIdx + 1} — ${quizLevel?.charAt(0).toUpperCase()}${quizLevel?.slice(1)}` : t.chooseLevel}
                   </div>
-                  <div className="text-[18px] font-semibold text-white leading-relaxed">
+                  <div className="text-[18px] font-semibold text-primary leading-relaxed">
                     {curQ?.q ?? t.selectEasyMedHard}
                   </div>
                 </div>
@@ -411,11 +411,11 @@ export default function ChatAndTips({ t, onSpeak, content }: Props) {
                 >
                   <div className="text-[38px] mb-2">{curRiddle?.i ?? "🧩"}</div>
                   {curRiddle && (
-                    <div className="text-[11px] tracking-[2.5px] uppercase mb-2 font-semibold" style={{ color: "rgba(255,255,255,0.45)" }}>
+                    <div className="text-[11px] tracking-[2.5px] uppercase mb-2 font-semibold" style={{ color: "var(--text-muted)" }}>
                       Riddle {rIdx + 1}
                     </div>
                   )}
-                  <div className="text-[18px] font-semibold text-white leading-relaxed">
+                  <div className="text-[18px] font-semibold text-primary leading-relaxed">
                     {curRiddle?.q ?? t.tapNextRiddle}
                   </div>
                 </div>
@@ -461,10 +461,11 @@ function ActionBtn({ color, onClick, children }: { color: BtnColor; onClick: () 
     <motion.button
       whileTap={{ scale: 0.95, transition: { duration: 0.08 } }}
       onClick={onClick}
-      className="py-3.5 px-2 rounded-xl text-[11px] tracking-[1.5px] uppercase font-bold cursor-pointer text-white"
+      className="py-3.5 px-2 rounded-xl text-[11px] tracking-[1.5px] uppercase font-bold cursor-pointer"
       style={{
         background: bg[color],
         border: `1px solid ${border[color]}`,
+        color: color === "dark" ? "var(--text-primary)" : "#fff",
         transition: "opacity 150ms ease",
       }}
     >

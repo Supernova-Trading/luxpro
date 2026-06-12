@@ -54,7 +54,7 @@ export default function SettingsMenu({
           transition={{ duration: 0.18, ease: "easeOut" }}
           className="absolute top-[120px] right-5 z-50 rounded-2xl p-2 min-w-[240px]"
           style={{
-            background: "rgba(13,17,23,0.92)",
+            background: "var(--overlay-bg)",
             backdropFilter: "blur(40px)",
             WebkitBackdropFilter: "blur(40px)",
             border: "1px solid rgba(200,168,75,0.30)",
@@ -78,8 +78,8 @@ export default function SettingsMenu({
               whileTap={{ scale: 0.97 }}
               onClick={action}
               className="w-full flex items-center gap-3 px-4 py-3.5 text-left rounded-xl transition-colors"
-              style={{ color: "rgba(255,255,255,0.85)" }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.07)"; }}
+              style={{ color: "var(--text-primary)" }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "var(--lp-surface-mid)"; }}
               onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "transparent"; }}
             >
               <span className="flex items-center justify-center w-5 h-5">{icon}</span>
@@ -94,7 +94,7 @@ export default function SettingsMenu({
           >
             <div
               className="px-2 pb-1.5 text-[9px] tracking-[2px] uppercase font-semibold"
-              style={{ color: "rgba(255,255,255,0.35)" }}
+              style={{ color: "var(--text-muted)" }}
             >
               Voice Output
             </div>
@@ -106,8 +106,8 @@ export default function SettingsMenu({
                   className="flex-1 py-2 rounded-lg text-[10px] tracking-[1px] uppercase font-bold transition-all flex items-center justify-center gap-1.5"
                   style={
                     voiceMode === mode
-                      ? { background: "var(--lp-gold)", color: "#0D1117", boxShadow: "var(--glow-subtle)" }
-                      : { background: "rgba(255,255,255,0.07)", color: "rgba(255,255,255,0.60)", border: "1px solid rgba(255,255,255,0.10)" }
+                      ? { background: "var(--lp-gold)", color: "var(--text-on-accent)", boxShadow: "var(--glow-subtle)" }
+                      : { background: "var(--lp-surface-mid)", color: "var(--text-secondary)", border: "1px solid rgba(255,255,255,0.10)" }
                   }
                 >
                   <Icon name={mode === "driver" ? "mic" : "languages"} size={12} />
@@ -124,7 +124,7 @@ export default function SettingsMenu({
           >
             <div
               className="px-2 pb-1.5 text-[9px] tracking-[2px] uppercase font-semibold"
-              style={{ color: "rgba(255,255,255,0.35)" }}
+              style={{ color: "var(--text-muted)" }}
             >
               Theme
             </div>
@@ -136,8 +136,8 @@ export default function SettingsMenu({
                   className="flex-1 py-2 rounded-lg text-[10px] tracking-[1px] uppercase font-bold transition-all flex items-center justify-center gap-1.5"
                   style={
                     theme === mode
-                      ? { background: "var(--lp-gold)", color: "#0D1117", boxShadow: "var(--glow-subtle)" }
-                      : { background: "rgba(255,255,255,0.07)", color: "rgba(255,255,255,0.60)", border: "1px solid rgba(255,255,255,0.10)" }
+                      ? { background: "var(--lp-gold)", color: "var(--text-on-accent)", boxShadow: "var(--glow-subtle)" }
+                      : { background: "var(--lp-surface-mid)", color: "var(--text-secondary)", border: "1px solid rgba(255,255,255,0.10)" }
                   }
                 >
                   <Icon name={mode === "dark" ? "moon" : "sun"} size={12} />

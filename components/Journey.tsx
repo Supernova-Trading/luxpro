@@ -100,7 +100,7 @@ export default function Journey({ t, onSpeak }: Props) {
           <div className="text-[24px] leading-none">🔥</div>
           <div
             className="text-[12px] tracking-[1.5px] font-bold uppercase"
-            style={{ color: temp === "warm" ? "var(--lp-gold)" : "rgba(255,255,255,0.80)" }}
+            style={{ color: temp === "warm" ? "var(--lp-gold)" : "var(--text-primary)" }}
           >
             {t.warm}
           </div>
@@ -125,7 +125,7 @@ export default function Journey({ t, onSpeak }: Props) {
           <div className="text-[24px] leading-none">🧊</div>
           <div
             className="text-[12px] tracking-[1.5px] font-bold uppercase"
-            style={{ color: temp === "cold" ? "var(--lp-gold)" : "rgba(255,255,255,0.80)" }}
+            style={{ color: temp === "cold" ? "var(--lp-gold)" : "var(--text-primary)" }}
           >
             {t.cold}
           </div>
@@ -150,7 +150,7 @@ export default function Journey({ t, onSpeak }: Props) {
           <div className="text-[24px] leading-none">⚡</div>
           <div
             className="text-[12px] tracking-[1.5px] font-bold uppercase"
-            style={{ color: fastRoute ? "var(--lp-gold)" : "rgba(255,255,255,0.80)" }}
+            style={{ color: fastRoute ? "var(--lp-gold)" : "var(--text-primary)" }}
           >
             {t.fastRoute}
           </div>
@@ -170,7 +170,7 @@ export default function Journey({ t, onSpeak }: Props) {
           }}
         >
           <div className="text-[24px] leading-none">📍</div>
-          <div className="text-[12px] tracking-[1.5px] font-bold uppercase" style={{ color: "rgba(255,255,255,0.80)" }}>
+          <div className="text-[12px] tracking-[1.5px] font-bold uppercase" style={{ color: "var(--text-primary)" }}>
             {t.changeDest}
           </div>
         </motion.div>
@@ -191,7 +191,7 @@ export default function Journey({ t, onSpeak }: Props) {
           <div className="text-[24px] leading-none">🔇</div>
           <div
             className="text-[12px] tracking-[1.5px] font-bold uppercase"
-            style={{ color: quietRide ? "var(--lp-gold)" : "rgba(255,255,255,0.80)" }}
+            style={{ color: quietRide ? "var(--lp-gold)" : "var(--text-primary)" }}
           >
             {t.quietRide}
           </div>

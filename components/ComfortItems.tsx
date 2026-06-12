@@ -59,7 +59,7 @@ export default function ComfortItems({ t, onSpeak }: Props) {
               <div className="text-[26px] leading-none">{icon}</div>
               <div
                 className="text-[12px] tracking-[2px] uppercase font-bold text-center"
-                style={{ color: isActive ? "var(--lp-gold)" : "rgba(255,255,255,0.80)" }}
+                style={{ color: isActive ? "var(--lp-gold)" : "var(--text-primary)" }}
               >
                 {t[labelKey]}
               </div>

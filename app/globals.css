@@ -25,7 +25,7 @@
   --prim-white:        #FFFFFF;
 
   /* ── Semantic layer (purpose aliases) ───────────────────────────────────── */
-  --lp-fg:          #ffffff;
+  --lp-fg:          var(--text-primary);
   --lp-bg:          var(--prim-obsidian-900);
   --lp-bg2:         var(--prim-obsidian-800);
   --lp-bg3:         var(--prim-obsidian-700);
@@ -46,6 +46,15 @@
   --lp-navy:        var(--prim-navy-900);
   --lp-navy2:       var(--prim-navy-700);
   --lp-blue2:       var(--prim-blue-400);
+
+  /* ── Semantic text tokens (open-design warm-editorial, hex→OKLCH) ─────────
+     Contrast verified vs worst-case surface = --lp-surface-hi over bg2 (#353D49):
+     primary 10.3:1 · secondary 6.2:1 · muted 4.7:1 · on-accent vs gold 8.3:1 */
+  --text-primary:   oklch(0.977 0.007 81);  /* warm-ed paper #FAF7F2 — never pure white */
+  --text-secondary: oklch(0.817 0.016 77);
+  --text-muted:     oklch(0.736 0.016 71);
+  --text-on-accent: oklch(0.176 0.014 258); /* obsidian-950 on gold */
+  --accent-positive: oklch(0.800 0.182 152); /* #4ADE80 — 6.3:1 on dark surfaces */
 
   /* ── Glow tokens ─────────────────────────────────────────────────────────── */
   --glow-gold:   0 0 20px rgba(200, 168, 75, 0.35), 0 0 40px rgba(200, 168, 75, 0.15);
@@ -75,7 +84,7 @@
 
   /* shadcn compat tokens */
   --background:   var(--prim-obsidian-900);
-  --foreground:   #ffffff;
+  --foreground:   var(--text-primary);
   --border:       rgba(255, 255, 255, 0.08);
   --ring:         var(--prim-gold-500);
   --radius:       0.625rem;
@@ -115,6 +124,12 @@
 
   .text-gold      { color: var(--lp-gold); }
   .text-gold-soft { color: var(--lp-gold-soft); }
+
+  /* Semantic text utilities — theme-aware via [data-theme] */
+  .text-primary   { color: var(--text-primary); }
+  .text-secondary { color: var(--text-secondary); }
+  .text-muted     { color: var(--text-muted); }
+  .text-on-accent { color: var(--text-on-accent); }
 
   /* Glass surface — the core 4.1 card treatment */
   .glass {
@@ -257,7 +272,16 @@
 
 /* ─── Light theme ─────────────────────────────────────────────────────────────── */
 [data-theme="light"] {
-  --lp-fg:           oklch(0.130 0.010 250);
+  /* Semantic text tokens — warm-editorial light. Contrast vs worst-case white
+     card surface: primary 17.4:1 · secondary 7.8:1 · muted 5.6:1
+     (raw warm-ed muted #8A817A is 3.8:1 → lightness lowered for AA) */
+  --text-primary:   oklch(0.219 0.007 78);  /* warm-ed fg #1C1A17 */
+  --text-secondary: oklch(0.439 0.013 68);
+  --text-muted:     oklch(0.518 0.015 71);
+  --text-on-accent: oklch(0.176 0.014 258);
+  --accent-positive: oklch(0.527 0.137 150); /* #15803D — 5.0:1 on white */
+
+  --lp-fg:           var(--text-primary);
   --lp-bg:           oklch(0.975 0.003 250);
   --lp-bg2:          oklch(0.960 0.005 250);
   --lp-bg3:          oklch(0.945 0.007 250);
@@ -278,6 +302,6 @@
   --lp-shadow-glass: 0 8px 32px oklch(0 0 0 / 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.90);
   --overlay-bg:      oklch(0.975 0.003 250 / 0.92);
   --background:      oklch(0.975 0.003 250);
-  --foreground:      oklch(0.130 0.010 250);
+  --foreground:      var(--text-primary);
   --border:          oklch(0.860 0.008 250 / 0.60);
 }

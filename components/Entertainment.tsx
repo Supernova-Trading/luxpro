@@ -16,7 +16,7 @@ const panelVariants = {
 
 // Shared glass panel style for expanded panels
 const glassPanelStyle: React.CSSProperties = {
-  background: "rgba(13,17,23,0.75)",
+  background: "var(--overlay-bg)",
   backdropFilter: "blur(32px)",
   WebkitBackdropFilter: "blur(32px)",
   border: "1px solid rgba(255,255,255,0.10)",
@@ -103,7 +103,7 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
           <div className="text-[26px] leading-none">📱</div>
           <div
             className="text-[13px] tracking-[2px] uppercase font-bold"
-            style={{ color: "rgba(255,255,255,0.85)" }}
+            style={{ color: "var(--text-primary)" }}
           >
             {t.bluetooth}
           </div>
@@ -125,7 +125,7 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
           <div className="text-[26px] leading-none">📻</div>
           <div
             className="text-[13px] tracking-[2px] uppercase font-bold"
-            style={{ color: open === "radio" ? "var(--lp-gold)" : "rgba(255,255,255,0.85)" }}
+            style={{ color: open === "radio" ? "var(--lp-gold)" : "var(--text-primary)" }}
           >
             {t.radio}
           </div>
@@ -156,7 +156,7 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
           <div className="text-[26px] leading-none">🎧</div>
           <div
             className="text-[13px] tracking-[2px] uppercase font-bold"
-            style={{ color: open === "playlist" ? "var(--lp-gold)" : "rgba(255,255,255,0.85)" }}
+            style={{ color: open === "playlist" ? "var(--lp-gold)" : "var(--text-primary)" }}
           >
             {t.playlist}
           </div>
@@ -189,14 +189,14 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
             <div className="flex items-center gap-3 px-5 py-3.5" style={panelHeaderStyle}>
               <span className="text-[22px]">📻</span>
               <div className="flex-1 ml-2">
-                <div className="text-[9px] tracking-[2.5px] text-white/50 uppercase font-semibold">{t.nowPlaying}</div>
-                <div className="text-[14px] font-bold text-white tracking-[1px] mt-0.5">
+                <div className="text-[9px] tracking-[2.5px] text-muted uppercase font-semibold">{t.nowPlaying}</div>
+                <div className="text-[14px] font-bold text-primary tracking-[1px] mt-0.5">
                   {radio.currentStation ? `${radio.currentStation.n} — Live` : t.selectStation}
                 </div>
               </div>
               <button
                 onClick={() => radio.stop()}
-                className="rounded-lg px-3.5 py-1.5 text-white text-[11px] font-bold tracking-[1px] transition-colors"
+                className="rounded-lg px-3.5 py-1.5 text-primary text-[11px] font-bold tracking-[1px] transition-colors"
                 style={{
                   background: "rgba(255,255,255,0.10)",
                   border: "1px solid rgba(255,255,255,0.20)",
@@ -240,7 +240,7 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
                     <span className="text-[24px]">{station.i}</span>
                     <span
                       className="text-[10px] font-bold uppercase text-center leading-tight"
-                      style={{ color: isCurrent ? "var(--lp-gold)" : isBroken ? "rgba(255,100,100,0.80)" : "rgba(255,255,255,0.80)" }}
+                      style={{ color: isCurrent ? "var(--lp-gold)" : isBroken ? "rgba(255,100,100,0.80)" : "var(--text-primary)" }}
                     >
                       {station.n}
                     </span>
@@ -270,8 +270,8 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
                 }}
               >
                 <div className="text-center mb-3">
-                  <div className="text-[10px] tracking-[2.5px] text-white/45 uppercase mb-1 font-semibold">{t.nowPlaying}</div>
-                  <div className="text-[14px] font-bold text-white">
+                  <div className="text-[10px] tracking-[2.5px] text-muted uppercase mb-1 font-semibold">{t.nowPlaying}</div>
+                  <div className="text-[14px] font-bold text-primary">
                     {radio.statusText || `${radio.currentStation.n} — Live`}
                   </div>
                 </div>
@@ -285,7 +285,7 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
                       key={i}
                       whileTap={{ scale: 0.92 }}
                       onClick={fn}
-                      className="rounded-full flex items-center justify-center text-white"
+                      className="rounded-full flex items-center justify-center text-primary"
                       style={{
                         width: size,
                         height: size,
@@ -301,7 +301,7 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
                   ))}
                 </div>
                 <div className="flex items-center gap-2.5 mt-3">
-                  <span className="text-[10px] text-white/45 tracking-[1.5px] uppercase font-bold">{t.volume}</span>
+                  <span className="text-[10px] text-muted tracking-[1.5px] uppercase font-bold">{t.volume}</span>
                   <input
                     type="range"
                     min={0}
@@ -334,14 +334,14 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
             <div className="flex items-center gap-3 px-5 py-3.5" style={panelHeaderStyle}>
               <span className="text-[22px]">{activePL >= 0 ? PLAYLISTS[activePL].i : "🎵"}</span>
               <div className="flex-1 ml-2">
-                <div className="text-[9px] tracking-[2.5px] text-white/50 uppercase font-semibold">{t.nowPlaying}</div>
-                <div className="text-[14px] font-bold text-white tracking-[1px] mt-0.5">
+                <div className="text-[9px] tracking-[2.5px] text-muted uppercase font-semibold">{t.nowPlaying}</div>
+                <div className="text-[14px] font-bold text-primary tracking-[1px] mt-0.5">
                   {activePL >= 0 ? `${PLAYLISTS[activePL].i} ${PLAYLISTS[activePL].n}` : t.selectPlaylist}
                 </div>
               </div>
               <button
                 onClick={() => { setActivePL(-1); setPlUrl(""); }}
-                className="rounded-lg px-3.5 py-1.5 text-white text-[11px] font-bold tracking-[1px]"
+                className="rounded-lg px-3.5 py-1.5 text-primary text-[11px] font-bold tracking-[1px]"
                 style={{
                   background: "rgba(255,255,255,0.10)",
                   border: "1px solid rgba(255,255,255,0.20)",
@@ -370,7 +370,7 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
                   <span className="text-[24px]">{pl.i}</span>
                   <span
                     className="text-[10px] font-bold uppercase text-center leading-tight"
-                    style={{ color: activePL === idx ? "var(--lp-gold)" : "rgba(255,255,255,0.80)" }}
+                    style={{ color: activePL === idx ? "var(--lp-gold)" : "var(--text-primary)" }}
                   >
                     {pl.n}
                   </span>

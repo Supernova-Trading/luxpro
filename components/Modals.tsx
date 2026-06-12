@@ -31,7 +31,7 @@ function Overlay({ show, id, onClose, children }: {
             transition={{ duration: 0.22, ease: "easeOut" }}
             className="rounded-[28px] p-7 text-center min-w-[300px] max-w-[390px] w-full mx-4 relative overflow-hidden"
             style={{
-              background: "rgba(13,17,23,0.85)",
+              background: "var(--overlay-bg)",
               backdropFilter: "blur(40px)",
               WebkitBackdropFilter: "blur(40px)",
               border: "1px solid rgba(200,168,75,0.30)",
@@ -63,9 +63,9 @@ function ModalClose({ label, onClick }: { label: string; onClick: () => void }) 
       onClick={onClick}
       className="rounded-xl py-2.5 px-7 text-[11px] tracking-[2px] uppercase font-bold mt-1 transition-colors"
       style={{
-        background: "rgba(255,255,255,0.08)",
+        background: "var(--lp-surface-mid)",
         border: "1px solid rgba(255,255,255,0.18)",
-        color: "rgba(255,255,255,0.80)",
+        color: "var(--text-primary)",
       }}
     >
       {label}
@@ -79,19 +79,19 @@ export function BluetoothModal({ show, t, onClose }: BTProps) {
   return (
     <Overlay show={show} id="bt" onClose={onClose}>
       <div className="text-[42px] mb-3">📱</div>
-      <div className="text-[10px] tracking-[3px] uppercase mb-1.5 font-semibold" style={{ color: "rgba(255,255,255,0.45)" }}>
+      <div className="text-[10px] tracking-[3px] uppercase mb-1.5 font-semibold" style={{ color: "var(--text-muted)" }}>
         {t.btConnect}
       </div>
       <div className="rounded-xl p-3.5 mb-3.5 text-left" style={{ background: "rgba(200,168,75,0.10)", border: "2px solid rgba(200,168,75,0.50)" }}>
-        <div className="text-[9px] tracking-[2.5px] uppercase mb-1 font-semibold" style={{ color: "rgba(255,255,255,0.50)" }}>{t.btDeviceName}</div>
+        <div className="text-[9px] tracking-[2.5px] uppercase mb-1 font-semibold" style={{ color: "var(--text-muted)" }}>{t.btDeviceName}</div>
         <div className="font-cormorant text-[22px] font-bold tracking-[2px]" style={{ color: "var(--lp-gold)", textShadow: "0 0 16px rgba(200,168,75,0.35)" }}>
           My Volvo Car
         </div>
       </div>
-      <div className="rounded-xl p-4 mb-3.5 text-left" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.10)" }}>
+      <div className="rounded-xl p-4 mb-3.5 text-left" style={{ background: "var(--lp-surface)", border: "1px solid rgba(255,255,255,0.10)" }}>
         <ol className="list-decimal pl-5 space-y-1">
           {[t.btStep1, t.btStep2, t.btStep3, t.btStep4, t.btStep5].map((step, i) => (
-            <li key={i} className="text-[14px] leading-relaxed font-medium" style={{ color: "rgba(255,255,255,0.85)" }} dangerouslySetInnerHTML={{ __html: step }} />
+            <li key={i} className="text-[14px] leading-relaxed font-medium" style={{ color: "var(--text-primary)" }} dangerouslySetInnerHTML={{ __html: step }} />
           ))}
         </ol>
       </div>
@@ -106,8 +106,8 @@ export function PhoneModal({ show, t, onClose }: PhoneProps) {
   return (
     <Overlay show={show} id="phone" onClose={onClose}>
       <div className="text-[42px] mb-3">📞</div>
-      <div className="text-[10px] tracking-[3px] uppercase mb-1.5 font-semibold" style={{ color: "rgba(255,255,255,0.45)" }}>{t.contactDriver}</div>
-      <div className="font-cormorant text-[28px] font-bold text-white tracking-[3px] mb-2" style={{ textShadow: "0 0 20px rgba(255,255,255,0.15)" }}>Amish</div>
+      <div className="text-[10px] tracking-[3px] uppercase mb-1.5 font-semibold" style={{ color: "var(--text-muted)" }}>{t.contactDriver}</div>
+      <div className="font-cormorant text-[28px] font-bold text-primary tracking-[3px] mb-2" style={{ textShadow: "0 0 20px rgba(255,255,255,0.15)" }}>Amish</div>
       <a href="tel:07438537561" className="block text-[22px] font-bold tracking-[2px] mb-4 no-underline" style={{ color: "var(--lp-gold)", textShadow: "0 0 16px rgba(200,168,75,0.40)" }}>
         07438 537 561
       </a>
@@ -134,8 +134,8 @@ export function ReplyModal({ show, t, onClose, onSpeak }: ReplyProps) {
   return (
     <Overlay show={show} id="reply" onClose={onClose}>
       <div className="text-[42px] mb-3">💬</div>
-      <div className="text-[10px] tracking-[3px] uppercase mb-1.5 font-semibold" style={{ color: "rgba(255,255,255,0.45)" }}>{t.replyDriver}</div>
-      <div className="font-cormorant text-[28px] font-bold text-white tracking-[3px] mb-3.5" style={{ textShadow: "0 0 20px rgba(255,255,255,0.15)" }}>Amish</div>
+      <div className="text-[10px] tracking-[3px] uppercase mb-1.5 font-semibold" style={{ color: "var(--text-muted)" }}>{t.replyDriver}</div>
+      <div className="font-cormorant text-[28px] font-bold text-primary tracking-[3px] mb-3.5" style={{ textShadow: "0 0 20px rgba(255,255,255,0.15)" }}>Amish</div>
       <div className="flex flex-col gap-2.5 mb-3.5">
         {messages.map(({ icon, text }) => (
           <motion.button
@@ -143,7 +143,7 @@ export function ReplyModal({ show, t, onClose, onSpeak }: ReplyProps) {
             whileTap={{ scale: 0.97 }}
             onClick={() => sendMsg(text)}
             className="rounded-xl py-3 px-4 text-[11px] font-bold transition-colors text-left"
-            style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", color: "rgba(255,255,255,0.85)" }}
+            style={{ background: "var(--lp-surface)", border: "1px solid rgba(255,255,255,0.12)", color: "var(--text-primary)" }}
           >
             {icon} {text}
           </motion.button>
@@ -176,8 +176,8 @@ export function AdminModal({ show, t, voiceMode, onClose, onSetVoiceMode, onToas
   return (
     <Overlay show={show} id="admin" onClose={onClose}>
       <div className="text-[42px] mb-3">🔧</div>
-      <div className="text-[10px] tracking-[3px] uppercase mb-1.5 font-semibold" style={{ color: "rgba(255,255,255,0.45)" }}>{t.adminPanel}</div>
-      <div className="font-cormorant text-[20px] font-bold text-white tracking-[2px] mb-3" style={{ textShadow: "0 0 20px rgba(255,255,255,0.10)" }}>
+      <div className="text-[10px] tracking-[3px] uppercase mb-1.5 font-semibold" style={{ color: "var(--text-muted)" }}>{t.adminPanel}</div>
+      <div className="font-cormorant text-[20px] font-bold text-primary tracking-[2px] mb-3" style={{ textShadow: "0 0 20px rgba(255,255,255,0.10)" }}>
         LuxPro 4.1
       </div>
 
@@ -188,7 +188,7 @@ export function AdminModal({ show, t, voiceMode, onClose, onSetVoiceMode, onToas
             whileTap={{ scale: 0.96 }}
             onClick={() => { onToast(`Admin: ${key}`); onClose(); }}
             className="rounded-xl py-2.5 px-2 text-[10px] font-bold"
-            style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", color: "rgba(255,255,255,0.80)" }}
+            style={{ background: "var(--lp-surface)", border: "1px solid rgba(255,255,255,0.12)", color: "var(--text-primary)" }}
           >
             {label}
           </motion.button>
@@ -196,7 +196,7 @@ export function AdminModal({ show, t, voiceMode, onClose, onSetVoiceMode, onToas
       </div>
 
       <div className="mb-4 text-left">
-        <div className="text-[9px] tracking-[2px] uppercase font-semibold mb-2" style={{ color: "rgba(255,255,255,0.40)" }}>Voice Output Language</div>
+        <div className="text-[9px] tracking-[2px] uppercase font-semibold mb-2" style={{ color: "var(--text-muted)" }}>Voice Output Language</div>
         <div className="flex gap-2">
           {(["driver", "passenger"] as VoiceMode[]).map((mode) => (
             <button
@@ -205,15 +205,15 @@ export function AdminModal({ show, t, voiceMode, onClose, onSetVoiceMode, onToas
               className="flex-1 py-2.5 rounded-xl text-[10px] tracking-[1px] uppercase font-bold transition-all"
               style={
                 voiceMode === mode
-                  ? { background: "var(--lp-gold)", color: "#0D1117", boxShadow: "var(--glow-subtle)" }
-                  : { background: "rgba(255,255,255,0.07)", color: "rgba(255,255,255,0.60)", border: "1px solid rgba(255,255,255,0.12)" }
+                  ? { background: "var(--lp-gold)", color: "var(--text-on-accent)", boxShadow: "var(--glow-subtle)" }
+                  : { background: "var(--lp-surface-mid)", color: "var(--text-secondary)", border: "1px solid rgba(255,255,255,0.12)" }
               }
             >
               {mode === "driver" ? "🎙 English (Driver)" : "🌐 Match Passenger"}
             </button>
           ))}
         </div>
-        <p className="text-[9px] mt-1.5 leading-relaxed" style={{ color: "rgba(255,255,255,0.35)" }}>
+        <p className="text-[9px] mt-1.5 leading-relaxed" style={{ color: "var(--text-muted)" }}>
           English keeps voice prompts in English so Amish always understands.<br />
           Match Passenger speaks in the passenger&apos;s selected UI language.
         </p>

@@ -11,7 +11,7 @@ export default function SectionHeader({ label }: Props) {
           fontSize: "clamp(1.125rem, 2.5vw, 1.75rem)",
           letterSpacing: "0.05em",
           fontWeight: 500,
-          color: "#ffffff",
+          color: "var(--text-primary)",
         }}
       >
         {label}
