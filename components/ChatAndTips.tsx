@@ -16,7 +16,7 @@ const glassPanelStyle: React.CSSProperties = {
   background: "var(--overlay-bg)",
   backdropFilter: "blur(32px)",
   WebkitBackdropFilter: "blur(32px)",
-  border: "1px solid rgba(255,255,255,0.10)",
+  border: "1px solid var(--card-border)",
   boxShadow: "0 12px 48px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.06)",
 };
 
@@ -169,12 +169,12 @@ export default function ChatAndTips({ t, onSpeak, content }: Props) {
           onClick={() => togglePanel("chat")}
           className="cursor-pointer rounded-[18px] flex flex-col items-center gap-2.5 py-5 px-4 text-center"
           style={{
-            background: active === "chat" ? "rgba(200,168,75,0.10)" : "rgba(255,255,255,0.05)",
+            background: active === "chat" ? "rgba(200,168,75,0.10)" : "var(--lp-surface)",
             backdropFilter: "blur(24px)",
             WebkitBackdropFilter: "blur(24px)",
             border: active === "chat"
               ? "1px solid rgba(200,168,75,0.55)"
-              : "1px solid rgba(255,255,255,0.10)",
+              : "1px solid var(--lp-border)",
             boxShadow: active === "chat"
               ? "0 0 24px rgba(200,168,75,0.20), 0 8px 32px rgba(0,0,0,0.40)"
               : "0 8px 32px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.06)",
@@ -202,12 +202,12 @@ export default function ChatAndTips({ t, onSpeak, content }: Props) {
           onClick={() => togglePanel("tips")}
           className="cursor-pointer rounded-[18px] flex flex-col items-center gap-2.5 py-5 px-4 text-center"
           style={{
-            background: active === "tips" ? "rgba(34,197,94,0.10)" : "rgba(255,255,255,0.05)",
+            background: active === "tips" ? "rgba(34,197,94,0.10)" : "var(--lp-surface)",
             backdropFilter: "blur(24px)",
             WebkitBackdropFilter: "blur(24px)",
             border: active === "tips"
               ? "1px solid rgba(34,197,94,0.55)"
-              : "1px solid rgba(34,197,94,0.25)",
+              : "1px solid var(--lp-border)",
             boxShadow: active === "tips"
               ? "0 0 20px rgba(34,197,94,0.18), 0 8px 32px rgba(0,0,0,0.40)"
               : "0 8px 32px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.06)",
@@ -252,8 +252,8 @@ export default function ChatAndTips({ t, onSpeak, content }: Props) {
                   onClick={() => selectTip(id, msg)}
                   className="cursor-pointer rounded-[16px] flex flex-col items-center gap-2.5 py-5 px-3 text-center"
                   style={{
-                    background: tipChoice === id ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.04)",
-                    border: `1px solid ${tipChoice === id ? accent : "rgba(255,255,255,0.08)"}`,
+                    background: tipChoice === id ? "var(--lp-surface-mid)" : "var(--lp-surface)",
+                    border: `1px solid ${tipChoice === id ? accent : "var(--lp-border)"}`,
                     boxShadow: tipChoice === id ? activeGlow : undefined,
                     transition: "all 200ms ease",
                   }}
@@ -268,7 +268,7 @@ export default function ChatAndTips({ t, onSpeak, content }: Props) {
                   <div
                     className="text-[9px] tracking-[1.5px] uppercase rounded-full px-3 py-1 font-bold"
                     style={{
-                      border: `1px solid ${tipChoice === id ? "rgba(200,168,75,0.40)" : "rgba(255,255,255,0.18)"}`,
+                      border: `1px solid ${tipChoice === id ? "rgba(200,168,75,0.40)" : "var(--lp-border)"}`,
                       color: tipChoice === id ? "var(--lp-gold-soft)" : "var(--text-secondary)",
                     }}
                   >
@@ -295,7 +295,7 @@ export default function ChatAndTips({ t, onSpeak, content }: Props) {
             {/* Tabs */}
             <div
               className="flex"
-              style={{ borderBottom: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.03)" }}
+              style={{ borderBottom: "1px solid var(--lp-border)", background: "var(--lp-surface)" }}
             >
               {(["topics","quiz","riddles"] as ChatTab[]).map((tab) => {
                 const icons: Record<ChatTab,string> = { topics: "📌", quiz: "🧠", riddles: "❓" };
@@ -322,8 +322,8 @@ export default function ChatAndTips({ t, onSpeak, content }: Props) {
                 <div
                   className="rounded-2xl p-6 text-center min-h-[130px] flex flex-col items-center justify-center mb-3.5"
                   style={{
-                    background: "rgba(255,255,255,0.04)",
-                    border: "1px solid rgba(255,255,255,0.08)",
+                    background: "var(--lp-surface)",
+                    border: "1px solid var(--lp-border)",
                   }}
                 >
                   <div className="text-[38px] mb-2">{curTopic?.i ?? "🎲"}</div>
@@ -354,10 +354,10 @@ export default function ChatAndTips({ t, onSpeak, content }: Props) {
                       onClick={() => setLevel(l)}
                       className="py-3 px-1.5 rounded-xl text-[12px] tracking-[1.5px] uppercase font-bold transition-all"
                       style={{
-                        background: quizLevel === l ? levelColors[l] : "rgba(255,255,255,0.06)",
+                        background: quizLevel === l ? levelColors[l] : "var(--lp-surface-mid)",
                         border: quizLevel === l
                           ? `1px solid ${l === "easy" ? "#34D399" : l === "medium" ? "#FBBF24" : "#F87171"}`
-                          : "1px solid rgba(255,255,255,0.12)",
+                          : "1px solid var(--lp-border)",
                         color: quizLevel === l ? "#fff" : "var(--text-secondary)",
                       }}
                     >
@@ -368,8 +368,8 @@ export default function ChatAndTips({ t, onSpeak, content }: Props) {
                 <div
                   className="rounded-2xl px-5 py-5 text-center mb-3.5"
                   style={{
-                    background: "rgba(255,255,255,0.04)",
-                    border: "1px solid rgba(255,255,255,0.08)",
+                    background: "var(--lp-surface)",
+                    border: "1px solid var(--lp-border)",
                   }}
                 >
                   <div className="text-[11px] tracking-[2.5px] uppercase mb-2 font-semibold" style={{ color: "var(--text-muted)" }}>
@@ -405,8 +405,8 @@ export default function ChatAndTips({ t, onSpeak, content }: Props) {
                 <div
                   className="rounded-2xl px-5 py-5 text-center min-h-[130px] flex flex-col items-center justify-center mb-3.5"
                   style={{
-                    background: "rgba(255,255,255,0.04)",
-                    border: "1px solid rgba(255,255,255,0.08)",
+                    background: "var(--lp-surface)",
+                    border: "1px solid var(--lp-border)",
                   }}
                 >
                   <div className="text-[38px] mb-2">{curRiddle?.i ?? "🧩"}</div>
@@ -448,12 +448,12 @@ export default function ChatAndTips({ t, onSpeak, content }: Props) {
 type BtnColor = "dark" | "green" | "orange";
 function ActionBtn({ color, onClick, children }: { color: BtnColor; onClick: () => void; children: React.ReactNode }) {
   const bg: Record<BtnColor, string> = {
-    dark:   "rgba(255,255,255,0.08)",
+    dark:   "var(--lp-surface-mid)",
     green:  "linear-gradient(135deg,#059669,#10B981)",
     orange: "linear-gradient(135deg,#F97316,#FB923C)",
   };
   const border: Record<BtnColor, string> = {
-    dark:   "rgba(255,255,255,0.15)",
+    dark:   "var(--lp-border)",
     green:  "transparent",
     orange: "transparent",
   };

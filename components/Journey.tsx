@@ -142,8 +142,8 @@ export default function Journey({ t, onSpeak }: Props) {
           className="flex flex-col items-center gap-2 text-center rounded-[18px] cursor-pointer py-3 px-2"
           style={{
             ...glassCard,
-            background: fastRoute ? "rgba(200,168,75,0.12)" : "rgba(255,255,255,0.05)",
-            border: fastRoute ? "1px solid rgba(200,168,75,0.55)" : "1px solid rgba(255,255,255,0.10)",
+            background: fastRoute ? "rgba(200,168,75,0.12)" : "var(--lp-surface)",
+            border: fastRoute ? "1px solid rgba(200,168,75,0.55)" : "1px solid var(--lp-border)",
             boxShadow: fastRoute ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
           }}
         >
@@ -164,8 +164,8 @@ export default function Journey({ t, onSpeak }: Props) {
           className="flex flex-col items-center gap-2 text-center rounded-[18px] cursor-pointer py-3 px-2"
           style={{
             ...glassCard,
-            background: "rgba(255,255,255,0.05)",
-            border: "1px solid rgba(255,255,255,0.10)",
+            background: "var(--lp-surface)",
+            border: "1px solid var(--lp-border)",
             boxShadow: "none",
           }}
         >
@@ -183,8 +183,8 @@ export default function Journey({ t, onSpeak }: Props) {
           className="flex flex-col items-center gap-2 text-center rounded-[18px] cursor-pointer py-3 px-2"
           style={{
             ...glassCard,
-            background: quietRide ? "rgba(200,168,75,0.12)" : "rgba(255,255,255,0.05)",
-            border: quietRide ? "1px solid rgba(200,168,75,0.55)" : "1px solid rgba(255,255,255,0.10)",
+            background: quietRide ? "rgba(200,168,75,0.12)" : "var(--lp-surface)",
+            border: quietRide ? "1px solid rgba(200,168,75,0.55)" : "1px solid var(--lp-border)",
             boxShadow: quietRide ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
           }}
         >

@@ -49,10 +49,10 @@ export default function ComfortItems({ t, onSpeak }: Props) {
               className="relative flex flex-col items-center gap-2 py-3 px-2 rounded-[18px] cursor-pointer"
               style={{
                 ...glassCard,
-                background: isActive ? "rgba(200,168,75,0.10)" : "rgba(255,255,255,0.05)",
+                background: isActive ? "rgba(200,168,75,0.10)" : "var(--lp-surface)",
                 border: isActive
                   ? "1px solid rgba(200,168,75,0.55)"
-                  : "1px solid rgba(255,255,255,0.10)",
+                  : "1px solid var(--lp-border)",
                 boxShadow: isActive ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
               }}
             >

@@ -90,7 +90,7 @@ export default function SettingsMenu({
           {/* Voice mode toggle */}
           <div
             className="mx-2 my-1 pt-2"
-            style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}
+            style={{ borderTop: "1px solid var(--lp-border)" }}
           >
             <div
               className="px-2 pb-1.5 text-[9px] tracking-[2px] uppercase font-semibold"
@@ -107,7 +107,7 @@ export default function SettingsMenu({
                   style={
                     voiceMode === mode
                       ? { background: "var(--lp-gold)", color: "var(--text-on-accent)", boxShadow: "var(--glow-subtle)" }
-                      : { background: "var(--lp-surface-mid)", color: "var(--text-secondary)", border: "1px solid rgba(255,255,255,0.10)" }
+                      : { background: "var(--lp-surface-mid)", color: "var(--text-secondary)", border: "1px solid var(--lp-border)" }
                   }
                 >
                   <Icon name={mode === "driver" ? "mic" : "languages"} size={12} />
@@ -120,7 +120,7 @@ export default function SettingsMenu({
           {/* Theme toggle */}
           <div
             className="mx-2 my-1 pt-2"
-            style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}
+            style={{ borderTop: "1px solid var(--lp-border)" }}
           >
             <div
               className="px-2 pb-1.5 text-[9px] tracking-[2px] uppercase font-semibold"
@@ -137,7 +137,7 @@ export default function SettingsMenu({
                   style={
                     theme === mode
                       ? { background: "var(--lp-gold)", color: "var(--text-on-accent)", boxShadow: "var(--glow-subtle)" }
-                      : { background: "var(--lp-surface-mid)", color: "var(--text-secondary)", border: "1px solid rgba(255,255,255,0.10)" }
+                      : { background: "var(--lp-surface-mid)", color: "var(--text-secondary)", border: "1px solid var(--lp-border)" }
                   }
                 >
                   <Icon name={mode === "dark" ? "moon" : "sun"} size={12} />

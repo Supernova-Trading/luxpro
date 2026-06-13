@@ -64,7 +64,7 @@ function ModalClose({ label, onClick }: { label: string; onClick: () => void }) 
       className="rounded-xl py-2.5 px-7 text-[11px] tracking-[2px] uppercase font-bold mt-1 transition-colors"
       style={{
         background: "var(--lp-surface-mid)",
-        border: "1px solid rgba(255,255,255,0.18)",
+        border: "1px solid var(--lp-border)",
         color: "var(--text-primary)",
       }}
     >
@@ -88,7 +88,7 @@ export function BluetoothModal({ show, t, onClose }: BTProps) {
           My Volvo Car
         </div>
       </div>
-      <div className="rounded-xl p-4 mb-3.5 text-left" style={{ background: "var(--lp-surface)", border: "1px solid rgba(255,255,255,0.10)" }}>
+      <div className="rounded-xl p-4 mb-3.5 text-left" style={{ background: "var(--lp-surface)", border: "1px solid var(--lp-border)" }}>
         <ol className="list-decimal pl-5 space-y-1">
           {[t.btStep1, t.btStep2, t.btStep3, t.btStep4, t.btStep5].map((step, i) => (
             <li key={i} className="text-[14px] leading-relaxed font-medium" style={{ color: "var(--text-primary)" }} dangerouslySetInnerHTML={{ __html: step }} />
@@ -143,7 +143,7 @@ export function ReplyModal({ show, t, onClose, onSpeak }: ReplyProps) {
             whileTap={{ scale: 0.97 }}
             onClick={() => sendMsg(text)}
             className="rounded-xl py-3 px-4 text-[11px] font-bold transition-colors text-left"
-            style={{ background: "var(--lp-surface)", border: "1px solid rgba(255,255,255,0.12)", color: "var(--text-primary)" }}
+            style={{ background: "var(--lp-surface)", border: "1px solid var(--lp-border)", color: "var(--text-primary)" }}
           >
             {icon} {text}
           </motion.button>
@@ -188,7 +188,7 @@ export function AdminModal({ show, t, voiceMode, onClose, onSetVoiceMode, onToas
             whileTap={{ scale: 0.96 }}
             onClick={() => { onToast(`Admin: ${key}`); onClose(); }}
             className="rounded-xl py-2.5 px-2 text-[10px] font-bold"
-            style={{ background: "var(--lp-surface)", border: "1px solid rgba(255,255,255,0.12)", color: "var(--text-primary)" }}
+            style={{ background: "var(--lp-surface)", border: "1px solid var(--lp-border)", color: "var(--text-primary)" }}
           >
             {label}
           </motion.button>
@@ -206,7 +206,7 @@ export function AdminModal({ show, t, voiceMode, onClose, onSetVoiceMode, onToas
               style={
                 voiceMode === mode
                   ? { background: "var(--lp-gold)", color: "var(--text-on-accent)", boxShadow: "var(--glow-subtle)" }
-                  : { background: "var(--lp-surface-mid)", color: "var(--text-secondary)", border: "1px solid rgba(255,255,255,0.12)" }
+                  : { background: "var(--lp-surface-mid)", color: "var(--text-secondary)", border: "1px solid var(--lp-border)" }
               }
             >
               {mode === "driver" ? "🎙 English (Driver)" : "🌐 Match Passenger"}

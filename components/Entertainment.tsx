@@ -19,14 +19,14 @@ const glassPanelStyle: React.CSSProperties = {
   background: "var(--overlay-bg)",
   backdropFilter: "blur(32px)",
   WebkitBackdropFilter: "blur(32px)",
-  border: "1px solid rgba(255,255,255,0.10)",
+  border: "1px solid var(--card-border)",
   boxShadow: "0 20px 40px rgba(0,0,0,0.10), inset 0 1px 0 rgba(255,255,255,0.06)",
 };
 
-// Panel header style (dark strip inside glass panel)
+// Panel header style (theme-aware strip inside glass panel)
 const panelHeaderStyle: React.CSSProperties = {
-  background: "rgba(255,255,255,0.05)",
-  borderBottom: "1px solid rgba(255,255,255,0.08)",
+  background: "var(--lp-surface)",
+  borderBottom: "1px solid var(--lp-border)",
 };
 
 // Shared glass card base
@@ -95,8 +95,8 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
           className="relative cursor-pointer rounded-[18px] flex flex-col items-center gap-2 py-3 px-3"
           style={{
             ...glassCard,
-            background: "rgba(255,255,255,0.05)",
-            border: "1px solid rgba(255,255,255,0.10)",
+            background: "var(--lp-surface)",
+            border: "1px solid var(--lp-border)",
             boxShadow: "none",
           }}
         >
@@ -117,8 +117,8 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
           className="relative cursor-pointer rounded-[18px] flex flex-col items-center gap-2 py-3 px-3"
           style={{
             ...glassCard,
-            background: open === "radio" ? "rgba(200,168,75,0.10)" : "rgba(255,255,255,0.05)",
-            border: open === "radio" ? "1px solid rgba(200,168,75,0.55)" : "1px solid rgba(255,255,255,0.10)",
+            background: open === "radio" ? "rgba(200,168,75,0.10)" : "var(--lp-surface)",
+            border: open === "radio" ? "1px solid rgba(200,168,75,0.55)" : "1px solid var(--lp-border)",
             boxShadow: open === "radio" ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
           }}
         >
@@ -148,8 +148,8 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
           className="relative cursor-pointer rounded-[18px] flex flex-col items-center gap-2 py-3 px-3"
           style={{
             ...glassCard,
-            background: open === "playlist" ? "rgba(200,168,75,0.10)" : "rgba(255,255,255,0.05)",
-            border: open === "playlist" ? "1px solid rgba(200,168,75,0.55)" : "1px solid rgba(255,255,255,0.10)",
+            background: open === "playlist" ? "rgba(200,168,75,0.10)" : "var(--lp-surface)",
+            border: open === "playlist" ? "1px solid rgba(200,168,75,0.55)" : "1px solid var(--lp-border)",
             boxShadow: open === "playlist" ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
           }}
         >
@@ -198,8 +198,8 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
                 onClick={() => radio.stop()}
                 className="rounded-lg px-3.5 py-1.5 text-primary text-[11px] font-bold tracking-[1px] transition-colors"
                 style={{
-                  background: "rgba(255,255,255,0.10)",
-                  border: "1px solid rgba(255,255,255,0.20)",
+                  background: "var(--lp-surface-hi)",
+                  border: "1px solid var(--lp-border)",
                 }}
               >
                 {t.stop}
@@ -224,14 +224,14 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
                         ? "rgba(255,60,60,0.06)"
                         : station.f
                         ? "rgba(200,168,75,0.07)"
-                        : "rgba(255,255,255,0.05)",
+                        : "var(--lp-surface)",
                       border: isCurrent
                         ? "1px solid rgba(200,168,75,0.60)"
                         : isBroken
                         ? "1px solid rgba(255,60,60,0.35)"
                         : station.f
                         ? "1px solid rgba(200,168,75,0.30)"
-                        : "1px solid rgba(255,255,255,0.08)",
+                        : "1px solid var(--lp-border)",
                       boxShadow: isCurrent ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : undefined,
                       opacity: isBroken && !isCurrent ? 0.65 : 1,
                       transition: "all 200ms ease",
@@ -265,8 +265,8 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
               <div
                 className="mx-3.5 mb-3.5 rounded-2xl p-3.5"
                 style={{
-                  background: "rgba(255,255,255,0.04)",
-                  border: "1px solid rgba(255,255,255,0.08)",
+                  background: "var(--lp-surface)",
+                  border: "1px solid var(--lp-border)",
                 }}
               >
                 <div className="text-center mb-3">
@@ -290,8 +290,8 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
                         width: size,
                         height: size,
                         fontSize: size > 44 ? "18px" : "14px",
-                        background: "rgba(255,255,255,0.08)",
-                        border: "1px solid rgba(255,255,255,0.15)",
+                        background: "var(--lp-surface-mid)",
+                        border: "1px solid var(--lp-border)",
                         boxShadow: size > 44 ? "0 0 16px rgba(200,168,75,0.18)" : undefined,
                         transition: "box-shadow 200ms ease",
                       }}
@@ -343,8 +343,8 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
                 onClick={() => { setActivePL(-1); setPlUrl(""); }}
                 className="rounded-lg px-3.5 py-1.5 text-primary text-[11px] font-bold tracking-[1px]"
                 style={{
-                  background: "rgba(255,255,255,0.10)",
-                  border: "1px solid rgba(255,255,255,0.20)",
+                  background: "var(--lp-surface-hi)",
+                  border: "1px solid var(--lp-border)",
                 }}
               >
                 {t.stop}
@@ -359,10 +359,10 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
                   onClick={() => handleSelectPlaylist(pl, idx)}
                   className="flex flex-col items-center gap-1.5 rounded-xl px-2.5 py-3.5 cursor-pointer flex-none w-[110px]"
                   style={{
-                    background: activePL === idx ? "rgba(200,168,75,0.15)" : "rgba(255,255,255,0.05)",
+                    background: activePL === idx ? "rgba(200,168,75,0.15)" : "var(--lp-surface)",
                     border: activePL === idx
                       ? "1px solid rgba(200,168,75,0.60)"
-                      : "1px solid rgba(255,255,255,0.08)",
+                      : "1px solid var(--lp-border)",
                     boxShadow: activePL === idx ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : undefined,
                     transition: "all 200ms ease",
                   }}
