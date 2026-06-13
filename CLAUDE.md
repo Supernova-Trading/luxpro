@@ -24,6 +24,7 @@ Every design decision must trace to one of these local repos:
 - Use generic AI defaults (purple gradients, bounce animations, pure black backgrounds, outer glow shadows)
 
 ## LuxPro context
+- Production URL: https://luxpro-nu.vercel.app
 - Luxury ride tablet UI — passengers use it for 10-40 minutes in a moving car
 - Target viewport: 1280x800 landscape, everything must fit without scrolling
 - Brand: dark obsidian + gold (#C8A84B) + Cormorant Garamond

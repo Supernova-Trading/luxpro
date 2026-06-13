@@ -59,8 +59,9 @@ export function useRadio() {
       });
 
       if (!audioRef.current) {
+        // No crossOrigin: nothing consumes CORS-clean audio (no Web Audio
+        // analysis), and forcing CORS mode breaks stations without ACAO headers.
         audioRef.current = new Audio();
-        audioRef.current.crossOrigin = "anonymous";
       }
       const audio = audioRef.current;
       audio.pause();
