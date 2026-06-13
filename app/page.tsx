@@ -7,11 +7,11 @@ import Header from "@/components/Header";
 import VoiceBar from "@/components/VoiceBar";
 import Entertainment from "@/components/Entertainment";
 import TipBanner from "@/components/TipBanner";
-import ChatAndTips from "@/components/ChatAndTips";
+import MiddleSplit from "@/components/MiddleSplit";
 import Journey from "@/components/Journey";
 import ComfortItems from "@/components/ComfortItems";
 import SettingsMenu from "@/components/SettingsMenu";
-import { BluetoothModal, PhoneModal, ReplyModal, AdminModal } from "@/components/Modals";
+import { BluetoothModal, PhoneModal, ReplyModal, AdminModal, TipQRModal } from "@/components/Modals";
 import Toast from "@/components/Toast";
 
 import { useLanguage } from "@/hooks/useLanguage";
@@ -75,6 +75,7 @@ export default function LuxProPage() {
   const [phoneOpen, setPhoneOpen] = useState(false);
   const [replyOpen, setReplyOpen] = useState(false);
   const [adminOpen, setAdminOpen] = useState(false);
+  const [qrOpen, setQrOpen] = useState(false);
 
   // Welcome speech on load
   useEffect(() => {
@@ -158,7 +159,7 @@ export default function LuxProPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.06 }}
         >
-          <TipBanner t={t} />
+          <TipBanner t={t} onShowQR={() => setQrOpen(true)} onSpeak={speak} />
         </motion.div>
 
         <motion.div
@@ -166,7 +167,7 @@ export default function LuxProPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.12 }}
         >
-          <ChatAndTips t={t} onSpeak={speak} content={content} />
+          <MiddleSplit t={t} onSpeak={speak} content={content} />
         </motion.div>
 
         <motion.div
@@ -198,6 +199,7 @@ export default function LuxProPage() {
         onSetVoiceMode={setVoiceMode}
         onToast={toast}
       />
+      <TipQRModal show={qrOpen} t={t} onClose={() => setQrOpen(false)} />
 
       {/* Toast */}
       <Toast message={toastMsg} show={toastShow} />

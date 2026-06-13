@@ -223,3 +223,26 @@ export function AdminModal({ show, t, voiceMode, onClose, onSetVoiceMode, onToas
     </Overlay>
   );
 }
+
+// ─── Tip QR modal (Bank Transfer) ──────────────────────────────────────────────
+interface QRProps { show: boolean; t: Translation; onClose: () => void; }
+export function TipQRModal({ show, t, onClose }: QRProps) {
+  return (
+    <Overlay show={show} id="tip-qr" onClose={onClose}>
+      <div className="text-[10px] tracking-[3px] uppercase mb-3 font-semibold" style={{ color: "var(--text-muted)" }}>
+        {t.scanToTip}
+      </div>
+      <div className="rounded-2xl p-4 mb-3.5 inline-block" style={{ background: "#ffffff", border: "1px solid var(--lp-border-gold)" }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/qr-tip.png" alt={t.scanToTip} className="block" style={{ width: 200, height: 200 }} />
+      </div>
+      <div className="font-cormorant text-[20px] font-bold tracking-[2px] mb-1" style={{ color: "var(--lp-gold)", textShadow: "0 0 16px rgba(200,168,75,0.35)" }}>
+        Amish
+      </div>
+      <p className="text-[12px] leading-relaxed mb-4" style={{ color: "var(--text-secondary)" }}>
+        {t.qrCaption}
+      </p>
+      <ModalClose label={t.close} onClick={onClose} />
+    </Overlay>
+  );
+}
