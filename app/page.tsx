@@ -19,16 +19,6 @@ import { useVoice } from "@/hooks/useVoice";
 import { useRadio } from "@/hooks/useRadio";
 import type { Lang } from "@/lib/translations";
 
-// ─── ETA countdown: 8 minutes hardcoded ─────────────────────────────────────
-function useEta() {
-  const [eta, setEta] = useState(8 * 60);
-  useEffect(() => {
-    const id = setInterval(() => setEta((s) => (s > 0 ? s - 1 : 0)), 1000);
-    return () => clearInterval(id);
-  }, []);
-  return eta;
-}
-
 // ─── Toast helper ─────────────────────────────────────────────────────────────
 function useToast() {
   const [msg, setMsg] = useState("");
@@ -70,7 +60,6 @@ export default function LuxProPage() {
   const { lang, setLang, t, radios, content, isRTL } = useLanguage();
   const { speak, speaking, voiceMode, setVoiceMode } = useVoice(lang);
   const radio = useRadio();
-  const eta = useEta();
   const { toastMsg, toastShow, toast } = useToast();
   const { isFS, toggle: toggleFS } = useFullscreen();
 
@@ -122,7 +111,6 @@ export default function LuxProPage() {
       <Header
         lang={lang}
         t={t}
-        eta={eta}
         onSetLang={handleSetLang}
         onOpenSettings={() => setSettingsOpen((v) => !v)}
       />

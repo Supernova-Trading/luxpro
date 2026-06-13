@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { LANG_FLAGS, type Lang } from "@/lib/translations";
 import type { Translation } from "@/lib/translations";
 import { Icon } from "./Icon";
@@ -7,7 +8,6 @@ import { Icon } from "./Icon";
 interface Props {
   lang: Lang;
   t: Translation;
-  eta: number; // seconds remaining
   onSetLang: (l: Lang) => void;
   onOpenSettings: () => void;
 }
@@ -23,7 +23,51 @@ function etaLabel(seconds: number): string {
   return m > 0 ? `${m} min` : "< 1 min";
 }
 
-export default function Header({ lang, t, eta, onSetLang, onOpenSettings }: Props) {
+// Self-contained ETA countdown (8 minutes hardcoded). Owning the 1 Hz tick
+// here keeps the per-second re-render scoped to this pill instead of the
+// whole app tree.
+function EtaPill() {
+  const [eta, setEta] = useState(8 * 60);
+  useEffect(() => {
+    const id = setInterval(() => setEta((s) => (s > 0 ? s - 1 : 0)), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  return (
+    <div
+      className="flex items-center gap-1.5 rounded-lg px-3 py-1.5"
+      style={{
+        background: "rgba(200,168,75,0.10)",
+        border: "1px solid rgba(200,168,75,0.25)",
+        backdropFilter: "blur(10px)",
+      }}
+    >
+      <span
+        style={{
+          fontSize: "8px",
+          letterSpacing: "2.5px",
+          color: "rgba(255,255,255,0.55)",
+          textTransform: "uppercase",
+          fontWeight: 700,
+        }}
+      >
+        ETA
+      </span>
+      <span
+        style={{
+          fontSize: "13px",
+          fontWeight: 800,
+          color: "var(--lp-gold)",
+          letterSpacing: "1px",
+        }}
+      >
+        {etaLabel(eta)}
+      </span>
+    </div>
+  );
+}
+
+export default function Header({ lang, t, onSetLang, onOpenSettings }: Props) {
   return (
     <header
       className="flex-shrink-0 flex items-stretch relative overflow-hidden"
@@ -91,37 +135,7 @@ export default function Header({ lang, t, eta, onSetLang, onOpenSettings }: Prop
       >
         {/* ETA + settings */}
         <div className="flex items-center gap-2 w-full justify-end">
-          {/* ETA pill */}
-          <div
-            className="flex items-center gap-1.5 rounded-lg px-3 py-1.5"
-            style={{
-              background: "rgba(200,168,75,0.10)",
-              border: "1px solid rgba(200,168,75,0.25)",
-              backdropFilter: "blur(10px)",
-            }}
-          >
-            <span
-              style={{
-                fontSize: "8px",
-                letterSpacing: "2.5px",
-                color: "rgba(255,255,255,0.55)",
-                textTransform: "uppercase",
-                fontWeight: 700,
-              }}
-            >
-              ETA
-            </span>
-            <span
-              style={{
-                fontSize: "13px",
-                fontWeight: 800,
-                color: "var(--lp-gold)",
-                letterSpacing: "1px",
-              }}
-            >
-              {etaLabel(eta)}
-            </span>
-          </div>
+          <EtaPill />
 
           {/* Settings button */}
           <button
