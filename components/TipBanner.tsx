@@ -5,9 +5,11 @@ import type { Translation } from "@/lib/translations";
 
 interface Props {
   t: Translation;
+  onShowQR: () => void;
+  onSpeak: (text: string) => void;
 }
 
-export default function TipBanner({ t }: Props) {
+export default function TipBanner({ t, onShowQR, onSpeak }: Props) {
   return (
     <motion.div
       whileTap={{ scale: 0.985 }}
@@ -80,17 +82,31 @@ export default function TipBanner({ t }: Props) {
         {t.tipQuote}
       </p>
 
-      {/* Sub-label */}
-      <p
-        className="mt-2 uppercase font-semibold"
-        style={{
-          fontSize: "9px",
-          letterSpacing: "3px",
-          color: "rgba(200,168,75,0.55)",
-        }}
-      >
-        Cash · Uber Cash · Card
-      </p>
+      {/* Payment options — folded-in Tips: Cash · Card · Bank Transfer (QR) */}
+      <div className="grid grid-cols-3 gap-2 mt-2.5">
+        {[
+          { id: "cash", icon: "💵", label: t.payCash, onTap: () => onSpeak("Thank you. Please hand your cash tip to Amish at drop-off.") },
+          { id: "card", icon: "💳", label: t.payCard, onTap: () => onSpeak("Thank you. You can tip Amish by card at drop-off.") },
+          { id: "bank", icon: "🏦", label: t.payBank, onTap: onShowQR },
+        ].map(({ id, icon, label, onTap }) => (
+          <motion.button
+            key={id}
+            whileTap={{ scale: 0.96, transition: { duration: 0.08 } }}
+            onClick={onTap}
+            className="flex items-center justify-center gap-2 rounded-[14px] uppercase font-bold py-2.5 px-2"
+            style={{
+              fontSize: "11px",
+              letterSpacing: "1.5px",
+              background: "rgba(255,255,255,0.05)",
+              border: "1px solid rgba(200,168,75,0.30)",
+              color: "var(--lp-gold-soft)",
+            }}
+          >
+            <span className="text-[16px] leading-none">{icon}</span>
+            {label}
+          </motion.button>
+        ))}
+      </div>
     </motion.div>
   );
 }
