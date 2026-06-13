@@ -29,4 +29,5 @@ Every design decision must trace to one of these local repos:
 - Target viewport: 1280x800 landscape, everything must fit without scrolling
 - Brand: dark obsidian + gold (#C8A84B) + Cormorant Garamond
 - Theme system: [data-theme] with semantic OKLCH tokens from open-design warm-editorial — text colors must use tokens, never hardcoded values
+- Known perf debt: 15–20 simultaneous backdrop-filter blur surfaces are the top sluggishness cause on Tab A — address in the UX/styling pass
 - Every session continues from where the last one left off
