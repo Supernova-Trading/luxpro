@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import type { Translation } from "@/lib/translations";
 
@@ -10,6 +11,14 @@ interface Props {
 }
 
 export default function TipBanner({ t, onShowQR, onSpeak }: Props) {
+  const [showUberPrompt, setShowUberPrompt] = useState(false);
+
+  function handleUberTap() {
+    onSpeak("Thank you. Please tip Amish through your Uber app after the journey.");
+    setShowUberPrompt(true);
+    setTimeout(() => setShowUberPrompt(false), 6000);
+  }
+
   return (
     <motion.div
       whileTap={{ scale: 0.985 }}
@@ -82,11 +91,11 @@ export default function TipBanner({ t, onShowQR, onSpeak }: Props) {
         {t.tipQuote}
       </p>
 
-      {/* Payment options — folded-in Tips: Cash · Card · Bank Transfer (QR) */}
+      {/* Payment options — Cash · Uber · Bank Transfer (QR) */}
       <div className="grid grid-cols-3 gap-2 mt-2.5">
         {[
           { id: "cash", icon: "💵", label: t.payCash, onTap: () => onSpeak("Thank you. Please hand your cash tip to Amish at drop-off.") },
-          { id: "card", icon: "💳", label: t.payCard, onTap: () => onSpeak("Thank you. You can tip Amish by card at drop-off.") },
+          { id: "uber", icon: "🚗", label: t.payUber, onTap: handleUberTap },
           { id: "bank", icon: "🏦", label: t.payBank, onTap: onShowQR },
         ].map(({ id, icon, label, onTap }) => (
           <motion.button
@@ -107,6 +116,17 @@ export default function TipBanner({ t, onShowQR, onSpeak }: Props) {
           </motion.button>
         ))}
       </div>
+      {showUberPrompt && (
+        <motion.p
+          initial={{ opacity: 0, y: 4 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0 }}
+          className="font-cormorant italic text-center mt-2"
+          style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.75)", letterSpacing: "0.3px" }}
+        >
+          {t.uberPrompt}
+        </motion.p>
+      )}
     </motion.div>
   );
 }

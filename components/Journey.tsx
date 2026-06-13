@@ -40,19 +40,12 @@ const glassCard: React.CSSProperties = {
 
 export default function Journey({ t, onSpeak }: Props) {
   const [fastRoute, setFastRoute] = useState(false);
-  const [quietRide, setQuietRide] = useState(false);
   const [temp, setTemp] = useState<TempChoice>(null);
 
   function toggleFastRoute() {
     const next = !fastRoute;
     setFastRoute(next);
     onSpeak(next ? "Amish, please take the fastest route" : "Fast route off");
-  }
-
-  function toggleQuietRide() {
-    const next = !quietRide;
-    setQuietRide(next);
-    onSpeak(next ? "Amish, the passenger would prefer a quiet ride please" : "Quiet ride off");
   }
 
   function selectTemp(t2: "warm" | "cold") {
@@ -175,25 +168,22 @@ export default function Journey({ t, onSpeak }: Props) {
           </div>
         </motion.div>
 
-        {/* Quiet Ride */}
+        {/* Motorway */}
         <motion.div
           whileTap={{ scale: 0.95, transition: { duration: 0.08 } }}
           whileHover={{ y: -2, transition: { type: "tween", duration: 0.2, ease: [0.16, 1, 0.3, 1] } }}
-          onClick={toggleQuietRide}
+          onClick={() => onSpeak("Amish, please take the motorway.")}
           className="flex flex-col items-center gap-2 text-center rounded-[18px] cursor-pointer py-3 px-2"
           style={{
             ...glassCard,
-            background: quietRide ? "rgba(200,168,75,0.12)" : "var(--lp-surface)",
-            border: quietRide ? "1px solid rgba(200,168,75,0.55)" : "1px solid var(--lp-border)",
-            boxShadow: quietRide ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
+            background: "var(--lp-surface)",
+            border: "1px solid var(--lp-border)",
+            boxShadow: "none",
           }}
         >
-          <div className="text-[24px] leading-none">🔇</div>
-          <div
-            className="text-[12px] tracking-[1.5px] font-bold uppercase"
-            style={{ color: quietRide ? "var(--lp-gold)" : "var(--text-primary)" }}
-          >
-            {t.quietRide}
+          <div className="text-[24px] leading-none">🛣️</div>
+          <div className="text-[12px] tracking-[1.5px] font-bold uppercase" style={{ color: "var(--text-primary)" }}>
+            {t.motorway}
           </div>
         </motion.div>
       </div>

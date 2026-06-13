@@ -22,7 +22,8 @@ export interface Translation {
   playGame: string;
   gameSub: string;
   payCash: string;
-  payCard: string;
+  payUber: string;
+  uberPrompt: string;
   payBank: string;
   scanToTip: string;
   qrCaption: string;
@@ -48,7 +49,7 @@ export interface Translation {
   warm: string;
   cold: string;
   comfortItems: string;
-  quietRide: string;
+  motorway: string;
   charger: string;
   specialSnacks: string;
   wipes: string;
@@ -98,7 +99,8 @@ export const T: Record<Lang, Translation> = {
     playGame: "Play a Game",
     gameSub: "Quiz · Riddles",
     payCash: "Cash",
-    payCard: "Card",
+    payUber: "Uber",
+    uberPrompt: "Please tip through your Uber app after the journey.",
     payBank: "Bank Transfer",
     scanToTip: "Scan to Tip",
     qrCaption: "Scan with your banking app to tip Amish",
@@ -124,7 +126,7 @@ export const T: Record<Lang, Translation> = {
     warm: "Warm",
     cold: "Cold",
     comfortItems: "Comfort Items",
-    quietRide: "Quiet Ride",
+    motorway: "Motorway",
     charger: "Phone Charger",
     specialSnacks: "Special Snacks",
     wipes: "Wet Wipes",
@@ -172,7 +174,8 @@ export const T: Record<Lang, Translation> = {
     playGame: "Jugar",
     gameSub: "Quiz · Adivinanzas",
     payCash: "Efectivo",
-    payCard: "Tarjeta",
+    payUber: "Uber",
+    uberPrompt: "Por favor, deja la propina a través de tu app de Uber después del viaje.",
     payBank: "Transferencia",
     scanToTip: "Escanea para Propina",
     qrCaption: "Escanea con tu app bancaria para dar propina a Amish",
@@ -198,7 +201,7 @@ export const T: Record<Lang, Translation> = {
     warm: "Caliente",
     cold: "Frío",
     comfortItems: "Comodidades",
-    quietRide: "Viaje Silencioso",
+    motorway: "Autopista",
     charger: "Cargador",
     specialSnacks: "Snacks Especiales",
     wipes: "Toallitas",
@@ -246,7 +249,8 @@ export const T: Record<Lang, Translation> = {
     playGame: "Jouer",
     gameSub: "Quiz · Énigmes",
     payCash: "Espèces",
-    payCard: "Carte",
+    payUber: "Uber",
+    uberPrompt: "Veuillez donner le pourboire via votre application Uber après le trajet.",
     payBank: "Virement",
     scanToTip: "Scanner pour Pourboire",
     qrCaption: "Scannez avec votre application bancaire pour un pourboire à Amish",
@@ -272,7 +276,7 @@ export const T: Record<Lang, Translation> = {
     warm: "Chaud",
     cold: "Froid",
     comfortItems: "Articles de Confort",
-    quietRide: "Trajet Silencieux",
+    motorway: "Autoroute",
     charger: "Chargeur",
     specialSnacks: "Snacks Spéciaux",
     wipes: "Lingettes",
@@ -320,7 +324,8 @@ export const T: Record<Lang, Translation> = {
     playGame: "العب لعبة",
     gameSub: "مسابقة · ألغاز",
     payCash: "نقداً",
-    payCard: "بطاقة",
+    payUber: "أوبر",
+    uberPrompt: "يرجى إعطاء الإكرامية عبر تطبيق Uber بعد الرحلة.",
     payBank: "تحويل بنكي",
     scanToTip: "امسح للإكرامية",
     qrCaption: "امسح الرمز بتطبيق البنك لإعطاء إكرامية لأميش",
@@ -346,7 +351,7 @@ export const T: Record<Lang, Translation> = {
     warm: "دافئ",
     cold: "بارد",
     comfortItems: "وسائل الراحة",
-    quietRide: "رحلة هادئة",
+    motorway: "الطريق السريع",
     charger: "شاحن الهاتف",
     specialSnacks: "وجبات مميزة",
     wipes: "مناديل مبللة",
@@ -394,7 +399,8 @@ export const T: Record<Lang, Translation> = {
     playGame: "Игра",
     gameSub: "Викторина · Загадки",
     payCash: "Наличные",
-    payCard: "Карта",
+    payUber: "Uber",
+    uberPrompt: "Пожалуйста, оставьте чаевые через приложение Uber после поездки.",
     payBank: "Перевод",
     scanToTip: "Сканируйте для чаевых",
     qrCaption: "Отсканируйте в банковском приложении, чтобы дать чаевые Amish",
@@ -420,7 +426,7 @@ export const T: Record<Lang, Translation> = {
     warm: "Тёплое",
     cold: "Холодное",
     comfortItems: "Удобства",
-    quietRide: "Тихая поездка",
+    motorway: "Автомагистраль",
     charger: "Зарядное устройство",
     specialSnacks: "Снеки",
     wipes: "Влажные салфетки",
@@ -468,7 +474,8 @@ export const T: Record<Lang, Translation> = {
     playGame: "玩游戏",
     gameSub: "问答 · 谜语",
     payCash: "现金",
-    payCard: "刷卡",
+    payUber: "Uber",
+    uberPrompt: "请在行程结束后通过Uber应用给小费。",
     payBank: "银行转账",
     scanToTip: "扫码给小费",
     qrCaption: "用您的银行应用扫描，给Amish小费",
@@ -494,7 +501,7 @@ export const T: Record<Lang, Translation> = {
     warm: "热",
     cold: "冷",
     comfortItems: "舒适用品",
-    quietRide: "安静乘车",
+    motorway: "高速公路",
     charger: "手机充电器",
     specialSnacks: "特别小食",
     wipes: "湿巾",
