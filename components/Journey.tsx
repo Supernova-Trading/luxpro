@@ -73,8 +73,8 @@ export default function Journey({ t, onSpeak }: Props) {
       <div
         className="flex rounded-[18px] overflow-hidden mb-2"
         style={{
-          background: "rgba(255,255,255,0.03)",
-          border: "1px solid rgba(255,255,255,0.10)",
+          background: "var(--lp-surface)",
+          border: "1px solid var(--lp-border)",
         }}
       >
         {/* Warm */}
@@ -100,7 +100,7 @@ export default function Journey({ t, onSpeak }: Props) {
         </motion.div>
 
         {/* Divider */}
-        <div style={{ width: "1px", background: "rgba(255,255,255,0.08)", alignSelf: "stretch" }} />
+        <div style={{ width: "1px", background: "var(--lp-border)", alignSelf: "stretch" }} />
 
         {/* Cold */}
         <motion.div

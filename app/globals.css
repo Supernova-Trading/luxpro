@@ -285,8 +285,8 @@
   --lp-bg:           oklch(0.975 0.003 250);
   --lp-bg2:          oklch(0.960 0.005 250);
   --lp-bg3:          oklch(0.945 0.007 250);
-  --lp-surface:      rgba(255, 255, 255, 0.70);
-  --lp-surface-mid:  rgba(255, 255, 255, 0.85);
+  --lp-surface:      oklch(0.945 0.006 80);   /* warm-grey card fill — sits ~0.030 L below lp-bg for clear separation */
+  --lp-surface-mid:  oklch(0.925 0.007 80);   /* one step deeper for active / nested surfaces */
   --lp-surface-hi:   rgba(255, 255, 255, 0.95);
   --lp-text:         oklch(0.130 0.010 250);
   --lp-text-mid:     oklch(0.430 0.015 250);
@@ -294,7 +294,7 @@
   --lp-border:       oklch(0.860 0.008 250 / 0.60);
   --lp-border-gold:  rgba(200, 168, 75, 0.45);
   --lp-border-card:  oklch(0.860 0.008 250 / 0.60);
-  --card-bg:         rgba(255, 255, 255, 0.75);
+  --card-bg:         var(--lp-surface);
   --card-border:     oklch(0.860 0.008 250 / 0.60);
   --card-shadow:     0 8px 32px oklch(0 0 0 / 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.95);
   --lp-shadow:       0 4px 24px oklch(0 0 0 / 0.12), 0 1px 3px oklch(0 0 0 / 0.06);

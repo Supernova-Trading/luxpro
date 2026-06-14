@@ -13,11 +13,11 @@ const panelVariants = {
 
 // Glass panel style — consistent with Entertainment (matches the deployed look)
 const glassPanelStyle: React.CSSProperties = {
-  background: "var(--overlay-bg)",
+  background: "var(--card-bg)",
   backdropFilter: "blur(32px)",
   WebkitBackdropFilter: "blur(32px)",
   border: "1px solid var(--card-border)",
-  boxShadow: "0 12px 48px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.06)",
+  boxShadow: "var(--lp-shadow-glass)",
 };
 
 type Mode = "quiet" | "chat" | "game" | null;
