@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import SectionHeader from "./SectionHeader";
 import type { Translation } from "@/lib/translations";
@@ -8,6 +8,65 @@ import type { RadioStation } from "@/lib/radios";
 import type { Playlist } from "@/lib/playlists";
 import { PLAYLISTS } from "@/lib/playlists";
 import type { useRadio as UseRadioType } from "@/hooks/useRadio";
+
+// ── SoundCloud Widget API ─────────────────────────────────────────────────
+// Minimal shape of the bits of the widget we drive. The API talks to the
+// cross-origin player iframe over postMessage.
+type ScWidget = {
+  bind: (event: string, cb: (e?: { currentPosition?: number }) => void) => void;
+  unbind: (event: string) => void;
+  play: () => void;
+  pause: () => void;
+  togglePause: () => void;
+  next: () => void;
+  prev: () => void;
+  getPosition: (cb: (ms: number) => void) => void;
+  getDuration: (cb: (ms: number) => void) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  getCurrentSound: (cb: (sound: any) => void) => void;
+};
+type ScApi = {
+  Widget: ((iframe: HTMLIFrameElement) => ScWidget) & {
+    Events: Record<string, string>;
+  };
+};
+
+// Singleton loader for player/api.js — injects the script once and resolves
+// when window.SC is available.
+let scApiPromise: Promise<ScApi> | null = null;
+function loadScApi(): Promise<ScApi> {
+  if (typeof window === "undefined") return Promise.reject(new Error("no window"));
+  const existing = (window as unknown as { SC?: ScApi }).SC;
+  if (existing) return Promise.resolve(existing);
+  if (!scApiPromise) {
+    scApiPromise = new Promise((resolve, reject) => {
+      const s = document.createElement("script");
+      s.src = "https://w.soundcloud.com/player/api.js";
+      s.async = true;
+      s.onload = () => {
+        const sc = (window as unknown as { SC?: ScApi }).SC;
+        if (sc) resolve(sc);
+        else reject(new Error("SC missing after load"));
+      };
+      s.onerror = () => { scApiPromise = null; reject(new Error("SC api.js failed")); };
+      document.body.appendChild(s);
+    });
+  }
+  return scApiPromise;
+}
+
+// ── TEMP DIAGNOSTIC LOGGING — REMOVE once Bug 1 (8s cutoff) is settled ─────
+// Lets us play a track on the actual tablet and read, in the console, exactly
+// what the widget reports and what fires at ~8s. Delete this block and its
+// call sites in the playlist effect below to fully remove.
+function scDiag(msg: string) {
+  // eslint-disable-next-line no-console
+  console.log(`[LuxPro SC diag ${new Date().toISOString()}] ${msg}`);
+}
+function scDiagPos(w: ScWidget, evt: string) {
+  w.getPosition((p) => scDiag(`${evt} @ position=${Math.round(p)}ms`));
+}
+// ───────────────────────────────────────────────────────────────────────────
 
 const panelVariants = {
   hidden: { opacity: 0, height: 0, overflow: "hidden" },
@@ -50,6 +109,99 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
   const [open, setOpen] = useState<Panel>(null);
   const [activePL, setActivePL] = useState<number>(-1);
   const [plUrl, setPlUrl] = useState("");
+
+  // Playlist Widget-API control state
+  const plIframeRef = useRef<HTMLIFrameElement | null>(null);
+  const plWidgetRef = useRef<ScWidget | null>(null);
+  const [plPlaying, setPlPlaying] = useState(false);
+  const [plTitle, setPlTitle] = useState("");
+
+  // Attach the SoundCloud Widget API to the playlist iframe. Re-runs whenever
+  // the selected playlist (plUrl) changes; tears the instance down cleanly so
+  // no event bindings leak across playlist switches or unmount.
+  useEffect(() => {
+    if (!plUrl || !plIframeRef.current) {
+      setPlPlaying(false);
+      setPlTitle("");
+      return;
+    }
+    let cancelled = false;
+    let widget: ScWidget | null = null;
+
+    loadScApi()
+      .then((SC) => {
+        if (cancelled || !plIframeRef.current) return;
+        const E = SC.Widget.Events;
+        widget = SC.Widget(plIframeRef.current);
+        plWidgetRef.current = widget;
+
+        const refreshTitle = () =>
+          widget!.getCurrentSound((s) => {
+            if (!cancelled && s) setPlTitle(s.title || "");
+          });
+
+        widget.bind(E.READY, () => {
+          if (cancelled) return;
+          refreshTitle();
+          // ── TEMP DIAGNOSTIC (remove with scDiag block above) ──────────
+          widget!.getDuration((d) => scDiag(`READY getDuration=${d}ms`));
+          widget!.getCurrentSound((s) => {
+            const tr = s && s.media && s.media.transcodings && s.media.transcodings[0];
+            scDiag(
+              `READY sound title="${s && s.title}" duration=${s && s.duration} ` +
+              `snipped=${tr && tr.snipped} streamable=${s && s.streamable} ` +
+              `policy=${s && s.policy} monetization=${s && s.monetization_model}`
+            );
+          });
+          // ───────────────────────────────────────────────────────────────
+        });
+        widget.bind(E.PLAY, () => {
+          if (cancelled) return;
+          setPlPlaying(true);
+          refreshTitle();
+          scDiagPos(widget!, "PLAY"); // TEMP DIAGNOSTIC
+        });
+        widget.bind(E.PAUSE, () => {
+          if (cancelled) return;
+          setPlPlaying(false);
+          scDiagPos(widget!, "PAUSE"); // TEMP DIAGNOSTIC
+        });
+        widget.bind(E.FINISH, () => {
+          if (cancelled) return;
+          setPlPlaying(false);
+          scDiagPos(widget!, "FINISH"); // TEMP DIAGNOSTIC
+        });
+        widget.bind(E.ERROR, () => {
+          scDiag("ERROR event fired"); // TEMP DIAGNOSTIC
+        });
+      })
+      .catch(() => {
+        // api.js failed to load — controls stay inert, embed still plays on its own
+      });
+
+    return () => {
+      cancelled = true;
+      if (widget) {
+        try {
+          const E = (window as unknown as { SC?: ScApi }).SC?.Widget.Events;
+          if (E) {
+            widget.unbind(E.READY);
+            widget.unbind(E.PLAY);
+            widget.unbind(E.PAUSE);
+            widget.unbind(E.FINISH);
+            widget.unbind(E.ERROR);
+          }
+        } catch {
+          // best-effort cleanup
+        }
+      }
+      plWidgetRef.current = null;
+    };
+  }, [plUrl]);
+
+  const plPrev = () => plWidgetRef.current?.prev();
+  const plToggle = () => plWidgetRef.current?.togglePause();
+  const plNext = () => plWidgetRef.current?.next();
 
   function togglePanel(panel: Panel) {
     if (open === panel) {
@@ -380,12 +532,61 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
 
             {plUrl && (
               <iframe
+                // key per playlist URL: a new selection mounts a fresh iframe so the
+                // Widget API binds a clean postMessage channel (reusing the node across
+                // src swaps leaves the old channel stale). Theme/GPS re-renders don't
+                // change plUrl, so they never remount this.
+                key={plUrl}
+                ref={plIframeRef}
                 src={plUrl}
-                className="mx-3.5 mb-3.5 rounded-xl border-none"
+                className="mx-3.5 rounded-xl border-none"
                 style={{ width: "calc(100% - 28px)", height: 200 }}
                 scrolling="no"
                 allow="autoplay"
               />
+            )}
+
+            {/* Transport controls — drive the SoundCloud widget directly */}
+            {plUrl && (
+              <div
+                className="mx-3.5 my-3.5 rounded-2xl p-3.5"
+                style={{
+                  background: "var(--lp-surface)",
+                  border: "1px solid var(--lp-border)",
+                }}
+              >
+                {plTitle && (
+                  <div className="text-center mb-3 px-2">
+                    <div className="text-[10px] tracking-[2.5px] text-muted uppercase mb-1 font-semibold">{t.nowPlaying}</div>
+                    <div className="text-[14px] font-bold text-primary truncate">{plTitle}</div>
+                  </div>
+                )}
+                <div className="flex items-center justify-center gap-3">
+                  {[
+                    { fn: plPrev,   size: 40, icon: "⏮" },
+                    { fn: plToggle, size: 52, icon: plPlaying ? "⏸" : "▶" },
+                    { fn: plNext,   size: 40, icon: "⏭" },
+                  ].map(({ fn, size, icon }, i) => (
+                    <motion.button
+                      key={i}
+                      whileTap={{ scale: 0.92 }}
+                      onClick={fn}
+                      className="rounded-full flex items-center justify-center text-primary"
+                      style={{
+                        width: size,
+                        height: size,
+                        fontSize: size > 44 ? "18px" : "14px",
+                        background: "var(--lp-surface-mid)",
+                        border: "1px solid var(--lp-border)",
+                        boxShadow: size > 44 ? "0 0 16px rgba(200,168,75,0.18)" : undefined,
+                        transition: "box-shadow 200ms ease",
+                      }}
+                    >
+                      {icon}
+                    </motion.button>
+                  ))}
+                </div>
+              </div>
             )}
           </motion.div>
         )}
