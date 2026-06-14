@@ -37,8 +37,8 @@ function EtaPill() {
     <div
       className="flex items-center gap-1.5 rounded-lg px-3 py-1.5"
       style={{
-        background: "rgba(200,168,75,0.10)",
-        border: "1px solid rgba(200,168,75,0.25)",
+        background: "var(--lp-eta-bg)",
+        border: "1px solid var(--lp-eta-border)",
         backdropFilter: "blur(10px)",
       }}
     >
@@ -46,7 +46,7 @@ function EtaPill() {
         style={{
           fontSize: "8px",
           letterSpacing: "2.5px",
-          color: "rgba(255,255,255,0.55)",
+          color: "var(--lp-text-faint)",
           textTransform: "uppercase",
           fontWeight: 700,
         }}
@@ -57,7 +57,7 @@ function EtaPill() {
         style={{
           fontSize: "13px",
           fontWeight: 800,
-          color: "var(--lp-gold)",
+          color: "var(--lp-gold-text)",
           letterSpacing: "1px",
         }}
       >
@@ -73,11 +73,9 @@ export default function Header({ lang, t, onSetLang, onOpenSettings }: Props) {
       className="flex-shrink-0 flex items-stretch relative overflow-hidden"
       style={{
         minHeight: 110,
-        background:
-          "radial-gradient(ellipse at 28% 60%, rgba(200,168,75,0.10) 0%, transparent 60%), " +
-          "linear-gradient(135deg, #1A2330 0%, #0D1117 100%)",
+        background: "var(--lp-header-bg)",
         borderBottom: "1px solid rgba(200,168,75,0.20)",
-        boxShadow: "0 6px 32px rgba(0,0,0,0.65)",
+        boxShadow: "var(--lp-header-shadow)",
       }}
     >
       {/* Ambient glow disc behind wordmark */}
@@ -101,7 +99,7 @@ export default function Header({ lang, t, onSetLang, onOpenSettings }: Props) {
         className="flex flex-col justify-center px-7 py-4 relative"
         style={{
           flex: "1 1 0",
-          borderRight: "1px solid rgba(200,168,75,0.15)",
+          borderRight: "1px solid var(--lp-header-divider)",
         }}
       >
         <div
@@ -109,7 +107,7 @@ export default function Header({ lang, t, onSetLang, onOpenSettings }: Props) {
           style={{
             fontSize: "8px",
             letterSpacing: "4px",
-            color: "rgba(200,168,75,0.60)",
+            color: "var(--lp-welcome-color)",
           }}
         >
           {t.welcomeAboard}
@@ -118,9 +116,9 @@ export default function Header({ lang, t, onSetLang, onOpenSettings }: Props) {
           className="font-cormorant font-bold italic leading-tight"
           style={{
             fontSize: "clamp(18px, 3.5vw, 26px)",
-            color: "#ffffff",
+            color: "var(--lp-header-title-color)",
             letterSpacing: "2px",
-            textShadow: "0 0 32px rgba(200,168,75,0.25)",
+            textShadow: "var(--lp-title-text-shadow)",
           }}
         >
           {t.exploreTagline}
@@ -144,9 +142,9 @@ export default function Header({ lang, t, onSetLang, onOpenSettings }: Props) {
             style={{
               width: 36,
               height: 32,
-              background: "rgba(255,255,255,0.07)",
-              border: "1px solid rgba(255,255,255,0.15)",
-              color: "rgba(255,255,255,0.80)",
+              background: "var(--lp-overlay-mid)",
+              border: "1px solid var(--lp-overlay-border)",
+              color: "var(--text-primary)",
               backdropFilter: "blur(8px)",
               transition: "box-shadow 200ms ease, border-color 200ms ease",
             }}
@@ -156,7 +154,7 @@ export default function Header({ lang, t, onSetLang, onOpenSettings }: Props) {
             }}
             onMouseLeave={(e) => {
               (e.currentTarget as HTMLButtonElement).style.boxShadow = "none";
-              (e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(255,255,255,0.15)";
+              (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--lp-overlay-border)";
             }}
             title="Settings"
           >
@@ -177,11 +175,11 @@ export default function Header({ lang, t, onSetLang, onOpenSettings }: Props) {
                     lineHeight: 1,
                     border: l === lang
                       ? "1px solid rgba(200,168,75,0.70)"
-                      : "1px solid rgba(255,255,255,0.15)",
+                      : "1px solid var(--lp-overlay-border)",
                     background: l === lang
                       ? "rgba(200,168,75,0.18)"
-                      : "rgba(255,255,255,0.06)",
-                    color: l === lang ? "var(--lp-gold)" : "rgba(255,255,255,0.75)",
+                      : "var(--lp-overlay-btn)",
+                    color: l === lang ? "var(--lp-gold-text)" : "var(--lp-text-sub)",
                     boxShadow: l === lang ? "var(--glow-subtle)" : "none",
                     transition: "all 200ms ease",
                   }}

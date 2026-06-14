@@ -88,6 +88,41 @@
   --border:       rgba(255, 255, 255, 0.08);
   --ring:         var(--prim-gold-500);
   --radius:       0.625rem;
+
+  /* ── Theme-adaptive banner / header backgrounds ─────────────────────────────
+     These switch to warm light surfaces in [data-theme="light"] below.        */
+  --lp-banner-bg:
+    radial-gradient(ellipse at 50% 120%, rgba(200,168,75,0.18) 0%, transparent 60%),
+    radial-gradient(ellipse at 20% -10%,  rgba(200,168,75,0.10) 0%, transparent 50%),
+    linear-gradient(160deg, #1A2330 0%, #0D1117 100%);
+  --lp-header-bg:
+    radial-gradient(ellipse at 28% 60%, rgba(200,168,75,0.10) 0%, transparent 60%),
+    linear-gradient(135deg, #1A2330 0%, #0D1117 100%);
+  --lp-banner-shadow:  0 20px 40px rgba(0,0,0,0.12);
+  --lp-header-shadow:  0 6px 32px rgba(0,0,0,0.65);
+  --lp-header-divider: rgba(200,168,75,0.15);
+
+  /* ── Theme-adaptive text (white-alpha in dark → semantic dark in light) ─── */
+  --lp-header-title-color: #ffffff;
+  --lp-welcome-color:      rgba(200,168,75,0.60);
+  --lp-text-body:          rgba(255,255,255,0.90);
+  --lp-text-sub:           rgba(255,255,255,0.75);
+  --lp-text-faint:         rgba(255,255,255,0.55);
+
+  /* ── Gold for text on surfaces (stays brand gold in dark; deep amber in light) */
+  --lp-gold-text:        var(--lp-gold);
+  --lp-gold-text-shadow: 0 0 24px rgba(200,168,75,0.45);
+  --lp-title-text-shadow: 0 0 32px rgba(200,168,75,0.25);
+
+  /* ── White-alpha fills / borders (dark; overridden to warm fills in light) ─ */
+  --lp-overlay-low:    rgba(255,255,255,0.05);
+  --lp-overlay-mid:    rgba(255,255,255,0.07);
+  --lp-overlay-btn:    rgba(255,255,255,0.06);
+  --lp-overlay-border: rgba(255,255,255,0.15);
+
+  /* ── ETA pill ── */
+  --lp-eta-bg:     rgba(200,168,75,0.10);
+  --lp-eta-border: rgba(200,168,75,0.25);
 }
 
 /* ─── Global reset / body ───────────────────────────────────────────────────── */
@@ -304,4 +339,40 @@
   --background:      oklch(0.975 0.003 250);
   --foreground:      var(--text-primary);
   --border:          oklch(0.860 0.008 250 / 0.60);
+
+  /* ── Banner / header light surfaces ─────────────────────────────────────────
+     Banner base is oklch(0.940 0.014 80) — a touch deeper & warmer than the
+     standard --lp-surface (0.945 0.006) so the hero card still feels featured. */
+  --lp-banner-bg:
+    radial-gradient(ellipse at 50% 120%, rgba(200,168,75,0.10) 0%, transparent 60%),
+    radial-gradient(ellipse at 20% -10%,  rgba(200,168,75,0.06) 0%, transparent 50%),
+    oklch(0.940 0.014 80);
+  --lp-header-bg:
+    radial-gradient(ellipse at 28% 60%, rgba(200,168,75,0.09) 0%, transparent 60%),
+    oklch(0.955 0.010 80);
+  --lp-banner-shadow:  0 20px 40px rgba(0,0,0,0.07), 0 2px 8px rgba(200,168,75,0.10);
+  --lp-header-shadow:  0 6px 32px rgba(0,0,0,0.08);
+  --lp-header-divider: oklch(0.860 0.008 250 / 0.40);
+
+  /* ── Light-mode text ── */
+  --lp-header-title-color: var(--text-primary);
+  --lp-welcome-color:      oklch(0.44 0.115 73 / 0.85);
+  --lp-text-body:          var(--text-secondary);
+  --lp-text-sub:           var(--text-secondary);
+  --lp-text-faint:         var(--text-muted);
+
+  /* Deep amber — ~5.3:1 contrast on oklch(0.940 0.014 80) */
+  --lp-gold-text:        oklch(0.44 0.115 73);
+  --lp-gold-text-shadow: none;
+  --lp-title-text-shadow: none;
+
+  /* ── Warm-light fills replace white-alpha overlays ── */
+  --lp-overlay-low:    oklch(0.970 0.006 80);
+  --lp-overlay-mid:    oklch(0.960 0.007 80);
+  --lp-overlay-btn:    oklch(0.960 0.007 80);
+  --lp-overlay-border: oklch(0.860 0.008 250 / 0.60);
+
+  /* ── ETA pill in light ── */
+  --lp-eta-bg:     oklch(0.970 0.006 80);
+  --lp-eta-border: oklch(0.44 0.115 73 / 0.30);
 }

@@ -24,12 +24,9 @@ export default function TipBanner({ t, onShowQR, onSpeak }: Props) {
       whileTap={{ scale: 0.985 }}
       className="relative rounded-[22px] overflow-hidden text-center gold-top-line"
       style={{
-        background:
-          "radial-gradient(ellipse at 50% 120%, rgba(200,168,75,0.18) 0%, transparent 60%), " +
-          "radial-gradient(ellipse at 20% -10%, rgba(200,168,75,0.10) 0%, transparent 50%), " +
-          "linear-gradient(160deg, #1A2330 0%, #0D1117 100%)",
+        background: "var(--lp-banner-bg)",
         border: "1px solid rgba(200,168,75,0.40)",
-        boxShadow: "0 20px 40px rgba(0,0,0,0.12)",
+        boxShadow: "var(--lp-banner-shadow)",
         padding: "12px 16px 10px",
       }}
     >
@@ -50,16 +47,16 @@ export default function TipBanner({ t, onShowQR, onSpeak }: Props) {
       />
 
       {/* Stars */}
-      <div className="stars-gold mb-1.5 tracking-[4px] text-sm">★★★★★</div>
+      <div className="stars-gold mb-1.5 tracking-[4px] text-sm" style={{ color: "var(--lp-gold-text)" }}>★★★★★</div>
 
       {/* Heading */}
       <h2
         className="font-cormorant font-bold uppercase mb-1.5 leading-tight"
         style={{
           fontSize: "1.25rem",
-          color: "var(--lp-gold)",
+          color: "var(--lp-gold-text)",
           letterSpacing: "2px",
-          textShadow: "0 0 24px rgba(200,168,75,0.45)",
+          textShadow: "var(--lp-gold-text-shadow)",
         }}
       >
         {t.tipYourDriver}
@@ -82,7 +79,7 @@ export default function TipBanner({ t, onShowQR, onSpeak }: Props) {
         className="font-cormorant italic leading-snug"
         style={{
           fontSize: "0.875rem",
-          color: "rgba(255,255,255,0.90)",
+          color: "var(--lp-text-body)",
           letterSpacing: "0.3px",
           maxWidth: "520px",
           margin: "0 auto",
@@ -106,9 +103,9 @@ export default function TipBanner({ t, onShowQR, onSpeak }: Props) {
             style={{
               fontSize: "11px",
               letterSpacing: "1.5px",
-              background: "rgba(255,255,255,0.05)",
+              background: "var(--lp-overlay-low)",
               border: "1px solid rgba(200,168,75,0.30)",
-              color: "var(--lp-gold-soft)",
+              color: "var(--lp-gold-text)",
             }}
           >
             <span className="text-[16px] leading-none">{icon}</span>
@@ -122,7 +119,7 @@ export default function TipBanner({ t, onShowQR, onSpeak }: Props) {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0 }}
           className="font-cormorant italic text-center mt-2"
-          style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.75)", letterSpacing: "0.3px" }}
+          style={{ fontSize: "0.8rem", color: "var(--lp-text-sub)", letterSpacing: "0.3px" }}
         >
           {t.uberPrompt}
         </motion.p>
