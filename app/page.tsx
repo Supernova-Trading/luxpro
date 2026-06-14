@@ -17,6 +17,7 @@ import Toast from "@/components/Toast";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useVoice } from "@/hooks/useVoice";
 import { useRadio } from "@/hooks/useRadio";
+import { useTheme } from "@/hooks/useTheme";
 import type { Lang } from "@/lib/translations";
 
 // ─── Toast helper ─────────────────────────────────────────────────────────────
@@ -63,11 +64,8 @@ export default function LuxProPage() {
   const { toastMsg, toastShow, toast } = useToast();
   const { isFS, toggle: toggleFS } = useFullscreen();
 
-  // Theme
-  const [theme, setTheme] = useState<"dark" | "light">("dark");
-  useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-  }, [theme]);
+  // Theme — Auto/Light/Dark with SunCalc and localStorage persistence
+  const { mode: themeMode, setMode: setThemeMode } = useTheme();
 
   // Modal visibility
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -121,13 +119,11 @@ export default function LuxProPage() {
         open={settingsOpen}
         t={t}
         voiceMode={voiceMode}
-        theme={theme}
+        themeMode={themeMode}
         onClose={() => setSettingsOpen(false)}
         onShowPhone={handleShowPhone}
-        onShowReply={() => setReplyOpen(true)}
-        onShowAdmin={() => setAdminOpen(true)}
         onToggleFS={toggleFS}
-        onToggleTheme={() => setTheme((v) => (v === "dark" ? "light" : "dark"))}
+        onSetTheme={setThemeMode}
         onSetVoiceMode={setVoiceMode}
         isFullscreen={isFS}
       />

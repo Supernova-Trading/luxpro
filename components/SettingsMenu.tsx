@@ -4,25 +4,24 @@ import { useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Translation } from "@/lib/translations";
 import type { VoiceMode } from "@/hooks/useVoice";
+import type { ThemeMode } from "@/hooks/useTheme";
 import { Icon } from "./Icon";
 
 interface Props {
   open: boolean;
   t: Translation;
   voiceMode: VoiceMode;
-  theme: "dark" | "light";
+  themeMode: ThemeMode;
   onClose: () => void;
   onShowPhone: () => void;
-  onShowReply: () => void;
-  onShowAdmin: () => void;
   onToggleFS: () => void;
-  onToggleTheme: () => void;
+  onSetTheme: (m: ThemeMode) => void;
   onSetVoiceMode: (m: VoiceMode) => void;
   isFullscreen: boolean;
 }
 
 export default function SettingsMenu({
-  open, t, voiceMode, theme, onClose, onShowPhone, onShowReply, onShowAdmin, onToggleFS, onToggleTheme, onSetVoiceMode, isFullscreen,
+  open, t, voiceMode, themeMode, onClose, onShowPhone, onToggleFS, onSetTheme, onSetVoiceMode, isFullscreen,
 }: Props) {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -38,9 +37,13 @@ export default function SettingsMenu({
 
   const items: { icon: React.ReactNode; label: string; action: () => void }[] = [
     { icon: <Icon name="phone"   size={18} />, label: t.contactDriver, action: () => { onClose(); onShowPhone(); } },
-    { icon: <Icon name="send"    size={18} />, label: t.replyDriver,   action: () => { onClose(); onShowReply(); } },
-    { icon: <Icon name="sliders" size={18} />, label: t.adminPanel,    action: () => { onClose(); onShowAdmin(); } },
     { icon: <Icon name={isFullscreen ? "close" : "present"} size={18} />, label: isFullscreen ? "Exit Fullscreen" : t.fullScreen, action: () => { onClose(); onToggleFS(); } },
+  ];
+
+  const themeOptions: { mode: ThemeMode; icon: React.ReactNode; label: string }[] = [
+    { mode: "light", icon: <Icon name="sun"      size={12} />, label: "Light" },
+    { mode: "dark",  icon: <Icon name="moon"     size={12} />, label: "Dark"  },
+    { mode: "auto",  icon: <Icon name="sparkles" size={12} />, label: "Auto"  },
   ];
 
   return (
@@ -117,7 +120,7 @@ export default function SettingsMenu({
             </div>
           </div>
 
-          {/* Theme toggle */}
+          {/* Theme — Light / Dark / Auto */}
           <div
             className="mx-2 my-1 pt-2"
             style={{ borderTop: "1px solid var(--lp-border)" }}
@@ -129,19 +132,19 @@ export default function SettingsMenu({
               Theme
             </div>
             <div className="flex gap-1.5 px-2 pb-1">
-              {(["dark", "light"] as const).map((mode) => (
+              {themeOptions.map(({ mode, icon, label }) => (
                 <button
                   key={mode}
-                  onClick={() => { if (theme !== mode) onToggleTheme(); }}
+                  onClick={() => onSetTheme(mode)}
                   className="flex-1 py-2 rounded-lg text-[10px] tracking-[1px] uppercase font-bold transition-all flex items-center justify-center gap-1.5"
                   style={
-                    theme === mode
+                    themeMode === mode
                       ? { background: "var(--lp-gold)", color: "var(--text-on-accent)", boxShadow: "var(--glow-subtle)" }
                       : { background: "var(--lp-surface-mid)", color: "var(--text-secondary)", border: "1px solid var(--lp-border)" }
                   }
                 >
-                  <Icon name={mode === "dark" ? "moon" : "sun"} size={12} />
-                  {mode}
+                  {icon}
+                  {label}
                 </button>
               ))}
             </div>

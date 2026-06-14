@@ -9,11 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@types/suncalc": "^1.9.2",
     "framer-motion": "^12.39.0",
     "hls.js": "^1.6.16",
     "next": "14.2.35",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "suncalc": "^1.9.0"
   },
   "devDependencies": {
     "@types/node": "^20",
