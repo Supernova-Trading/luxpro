@@ -13,15 +13,11 @@ import type { useRadio as UseRadioType } from "@/hooks/useRadio";
 // Minimal shape of the bits of the widget we drive. The API talks to the
 // cross-origin player iframe over postMessage.
 type ScWidget = {
-  bind: (event: string, cb: (e?: { currentPosition?: number }) => void) => void;
+  bind: (event: string, cb: () => void) => void;
   unbind: (event: string) => void;
-  play: () => void;
-  pause: () => void;
   togglePause: () => void;
   next: () => void;
   prev: () => void;
-  getPosition: (cb: (ms: number) => void) => void;
-  getDuration: (cb: (ms: number) => void) => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getCurrentSound: (cb: (sound: any) => void) => void;
 };
@@ -54,19 +50,6 @@ function loadScApi(): Promise<ScApi> {
   }
   return scApiPromise;
 }
-
-// ── TEMP DIAGNOSTIC LOGGING — REMOVE once Bug 1 (8s cutoff) is settled ─────
-// Lets us play a track on the actual tablet and read, in the console, exactly
-// what the widget reports and what fires at ~8s. Delete this block and its
-// call sites in the playlist effect below to fully remove.
-function scDiag(msg: string) {
-  // eslint-disable-next-line no-console
-  console.log(`[LuxPro SC diag ${new Date().toISOString()}] ${msg}`);
-}
-function scDiagPos(w: ScWidget, evt: string) {
-  w.getPosition((p) => scDiag(`${evt} @ position=${Math.round(p)}ms`));
-}
-// ───────────────────────────────────────────────────────────────────────────
 
 const panelVariants = {
   hidden: { opacity: 0, height: 0, overflow: "hidden" },
@@ -143,36 +126,19 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
         widget.bind(E.READY, () => {
           if (cancelled) return;
           refreshTitle();
-          // ── TEMP DIAGNOSTIC (remove with scDiag block above) ──────────
-          widget!.getDuration((d) => scDiag(`READY getDuration=${d}ms`));
-          widget!.getCurrentSound((s) => {
-            const tr = s && s.media && s.media.transcodings && s.media.transcodings[0];
-            scDiag(
-              `READY sound title="${s && s.title}" duration=${s && s.duration} ` +
-              `snipped=${tr && tr.snipped} streamable=${s && s.streamable} ` +
-              `policy=${s && s.policy} monetization=${s && s.monetization_model}`
-            );
-          });
-          // ───────────────────────────────────────────────────────────────
         });
         widget.bind(E.PLAY, () => {
           if (cancelled) return;
           setPlPlaying(true);
           refreshTitle();
-          scDiagPos(widget!, "PLAY"); // TEMP DIAGNOSTIC
         });
         widget.bind(E.PAUSE, () => {
           if (cancelled) return;
           setPlPlaying(false);
-          scDiagPos(widget!, "PAUSE"); // TEMP DIAGNOSTIC
         });
         widget.bind(E.FINISH, () => {
           if (cancelled) return;
           setPlPlaying(false);
-          scDiagPos(widget!, "FINISH"); // TEMP DIAGNOSTIC
-        });
-        widget.bind(E.ERROR, () => {
-          scDiag("ERROR event fired"); // TEMP DIAGNOSTIC
         });
       })
       .catch(() => {
@@ -189,7 +155,6 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
             widget.unbind(E.PLAY);
             widget.unbind(E.PAUSE);
             widget.unbind(E.FINISH);
-            widget.unbind(E.ERROR);
           }
         } catch {
           // best-effort cleanup
