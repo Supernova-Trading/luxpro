@@ -11,7 +11,7 @@ interface Props {
   onSpeak: (text: string) => void;
 }
 
-const AUTO_RESET_MS = 23000;
+const AUTO_RESET_MS = 2500;
 
 export default function ComfortItems({ t, onSpeak }: Props) {
   const items: { icon: IconName; color: string; labelKey: "charger" | "specialSnacks" | "wipes" | "mints"; msg: string }[] = [
@@ -42,7 +42,7 @@ export default function ComfortItems({ t, onSpeak }: Props) {
     onSpeak(next ? "Amish, please take the fastest route" : "Fast route off");
     if (next) {
       // Auto-reverts to neutral if the passenger never taps it off — same
-      // ~23s window as Change Dest / Motorway's confirmation flash, so the
+      // window as Change Dest / Motorway's confirmation flash, so the
       // whole row behaves consistently.
       fastRouteTimer.current = setTimeout(() => setFastRoute(false), AUTO_RESET_MS);
     }
