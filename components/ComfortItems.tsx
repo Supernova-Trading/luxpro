@@ -21,6 +21,10 @@ export default function ComfortItems({ t, onSpeak }: Props) {
 
   const [active, setActive] = useState<Record<number, boolean>>({});
   const [fastRoute, setFastRoute] = useState(false);
+  // Change Dest / Motorway are one-shot requests, not persistent toggles —
+  // there's nothing to turn back off — so they get a brief gold confirmation
+  // flash on tap instead of a lasting selected state.
+  const [justTapped, setJustTapped] = useState<"dest" | "motorway" | null>(null);
 
   function toggle(idx: number, msg: string) {
     const next = !active[idx];
@@ -32,6 +36,12 @@ export default function ComfortItems({ t, onSpeak }: Props) {
     const next = !fastRoute;
     setFastRoute(next);
     onSpeak(next ? "Amish, please take the fastest route" : "Fast route off");
+  }
+
+  function tapOneShot(id: "dest" | "motorway", msg: string) {
+    setJustTapped(id);
+    onSpeak(msg);
+    setTimeout(() => setJustTapped((cur) => (cur === id ? null : cur)), 1400);
   }
 
   // No backdrop-filter — 4 of these render simultaneously, and blur on
@@ -112,16 +122,17 @@ export default function ComfortItems({ t, onSpeak }: Props) {
         <motion.div
           whileTap={{ scale: 0.95, transition: { duration: 0.08 } }}
           whileHover={{ y: -2, transition: { type: "tween", duration: 0.2, ease: [0.16, 1, 0.3, 1] } }}
-          onClick={() => onSpeak("Amish, the passenger would like to change the destination.")}
+          onClick={() => tapOneShot("dest", "Amish, the passenger would like to change the destination.")}
           className="flex flex-col items-center gap-2 text-center rounded-[18px] cursor-pointer py-3 px-2"
           style={{
             ...glassCard,
-            background: "var(--lp-surface)",
-            border: "1px solid var(--lp-border)",
+            background: justTapped === "dest" ? "rgba(200,168,75,0.12)" : "var(--lp-surface)",
+            border: justTapped === "dest" ? "1px solid rgba(200,168,75,0.55)" : "1px solid var(--lp-border)",
+            boxShadow: justTapped === "dest" ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
           }}
         >
-          <Icon name="map-pin" size={24} style={{ color: "#F87171" }} />
-          <div className="text-[12px] tracking-[1.5px] font-bold uppercase" style={{ color: "var(--text-primary)" }}>
+          <Icon name="map-pin" size={24} style={{ color: justTapped === "dest" ? "var(--lp-gold)" : "#F87171" }} />
+          <div className="text-[12px] tracking-[1.5px] font-bold uppercase" style={{ color: justTapped === "dest" ? "var(--lp-gold)" : "var(--text-primary)" }}>
             {t.changeDest}
           </div>
         </motion.div>
@@ -129,16 +140,17 @@ export default function ComfortItems({ t, onSpeak }: Props) {
         <motion.div
           whileTap={{ scale: 0.95, transition: { duration: 0.08 } }}
           whileHover={{ y: -2, transition: { type: "tween", duration: 0.2, ease: [0.16, 1, 0.3, 1] } }}
-          onClick={() => onSpeak("Amish, please take the motorway.")}
+          onClick={() => tapOneShot("motorway", "Amish, please take the motorway.")}
           className="flex flex-col items-center gap-2 text-center rounded-[18px] cursor-pointer py-3 px-2"
           style={{
             ...glassCard,
-            background: "var(--lp-surface)",
-            border: "1px solid var(--lp-border)",
+            background: justTapped === "motorway" ? "rgba(200,168,75,0.12)" : "var(--lp-surface)",
+            border: justTapped === "motorway" ? "1px solid rgba(200,168,75,0.55)" : "1px solid var(--lp-border)",
+            boxShadow: justTapped === "motorway" ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
           }}
         >
-          <Icon name="road" size={24} style={{ color: "#94A3B8" }} />
-          <div className="text-[12px] tracking-[1.5px] font-bold uppercase" style={{ color: "var(--text-primary)" }}>
+          <Icon name="road" size={24} style={{ color: justTapped === "motorway" ? "var(--lp-gold)" : "#94A3B8" }} />
+          <div className="text-[12px] tracking-[1.5px] font-bold uppercase" style={{ color: justTapped === "motorway" ? "var(--lp-gold)" : "var(--text-primary)" }}>
             {t.motorway}
           </div>
         </motion.div>
