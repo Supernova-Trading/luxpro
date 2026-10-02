@@ -41,6 +41,8 @@
   --lp-border-card: rgba(0, 0, 0, 0.08);
   --lp-warm:        var(--prim-warm-500);
   --lp-cold:        var(--prim-cold-500);
+  --lp-warm-tint:   color-mix(in srgb, var(--prim-warm-500) 15%, transparent);
+  --lp-cold-tint:   color-mix(in srgb, var(--prim-cold-500) 15%, transparent);
   --lp-gold:        var(--prim-gold-500);
   --lp-gold-soft:   var(--prim-gold-300);
   --lp-navy:        var(--prim-navy-900);

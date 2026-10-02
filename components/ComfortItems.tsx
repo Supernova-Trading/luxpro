@@ -50,10 +50,10 @@ export default function ComfortItems({ t, onSpeak }: Props) {
               className="relative flex flex-col items-center gap-2 py-3 px-2 rounded-[18px] cursor-pointer"
               style={{
                 ...glassCard,
-                background: isActive ? "rgba(200,168,75,0.10)" : "var(--lp-surface)",
+                background: isActive ? "rgba(200,168,75,0.10)" : "transparent",
                 border: isActive
                   ? "1px solid rgba(200,168,75,0.55)"
-                  : "1px solid var(--lp-border)",
+                  : "1px solid transparent",
                 boxShadow: isActive ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
               }}
             >
@@ -68,7 +68,6 @@ export default function ComfortItems({ t, onSpeak }: Props) {
                 className="absolute top-3 right-3 w-2 h-2 rounded-full"
                 style={{
                   background: "var(--lp-gold)",
-                  boxShadow: "0 0 8px rgba(200,168,75,0.70)",
                   opacity: isActive ? 1 : 0,
                   transition: "opacity 200ms ease",
                 }}

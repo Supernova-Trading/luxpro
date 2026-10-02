@@ -251,7 +251,6 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
             className="absolute top-3 right-3 w-2 h-2 rounded-full"
             style={{
               background: "var(--lp-gold)",
-              boxShadow: "0 0 8px rgba(200,168,75,0.70)",
               opacity: open === "radio" ? 1 : 0,
               transition: "opacity 200ms ease",
             }}
@@ -282,7 +281,6 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
             className="absolute top-3 right-3 w-2 h-2 rounded-full"
             style={{
               background: "var(--lp-gold)",
-              boxShadow: "0 0 8px rgba(200,168,75,0.70)",
               opacity: open === "playlist" ? 1 : 0,
               transition: "opacity 200ms ease",
             }}
@@ -410,7 +408,6 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
                         fontSize: size > 44 ? "18px" : "14px",
                         background: "var(--lp-surface-mid)",
                         border: "1px solid var(--lp-border)",
-                        boxShadow: size > 44 ? "0 0 16px rgba(200,168,75,0.18)" : undefined,
                         transition: "box-shadow 200ms ease",
                       }}
                     >
@@ -544,7 +541,6 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
                         fontSize: size > 44 ? "18px" : "14px",
                         background: "var(--lp-surface-mid)",
                         border: "1px solid var(--lp-border)",
-                        boxShadow: size > 44 ? "0 0 16px rgba(200,168,75,0.18)" : undefined,
                         transition: "box-shadow 200ms ease",
                       }}
                     >
