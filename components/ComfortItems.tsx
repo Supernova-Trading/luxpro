@@ -82,7 +82,7 @@ export default function ComfortItems({ t, onSpeak }: Props) {
                 border: isActive
                   ? "1px solid var(--active-border)"
                   : "1px solid var(--lp-border)",
-                boxShadow: isActive ? "inset 0 0 0 1.5px var(--active-ring)" : "none",
+                boxShadow: isActive ? "inset 0 0 0 1.5px var(--active-ring)" : "var(--tile-shadow)",
               }}
             >
               <Icon name={icon} size={26} style={{ color: isActive ? "var(--active-text)" : color }} />
@@ -117,7 +117,7 @@ export default function ComfortItems({ t, onSpeak }: Props) {
             ...glassCard,
             background: fastRoute ? "var(--active-bg-strong)" : "var(--lp-surface)",
             border: fastRoute ? "1px solid var(--active-border)" : "1px solid var(--lp-border)",
-            boxShadow: fastRoute ? "inset 0 0 0 1.5px var(--active-ring)" : "none",
+            boxShadow: fastRoute ? "inset 0 0 0 1.5px var(--active-ring)" : "var(--tile-shadow)",
           }}
         >
           <Icon name="zap" size={24} style={{ color: fastRoute ? "var(--active-text)" : "var(--icon-yellow)" }} />
@@ -138,7 +138,7 @@ export default function ComfortItems({ t, onSpeak }: Props) {
             ...glassCard,
             background: justTapped === "dest" ? "var(--active-bg-strong)" : "var(--lp-surface)",
             border: justTapped === "dest" ? "1px solid var(--active-border)" : "1px solid var(--lp-border)",
-            boxShadow: justTapped === "dest" ? "inset 0 0 0 1.5px var(--active-ring)" : "none",
+            boxShadow: justTapped === "dest" ? "inset 0 0 0 1.5px var(--active-ring)" : "var(--tile-shadow)",
           }}
         >
           <Icon name="map-pin" size={24} style={{ color: justTapped === "dest" ? "var(--active-text)" : "var(--icon-red)" }} />
@@ -156,7 +156,7 @@ export default function ComfortItems({ t, onSpeak }: Props) {
             ...glassCard,
             background: justTapped === "motorway" ? "var(--active-bg-strong)" : "var(--lp-surface)",
             border: justTapped === "motorway" ? "1px solid var(--active-border)" : "1px solid var(--lp-border)",
-            boxShadow: justTapped === "motorway" ? "inset 0 0 0 1.5px var(--active-ring)" : "none",
+            boxShadow: justTapped === "motorway" ? "inset 0 0 0 1.5px var(--active-ring)" : "var(--tile-shadow)",
           }}
         >
           <Icon name="road" size={24} style={{ color: justTapped === "motorway" ? "var(--active-text)" : "var(--icon-gray)" }} />

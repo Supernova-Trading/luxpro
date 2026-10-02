@@ -216,7 +216,7 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
             ...glassCard,
             background: "var(--lp-surface)",
             border: "1px solid var(--lp-border)",
-            boxShadow: "none",
+            boxShadow: "var(--tile-shadow)",
           }}
         >
           <Icon name="bluetooth" size={26} style={{ color: "var(--icon-blue)" }} />
@@ -238,7 +238,7 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
             ...glassCard,
             background: open === "radio" ? "var(--active-bg)" : "var(--lp-surface)",
             border: open === "radio" ? "1px solid var(--active-border)" : "1px solid var(--lp-border)",
-            boxShadow: open === "radio" ? "inset 0 0 0 1.5px var(--active-ring)" : "none",
+            boxShadow: open === "radio" ? "inset 0 0 0 1.5px var(--active-ring)" : "var(--tile-shadow)",
           }}
         >
           <Icon name="radio" size={26} style={{ color: open === "radio" ? "var(--active-text)" : "var(--icon-purple)" }} />
@@ -268,7 +268,7 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
             ...glassCard,
             background: open === "playlist" ? "var(--active-bg)" : "var(--lp-surface)",
             border: open === "playlist" ? "1px solid var(--active-border)" : "1px solid var(--lp-border)",
-            boxShadow: open === "playlist" ? "inset 0 0 0 1.5px var(--active-ring)" : "none",
+            boxShadow: open === "playlist" ? "inset 0 0 0 1.5px var(--active-ring)" : "var(--tile-shadow)",
           }}
         >
           <Icon name="headphones" size={26} style={{ color: open === "playlist" ? "var(--active-text)" : "var(--icon-pink)" }} />

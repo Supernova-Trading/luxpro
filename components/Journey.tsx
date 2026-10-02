@@ -82,7 +82,7 @@ export default function Journey({ t, onSpeak }: Props) {
             ...glassCard,
             border: "none",
             background: "var(--lp-warm-tint)",
-            boxShadow: temp === "warm" ? "inset 0 0 0 1.5px var(--active-ring)" : "none",
+            boxShadow: temp === "warm" ? "inset 0 0 0 1.5px var(--active-ring)" : "var(--tile-shadow)",
           }}
         >
           <Icon name="flame" size={24} style={{ color: temp === "warm" ? "var(--active-accent)" : "var(--icon-orange)" }} />
@@ -107,7 +107,7 @@ export default function Journey({ t, onSpeak }: Props) {
             ...glassCard,
             border: "none",
             background: "var(--lp-cold-tint)",
-            boxShadow: temp === "cold" ? "inset 0 0 0 1.5px var(--active-ring)" : "none",
+            boxShadow: temp === "cold" ? "inset 0 0 0 1.5px var(--active-ring)" : "var(--tile-shadow)",
           }}
         >
           <Icon name="snowflake" size={24} style={{ color: temp === "cold" ? "var(--active-accent)" : "var(--icon-sky)" }} />

@@ -151,7 +151,7 @@ export default function MiddleSplit({ t, onSpeak, content }: Props) {
               style={{
                 background: active ? "var(--active-bg)" : "var(--lp-surface)",
                 border: active ? "1px solid var(--active-border)" : "1px solid var(--lp-border)",
-                boxShadow: active ? "inset 0 0 0 1.5px var(--active-ring)" : "none",
+                boxShadow: active ? "inset 0 0 0 1.5px var(--active-ring)" : "var(--tile-shadow)",
                 transition: "border-color 200ms ease, background 200ms ease, box-shadow 200ms ease",
               }}
             >

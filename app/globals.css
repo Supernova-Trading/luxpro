@@ -90,6 +90,11 @@
      reused here as a foreground colour instead. */
   --active-accent:    var(--lp-gold);
 
+  /* Soft card-lift shadow — stays "none" in dark mode (step 3 of the
+     roadmap: depth from the luminance ladder, not shadows); light mode
+     overrides this below, where white-on-ivory needs it. */
+  --tile-shadow: none;
+
   /* ── Semantic text tokens (open-design warm-editorial, hex→OKLCH) ─────────
      Contrast verified vs worst-case surface = --lp-surface-hi over bg2 (#353D49):
      primary 10.3:1 · secondary 6.2:1 · muted 4.7:1 · on-accent vs gold 8.3:1 */
@@ -359,28 +364,34 @@
   --accent-positive: oklch(0.527 0.137 150); /* #15803D — 5.0:1 on white */
 
   --lp-fg:           var(--text-primary);
-  --lp-bg:           oklch(0.975 0.003 250);
-  --lp-bg2:          oklch(0.960 0.005 250);
-  --lp-bg3:          oklch(0.945 0.007 250);
-  --lp-surface:      oklch(0.900 0.006 75);   /* clean warm-grey card fill — low chroma so it reads crisp, not muddy */
-  --lp-surface-mid:  oklch(0.850 0.007 75);   /* one step deeper for active / nested surfaces */
-  --lp-surface-hi:   rgba(255, 255, 255, 0.95);
+  --lp-bg:           oklch(0.930 0.008 75);   /* deepened warm-ivory canvas — gives cards real room to read as "lifted" */
+  --lp-bg2:          oklch(0.920 0.009 75);
+  --lp-bg3:          oklch(0.910 0.010 75);
+  --lp-surface:      oklch(0.990 0.003 75);   /* crisp near-white card — premium reads as white, not grey */
+  --lp-surface-mid:  oklch(0.955 0.005 75);   /* one step deeper for active / nested surfaces */
+  --lp-surface-hi:   rgba(255, 255, 255, 0.98);
   --lp-text:         oklch(0.130 0.010 250);
   --lp-text-mid:     oklch(0.430 0.015 250);
   --lp-text-dim:     oklch(0.560 0.012 250);
-  --lp-border:       oklch(0.720 0.006 75 / 1);
+  --lp-border:       rgba(200, 168, 75, 0.25);  /* refined gold-tinted hairline, not flat grey — ties the card edge to the brand */
   --lp-border-gold:  rgba(200, 168, 75, 0.45);
-  --lp-border-card:  oklch(0.720 0.006 75 / 1);
+  --lp-border-card:  rgba(200, 168, 75, 0.25);
   --card-bg:         var(--lp-surface);
-  --card-border:     oklch(0.720 0.006 75 / 1);
-  --card-shadow:     0 8px 24px oklch(0 0 0 / 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.95);
-  --lp-shadow:       0 4px 24px oklch(0 0 0 / 0.12), 0 1px 3px oklch(0 0 0 / 0.06);
-  --lp-shadow-lg:    0 12px 48px oklch(0 0 0 / 0.16), 0 4px 16px oklch(0 0 0 / 0.10);
-  --lp-shadow-glass: 0 8px 24px oklch(0 0 0 / 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.90);
-  --overlay-bg:      oklch(0.975 0.003 250 / 0.92);
-  --background:      oklch(0.975 0.003 250);
+  --card-border:     rgba(200, 168, 75, 0.25);
+  --card-shadow:     0 2px 12px oklch(0.3 0.02 75 / 0.08), 0 1px 2px oklch(0.3 0.02 75 / 0.06);
+  --lp-shadow:       0 4px 24px oklch(0 0 0 / 0.10), 0 1px 3px oklch(0 0 0 / 0.05);
+  --lp-shadow-lg:    0 12px 48px oklch(0 0 0 / 0.14), 0 4px 16px oklch(0 0 0 / 0.08);
+  --lp-shadow-glass: 0 8px 24px oklch(0.3 0.02 75 / 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.90);
+  --overlay-bg:      oklch(0.930 0.008 75 / 0.92);
+  --background:      oklch(0.930 0.008 75);
   --foreground:      var(--text-primary);
-  --border:          oklch(0.720 0.006 75 / 1);
+  --border:          rgba(200, 168, 75, 0.25);
+
+  /* Soft lift for cards at rest — light mode needs it more than dark mode
+     did (white-on-warm-ivory has less inherent lightness contrast than the
+     dark palette's near-black-on-black), so this is a deliberate exception
+     to the dark-theme "no drop shadow" rule, not an oversight. */
+  --tile-shadow: 0 1px 3px oklch(0.3 0.02 75 / 0.07), 0 1px 2px oklch(0.3 0.02 75 / 0.05);
 
   /* ── Warm/Cold tint — stronger than the dark-mode 15% so Warm/Cold stay
      legible against a light, already-warm page background. ── */
