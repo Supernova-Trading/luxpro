@@ -39,7 +39,6 @@ function EtaPill() {
       style={{
         background: "var(--lp-eta-bg)",
         border: "1px solid var(--lp-eta-border)",
-        backdropFilter: "blur(10px)",
       }}
     >
       <span
@@ -145,7 +144,6 @@ export default function Header({ lang, t, onSetLang, onOpenSettings }: Props) {
               background: "var(--lp-overlay-mid)",
               border: "1px solid var(--lp-overlay-border)",
               color: "var(--text-primary)",
-              backdropFilter: "blur(8px)",
               transition: "box-shadow 200ms ease, border-color 200ms ease",
             }}
             onMouseEnter={(e) => {

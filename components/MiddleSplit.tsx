@@ -135,7 +135,9 @@ export default function MiddleSplit({ t, onSpeak, content }: Props) {
 
   return (
     <div>
-      {/* Three triggers — glass cards (matches deployed Open-to-Chat treatment) */}
+      {/* Three triggers — flat surface, no backdrop-filter: decorative cost
+          without elevation payoff on 3 simultaneous small tiles (impeccable/
+          DESIGN.md:287). The panel below keeps blur — it's a real overlay. */}
       <div className="grid grid-cols-3 gap-3.5 mb-3.5">
         {cards.map(({ id, icon, label, sub }) => {
           const active = mode === id;
@@ -147,8 +149,6 @@ export default function MiddleSplit({ t, onSpeak, content }: Props) {
               className="cursor-pointer rounded-[18px] flex flex-col items-center gap-2.5 py-5 px-3 text-center"
               style={{
                 background: active ? "rgba(200,168,75,0.10)" : "var(--lp-surface)",
-                backdropFilter: "blur(24px)",
-                WebkitBackdropFilter: "blur(24px)",
                 border: active ? "1px solid rgba(200,168,75,0.55)" : "1px solid var(--lp-border)",
                 boxShadow: "0 8px 32px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.06)",
                 transition: "border-color 200ms ease, background 200ms ease",

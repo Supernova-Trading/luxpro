@@ -71,10 +71,11 @@ const panelHeaderStyle: React.CSSProperties = {
   borderBottom: "1px solid var(--lp-border)",
 };
 
-// Shared glass card base
+// Shared card base — no backdrop-filter: this renders 3-up in a grid, and
+// blur on repeated small tiles is decorative cost without real elevation
+// payoff (see impeccable/DESIGN.md:287, redesign-skill/SKILL.md:93). Blur is
+// reserved for the single expanded panel below, which is a genuine overlay.
 const glassCard: React.CSSProperties = {
-  backdropFilter: "blur(24px)",
-  WebkitBackdropFilter: "blur(24px)",
   transition: "border-color 200ms ease, box-shadow 200ms ease, background 200ms ease",
 };
 

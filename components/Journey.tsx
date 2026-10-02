@@ -32,9 +32,10 @@ function playChime(type: "warm" | "cold") {
   } catch { /* silently ignore if audio context unavailable */ }
 }
 
+// No backdrop-filter — 5 of these render simultaneously, and blur on
+// repeated small tiles is decorative cost without real elevation payoff
+// (see impeccable/DESIGN.md:287, redesign-skill/SKILL.md:93).
 const glassCard: React.CSSProperties = {
-  backdropFilter: "blur(20px)",
-  WebkitBackdropFilter: "blur(20px)",
   transition: "box-shadow 200ms ease, border-color 200ms ease, background 200ms ease",
 };
 
