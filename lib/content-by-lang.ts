@@ -27,21 +27,9 @@ export async function loadContent(lang: Lang): Promise<LangContent> {
       const m = await import("./content-es");
       return { topics: m.TOPICS_ES, riddles: m.RIDDLES_ES, quizEasy: m.QUIZ_ES.easy, quizMedium: m.QUIZ_ES.medium, quizHard: m.QUIZ_ES.hard };
     }
-    case "fr": {
-      const m = await import("./content-fr");
-      return { topics: m.TOPICS_FR, riddles: m.RIDDLES_FR, quizEasy: m.QUIZ_FR.easy, quizMedium: m.QUIZ_FR.medium, quizHard: m.QUIZ_FR.hard };
-    }
-    case "ar": {
-      const m = await import("./content-ar");
-      return { topics: m.TOPICS_AR, riddles: m.RIDDLES_AR, quizEasy: m.QUIZ_AR.easy, quizMedium: m.QUIZ_AR.medium, quizHard: m.QUIZ_AR.hard };
-    }
-    case "ru": {
-      const m = await import("./content-ru");
-      return { topics: m.TOPICS_RU, riddles: m.RIDDLES_RU, quizEasy: m.QUIZ_EASY_RU, quizMedium: m.QUIZ_MEDIUM_RU, quizHard: m.QUIZ_HARD_RU };
-    }
-    case "zh": {
-      const m = await import("./content-zh");
-      return { topics: m.TOPICS_ZH, riddles: m.RIDDLES_ZH, quizEasy: m.QUIZ_EASY_ZH, quizMedium: m.QUIZ_MEDIUM_ZH, quizHard: m.QUIZ_HARD_ZH };
+    case "ur": {
+      const m = await import("./content-ur");
+      return { topics: m.TOPICS_UR, riddles: m.RIDDLES_UR, quizEasy: m.QUIZ_UR.easy, quizMedium: m.QUIZ_UR.medium, quizHard: m.QUIZ_UR.hard };
     }
     default:
       return EN_CONTENT;

@@ -87,7 +87,7 @@ export default function LuxProPage() {
   function handleSetLang(l: Lang) {
     setLang(l);
     radio.stop();
-    const labels: Record<Lang, string> = { en: "English", es: "Español", fr: "Français", ar: "العربية", ru: "Русский", zh: "中文" };
+    const labels: Record<Lang, string> = { en: "English", es: "Español", ur: "اردو" };
     toast(labels[l]);
   }
 
@@ -104,6 +104,7 @@ export default function LuxProPage() {
   return (
     <div
       className={`flex flex-col h-screen overflow-hidden relative ${isRTL ? "dir-rtl" : ""}`}
+      data-lang={lang}
       style={{ background: "var(--lp-bg)" }}
     >
       {/* Header */}
@@ -163,7 +164,7 @@ export default function LuxProPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.12 }}
         >
-          <MiddleSplit t={t} onSpeak={speak} content={content} />
+          <Journey t={t} onSpeak={speak} />
         </motion.div>
 
         <motion.div
@@ -171,7 +172,7 @@ export default function LuxProPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.18 }}
         >
-          <Journey t={t} onSpeak={speak} />
+          <ComfortItems t={t} onSpeak={speak} />
         </motion.div>
 
         <motion.div
@@ -179,7 +180,7 @@ export default function LuxProPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.24 }}
         >
-          <ComfortItems t={t} onSpeak={speak} />
+          <MiddleSplit t={t} onSpeak={speak} content={content} />
         </motion.div>
       </main>
 

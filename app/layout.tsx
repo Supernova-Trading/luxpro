@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Cormorant_Garamond } from "next/font/google";
+import { Inter, Cormorant_Garamond, Noto_Nastaliq_Urdu } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
@@ -13,6 +13,15 @@ const cormorant = Cormorant_Garamond({
   weight: ["400", "600", "700"],
   style: ["normal", "italic"],
   variable: "--font-cormorant",
+  display: "swap",
+});
+
+// Cormorant Garamond has no Arabic-script glyphs — Urdu content renders with
+// this instead, switched in via [data-lang="ur"] in globals.css.
+const notoNastaliq = Noto_Nastaliq_Urdu({
+  subsets: ["arabic"],
+  weight: ["400", "700"],
+  variable: "--font-nastaliq",
   display: "swap",
 });
 
@@ -31,7 +40,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${cormorant.variable}`}>
+    <html lang="en" className={`${inter.variable} ${cormorant.variable} ${notoNastaliq.variable}`}>
       <body className="antialiased">{children}</body>
     </html>
   );

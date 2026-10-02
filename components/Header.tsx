@@ -12,9 +12,9 @@ interface Props {
   onOpenSettings: () => void;
 }
 
-const LANGS: Lang[] = ["en", "es", "fr", "ar", "ru", "zh"];
+const LANGS: Lang[] = ["en", "es", "ur"];
 const LANG_CODES: Record<Lang, string> = {
-  en: "EN", es: "ES", fr: "FR", ar: "AR", ru: "RU", zh: "中文",
+  en: "EN", es: "ES", ur: "اردو",
 };
 
 function etaLabel(seconds: number): string {
@@ -162,37 +162,33 @@ export default function Header({ lang, t, onSetLang, onOpenSettings }: Props) {
           </button>
         </div>
 
-        {/* Language buttons — 2 rows of 3 */}
-        <div className="flex flex-col gap-1 items-end w-full">
-          {[LANGS.slice(0, 3), LANGS.slice(3)].map((row, ri) => (
-            <div key={ri} className="flex gap-1 justify-end">
-              {row.map((l) => (
-                <button
-                  key={l}
-                  onClick={() => onSetLang(l)}
-                  className="flex items-center gap-1 rounded-lg px-2 py-1 text-[10px] font-bold transition-all"
-                  style={{
-                    lineHeight: 1,
-                    border: l === lang
-                      ? "1px solid rgba(200,168,75,0.70)"
-                      : "1px solid var(--lp-overlay-border)",
-                    background: l === lang
-                      ? "rgba(200,168,75,0.18)"
-                      : "var(--lp-overlay-btn)",
-                    color: l === lang ? "var(--lp-gold-text)" : "var(--lp-text-sub)",
-                    boxShadow: l === lang ? "var(--glow-subtle)" : "none",
-                    transition: "all 200ms ease",
-                  }}
-                >
-                  <img
-                    src={LANG_FLAGS[l]}
-                    alt={l}
-                    className="w-[22px] h-[15px] rounded-[3px] shadow-sm block"
-                  />
-                  <span>{LANG_CODES[l]}</span>
-                </button>
-              ))}
-            </div>
+        {/* Language buttons — single row of 3 */}
+        <div className="flex gap-1 justify-end w-full">
+          {LANGS.map((l) => (
+            <button
+              key={l}
+              onClick={() => onSetLang(l)}
+              className="flex items-center gap-1 rounded-lg px-2 py-1 text-[10px] font-bold transition-all"
+              style={{
+                lineHeight: 1,
+                border: l === lang
+                  ? "1px solid rgba(200,168,75,0.70)"
+                  : "1px solid var(--lp-overlay-border)",
+                background: l === lang
+                  ? "rgba(200,168,75,0.18)"
+                  : "var(--lp-overlay-btn)",
+                color: l === lang ? "var(--lp-gold-text)" : "var(--lp-text-sub)",
+                boxShadow: l === lang ? "var(--glow-subtle)" : "none",
+                transition: "all 200ms ease",
+              }}
+            >
+              <img
+                src={LANG_FLAGS[l]}
+                alt={l}
+                className="w-[22px] h-[15px] rounded-[3px] shadow-sm block"
+              />
+              <span>{LANG_CODES[l]}</span>
+            </button>
           ))}
         </div>
       </div>

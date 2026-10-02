@@ -151,6 +151,17 @@
   /* Hide scrollbars but allow scrolling */
   ::-webkit-scrollbar { display: none; }
   * { scrollbar-width: none; }
+
+  /* Urdu (Nastaliq) — Inter/Cormorant have no Arabic-script glyphs, and
+     Nastaliq's diagonal stacking needs roughly double the line-height of
+     Latin text or letters overlap. */
+  [data-lang="ur"] {
+    font-family: var(--font-nastaliq), "Noto Naskh Arabic", serif;
+    line-height: 2;
+  }
+  [data-lang="ur"] .font-cormorant {
+    font-family: var(--font-nastaliq), "Noto Naskh Arabic", serif;
+  }
 }
 
 /* ─── Utility classes ──────────────────────────────────────────────────────── */

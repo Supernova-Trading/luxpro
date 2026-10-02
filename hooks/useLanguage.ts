@@ -22,7 +22,7 @@ export function useLanguage() {
 
   const t: Translation = T[lang];
   const radios: RadioStation[] = RADIOS_BY_LANG[lang] ?? RADIOS_BY_LANG.en;
-  const isRTL = lang === "ar";
+  const isRTL = lang === "ur";
 
   const setLang = useCallback((next: Lang) => {
     setLangState(next);
