@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import SectionHeader from "./SectionHeader";
+import { Icon, type IconName } from "./Icon";
 import type { Translation } from "@/lib/translations";
 import type { RadioStation } from "@/lib/radios";
 import type { Playlist } from "@/lib/playlists";
@@ -218,7 +219,7 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
             boxShadow: "none",
           }}
         >
-          <div className="text-[26px] leading-none">📱</div>
+          <Icon name="bluetooth" size={26} style={{ color: "var(--text-primary)" }} />
           <div
             className="text-[13px] tracking-[2px] uppercase font-bold"
             style={{ color: "var(--text-primary)" }}
@@ -240,7 +241,7 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
             boxShadow: open === "radio" ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
           }}
         >
-          <div className="text-[26px] leading-none">📻</div>
+          <Icon name="radio" size={26} style={{ color: open === "radio" ? "var(--lp-gold)" : "var(--text-primary)" }} />
           <div
             className="text-[13px] tracking-[2px] uppercase font-bold"
             style={{ color: open === "radio" ? "var(--lp-gold)" : "var(--text-primary)" }}
@@ -270,7 +271,7 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
             boxShadow: open === "playlist" ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
           }}
         >
-          <div className="text-[26px] leading-none">🎧</div>
+          <Icon name="headphones" size={26} style={{ color: open === "playlist" ? "var(--lp-gold)" : "var(--text-primary)" }} />
           <div
             className="text-[13px] tracking-[2px] uppercase font-bold"
             style={{ color: open === "playlist" ? "var(--lp-gold)" : "var(--text-primary)" }}
@@ -303,7 +304,7 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
           >
             {/* Panel bar */}
             <div className="flex items-center gap-3 px-5 py-3.5" style={panelHeaderStyle}>
-              <span className="text-[22px]">📻</span>
+              <Icon name="radio" size={22} style={{ color: "var(--lp-gold)" }} />
               <div className="flex-1 ml-2">
                 <div className="text-[9px] tracking-[2.5px] text-muted uppercase font-semibold">{t.nowPlaying}</div>
                 <div className="text-[14px] font-bold text-primary tracking-[1px] mt-0.5">
@@ -392,11 +393,11 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
                   </div>
                 </div>
                 <div className="flex items-center justify-center gap-3">
-                  {[
-                    { fn: radio.prev,       size: 40, icon: "⏮" },
-                    { fn: radio.togglePlay, size: 52, icon: radio.playing ? "⏸" : "▶" },
-                    { fn: radio.next,       size: 40, icon: "⏭" },
-                  ].map(({ fn, size, icon }, i) => (
+                  {([
+                    { fn: radio.prev,       size: 40, icon: "skip-back" },
+                    { fn: radio.togglePlay, size: 52, icon: radio.playing ? "pause" : "play" },
+                    { fn: radio.next,       size: 40, icon: "skip-forward" },
+                  ] as { fn: () => void; size: number; icon: IconName }[]).map(({ fn, size, icon }, i) => (
                     <motion.button
                       key={i}
                       whileTap={{ scale: 0.92 }}
@@ -405,13 +406,12 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
                       style={{
                         width: size,
                         height: size,
-                        fontSize: size > 44 ? "18px" : "14px",
                         background: "var(--lp-surface-mid)",
                         border: "1px solid var(--lp-border)",
                         transition: "box-shadow 200ms ease",
                       }}
                     >
-                      {icon}
+                      <Icon name={icon} size={size > 44 ? 20 : 16} />
                     </motion.button>
                   ))}
                 </div>
@@ -447,7 +447,11 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
             style={glassPanelStyle}
           >
             <div className="flex items-center gap-3 px-5 py-3.5" style={panelHeaderStyle}>
-              <span className="text-[22px]">{activePL >= 0 ? PLAYLISTS[activePL].i : "🎵"}</span>
+              {activePL >= 0 ? (
+                <span className="text-[22px]">{PLAYLISTS[activePL].i}</span>
+              ) : (
+                <Icon name="music-note" size={22} style={{ color: "var(--lp-gold)" }} />
+              )}
               <div className="flex-1 ml-2">
                 <div className="text-[9px] tracking-[2.5px] text-muted uppercase font-semibold">{t.nowPlaying}</div>
                 <div className="text-[14px] font-bold text-primary tracking-[1px] mt-0.5">
@@ -525,11 +529,11 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
                   </div>
                 )}
                 <div className="flex items-center justify-center gap-3">
-                  {[
-                    { fn: plPrev,   size: 40, icon: "⏮" },
-                    { fn: plToggle, size: 52, icon: plPlaying ? "⏸" : "▶" },
-                    { fn: plNext,   size: 40, icon: "⏭" },
-                  ].map(({ fn, size, icon }, i) => (
+                  {([
+                    { fn: plPrev,   size: 40, icon: "skip-back" },
+                    { fn: plToggle, size: 52, icon: plPlaying ? "pause" : "play" },
+                    { fn: plNext,   size: 40, icon: "skip-forward" },
+                  ] as { fn: () => void; size: number; icon: IconName }[]).map(({ fn, size, icon }, i) => (
                     <motion.button
                       key={i}
                       whileTap={{ scale: 0.92 }}
@@ -538,13 +542,12 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
                       style={{
                         width: size,
                         height: size,
-                        fontSize: size > 44 ? "18px" : "14px",
                         background: "var(--lp-surface-mid)",
                         border: "1px solid var(--lp-border)",
                         transition: "box-shadow 200ms ease",
                       }}
                     >
-                      {icon}
+                      <Icon name={icon} size={size > 44 ? 20 : 16} />
                     </motion.button>
                   ))}
                 </div>

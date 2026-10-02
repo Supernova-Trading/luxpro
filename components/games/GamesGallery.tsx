@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { Translation } from "@/lib/translations";
+import { Icon, type IconName } from "../Icon";
 import TicTacToe from "./TicTacToe";
 import RockPaperScissors from "./RockPaperScissors";
 import MemoryMatch from "./MemoryMatch";
@@ -18,10 +19,10 @@ interface Props {
 export default function GamesGallery({ t }: Props) {
   const [selected, setSelected] = useState<GameId | null>(null);
 
-  const games: { id: GameId; icon: string; label: string }[] = [
-    { id: "tictactoe", icon: "⭕", label: t.ticTacToe },
-    { id: "rps",       icon: "✊", label: t.rockPaperScissors },
-    { id: "memory",    icon: "🧠", label: t.memoryMatch },
+  const games: { id: GameId; icon: IconName; label: string }[] = [
+    { id: "tictactoe", icon: "tic-tac-toe", label: t.ticTacToe },
+    { id: "rps",       icon: "hand",        label: t.rockPaperScissors },
+    { id: "memory",    icon: "grid",        label: t.memoryMatch },
   ];
 
   if (!selected) {
@@ -41,7 +42,7 @@ export default function GamesGallery({ t }: Props) {
               className="flex flex-col items-center gap-2 py-5 px-2 rounded-2xl text-center"
               style={{ background: "var(--lp-surface)", border: "1px solid var(--lp-border)" }}
             >
-              <div className="text-[32px]">{icon}</div>
+              <Icon name={icon} size={30} style={{ color: "var(--lp-gold)" }} />
               <div className="text-[12px] font-bold uppercase tracking-[1px]" style={{ color: "var(--text-primary)" }}>
                 {label}
               </div>

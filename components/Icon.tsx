@@ -2,52 +2,79 @@
 
 import type { SVGProps } from 'react';
 
-type IconName =
+export type IconName =
   | 'arrow-left'
   | 'arrow-up'
   | 'attach'
+  | 'bank'
+  | 'bluetooth'
+  | 'candy'
+  | 'car'
+  | 'cash'
   | 'check'
   | 'chevron-down'
   | 'chevron-left'
   | 'chevron-right'
   | 'close'
+  | 'cookie'
   | 'copy'
   | 'comment'
+  | 'dice'
   | 'download'
   | 'draw'
+  | 'droplet'
   | 'edit'
   | 'eye'
   | 'file'
   | 'file-code'
+  | 'flame'
   | 'folder'
+  | 'gamepad'
   | 'grid'
+  | 'hand'
+  | 'headphones'
+  | 'help-circle'
   | 'history'
   | 'image'
   | 'import'
   | 'kanban'
   | 'languages'
+  | 'lightbulb'
   | 'link'
+  | 'map-pin'
   | 'mic'
   | 'minus'
   | 'moon'
+  | 'music-note'
+  | 'pause'
   | 'pencil'
   | 'phone'
+  | 'plug'
   | 'plus'
   | 'play'
   | 'present'
+  | 'radio'
   | 'refresh'
   | 'reload'
+  | 'road'
   | 'search'
   | 'send'
   | 'settings'
   | 'share'
+  | 'skip-back'
+  | 'skip-forward'
   | 'sliders'
+  | 'smile'
+  | 'snowflake'
+  | 'tic-tac-toe'
   | 'spinner'
   | 'sparkles'
   | 'stop'
   | 'sun'
+  | 'trash'
   | 'tweaks'
   | 'upload'
+  | 'zap'
   | 'zoom-in'
   | 'zoom-out';
 
@@ -272,6 +299,13 @@ export function Icon({ name, size = 14, strokeWidth = 1.6, ...rest }: Props) {
           <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z" />
         </svg>
       );
+    case 'pause':
+      return (
+        <svg {...common}>
+          <rect x="6" y="4" width="4" height="16" rx="1" />
+          <rect x="14" y="4" width="4" height="16" rx="1" />
+        </svg>
+      );
     case 'phone':
       return (
         <svg {...common}>
@@ -421,6 +455,223 @@ export function Icon({ name, size = 14, strokeWidth = 1.6, ...rest }: Props) {
           <circle cx="11" cy="11" r="7" />
           <path d="M8 11h6" />
           <path d="m21 21-4.3-4.3" />
+        </svg>
+      );
+    // ── Passenger-dashboard icons (replacing emoji chrome) ──────────────────
+    case 'bank':
+      return (
+        <svg {...common}>
+          <path d="M3 21h18" />
+          <path d="M5 21V10" />
+          <path d="M9 21V10" />
+          <path d="M15 21V10" />
+          <path d="M19 21V10" />
+          <path d="M2 10 12 3l10 7" />
+        </svg>
+      );
+    case 'bluetooth':
+      return (
+        <svg {...common}>
+          <path d="M6.5 6.5 17.5 17.5 12 23 12 1 17.5 6.5 6.5 17.5" />
+        </svg>
+      );
+    case 'candy':
+      return (
+        <svg {...common}>
+          <path d="M12 12 4 7v10z" />
+          <path d="M12 12 20 7v10z" />
+        </svg>
+      );
+    case 'car':
+      return (
+        <svg {...common}>
+          <path d="M5 11 7 7h10l2 4" />
+          <rect x="3" y="11" width="18" height="6" rx="2" />
+          <circle cx="7.5" cy="17.5" r="1.3" />
+          <circle cx="16.5" cy="17.5" r="1.3" />
+        </svg>
+      );
+    case 'cash':
+      return (
+        <svg {...common}>
+          <rect x="2" y="6" width="20" height="12" rx="2" />
+          <circle cx="12" cy="12" r="3" />
+          <path d="M6 12h.01" />
+          <path d="M18 12h.01" />
+        </svg>
+      );
+    case 'cookie':
+      return (
+        <svg {...common}>
+          <circle cx="12" cy="12" r="9" />
+          <circle cx="9" cy="10" r="0.8" fill="currentColor" stroke="none" />
+          <circle cx="14.5" cy="9" r="0.8" fill="currentColor" stroke="none" />
+          <circle cx="15" cy="14.5" r="0.8" fill="currentColor" stroke="none" />
+          <circle cx="9.5" cy="15" r="0.8" fill="currentColor" stroke="none" />
+        </svg>
+      );
+    case 'dice':
+      return (
+        <svg {...common}>
+          <rect x="3" y="3" width="18" height="18" rx="3" />
+          <circle cx="8" cy="8" r="0.8" fill="currentColor" stroke="none" />
+          <circle cx="16" cy="8" r="0.8" fill="currentColor" stroke="none" />
+          <circle cx="12" cy="12" r="0.8" fill="currentColor" stroke="none" />
+          <circle cx="8" cy="16" r="0.8" fill="currentColor" stroke="none" />
+          <circle cx="16" cy="16" r="0.8" fill="currentColor" stroke="none" />
+        </svg>
+      );
+    case 'droplet':
+      return (
+        <svg {...common}>
+          <path d="M12 2.7s-5 5.6-5 9.5a5 5 0 0 0 10 0c0-3.9-5-9.5-5-9.5z" />
+        </svg>
+      );
+    case 'flame':
+      return (
+        <svg {...common}>
+          <path d="M12 2c1.8 3.5-.8 4.8-.8 7.2a2.8 2.8 0 1 0 5.6 0c1.4 1.3 2.2 3 2.2 5a7 7 0 1 1-14 0c0-4.5 3-6.5 7-12.2z" />
+        </svg>
+      );
+    case 'gamepad':
+      return (
+        <svg {...common}>
+          <rect x="2" y="7" width="20" height="10" rx="5" />
+          <path d="M7 10v4" />
+          <path d="M5 12h4" />
+          <circle cx="15" cy="10.5" r="0.9" fill="currentColor" stroke="none" />
+          <circle cx="18" cy="13.5" r="0.9" fill="currentColor" stroke="none" />
+        </svg>
+      );
+    case 'hand':
+      return (
+        <svg {...common}>
+          <path d="M8 13V5a1.5 1.5 0 0 1 3 0v6" />
+          <path d="M11 11V3.5a1.5 1.5 0 0 1 3 0V11" />
+          <path d="M14 10.5V4.5a1.5 1.5 0 0 1 3 0V13" />
+          <path d="M8 12.5 6.5 11a1.5 1.5 0 0 0-2.3 1.9L7 18a6 6 0 0 0 5.5 3.5h1A6.5 6.5 0 0 0 20 15v-2.5a1.5 1.5 0 0 0-3 0" />
+        </svg>
+      );
+    case 'headphones':
+      return (
+        <svg {...common}>
+          <path d="M3 18v-6a9 9 0 0 1 18 0v6" />
+          <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z" />
+          <path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z" />
+        </svg>
+      );
+    case 'help-circle':
+      return (
+        <svg {...common}>
+          <circle cx="12" cy="12" r="10" />
+          <path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.5-3 4.5" />
+          <path d="M12 17h.01" />
+        </svg>
+      );
+    case 'lightbulb':
+      return (
+        <svg {...common}>
+          <path d="M9 18h6" />
+          <path d="M10 22h4" />
+          <path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.3h6c0-1 .4-1.8 1-2.3A7 7 0 0 0 12 2z" />
+        </svg>
+      );
+    case 'map-pin':
+      return (
+        <svg {...common}>
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+          <circle cx="12" cy="10" r="3" />
+        </svg>
+      );
+    case 'music-note':
+      return (
+        <svg {...common}>
+          <path d="M9 18V5l12-2v13" />
+          <circle cx="6" cy="18" r="3" />
+          <circle cx="18" cy="16" r="3" />
+        </svg>
+      );
+    case 'plug':
+      return (
+        <svg {...common}>
+          <path d="M9 2v4" />
+          <path d="M15 2v4" />
+          <path d="M7 8h10l-.5 6a4.5 4.5 0 0 1-9 0z" />
+          <path d="M12 18v4" />
+        </svg>
+      );
+    case 'radio':
+      return (
+        <svg {...common}>
+          <circle cx="12" cy="12" r="2" />
+          <path d="M16.2 7.8a6 6 0 0 1 0 8.4" />
+          <path d="M7.8 7.8a6 6 0 0 0 0 8.4" />
+          <path d="M19.1 4.9a10 10 0 0 1 0 14.2" />
+          <path d="M4.9 4.9a10 10 0 0 0 0 14.2" />
+        </svg>
+      );
+    case 'road':
+      return (
+        <svg {...common}>
+          <path d="M9 20 10.5 4h3L15 20" />
+          <path d="M12 7v2.5" />
+          <path d="M12 13v2.5" />
+        </svg>
+      );
+    case 'skip-back':
+      return (
+        <svg {...common}>
+          <path d="M19 20 9 12l10-8z" />
+          <path d="M5 19V5" />
+        </svg>
+      );
+    case 'skip-forward':
+      return (
+        <svg {...common}>
+          <path d="M5 4 15 12 5 20z" />
+          <path d="M19 5v14" />
+        </svg>
+      );
+    case 'smile':
+      return (
+        <svg {...common}>
+          <circle cx="12" cy="12" r="10" />
+          <path d="M8 14s1.5 2 4 2 4-2 4-2" />
+          <path d="M9 9h.01" />
+          <path d="M15 9h.01" />
+        </svg>
+      );
+    case 'snowflake':
+      return (
+        <svg {...common}>
+          <path d="M12 2v20" />
+          <path d="M4.2 7l15.6 10" />
+          <path d="M19.8 7 4.2 17" />
+        </svg>
+      );
+    case 'tic-tac-toe':
+      return (
+        <svg {...common}>
+          <path d="M9 3v18" />
+          <path d="M15 3v18" />
+          <path d="M3 9h18" />
+          <path d="M3 15h18" />
+        </svg>
+      );
+    case 'trash':
+      return (
+        <svg {...common}>
+          <path d="M3 6h18" />
+          <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+          <path d="m19 6-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+          <path d="M10 11v6" />
+          <path d="M14 11v6" />
+        </svg>
+      );
+    case 'zap':
+      return (
+        <svg {...common}>
+          <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z" />
         </svg>
       );
     default:

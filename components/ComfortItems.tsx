@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import SectionHeader from "./SectionHeader";
+import { Icon, type IconName } from "./Icon";
 import type { Translation } from "@/lib/translations";
 
 interface Props {
@@ -11,11 +12,11 @@ interface Props {
 }
 
 export default function ComfortItems({ t, onSpeak }: Props) {
-  const items = [
-    { icon: "🔌", labelKey: "charger"       as const, msg: "Amish, can I use the phone charger please" },
-    { icon: "🍱", labelKey: "specialSnacks" as const, msg: "Amish, can I have some special snacks please" },
-    { icon: "🧼", labelKey: "wipes"         as const, msg: "Amish, can I have some wet wipes please" },
-    { icon: "🍬", labelKey: "mints"         as const, msg: "Amish, can I have some sweets and mints please" },
+  const items: { icon: IconName; labelKey: "charger" | "specialSnacks" | "wipes" | "mints"; msg: string }[] = [
+    { icon: "plug",   labelKey: "charger",       msg: "Amish, can I use the phone charger please" },
+    { icon: "cookie", labelKey: "specialSnacks", msg: "Amish, can I have some special snacks please" },
+    { icon: "droplet", labelKey: "wipes",        msg: "Amish, can I have some wet wipes please" },
+    { icon: "candy",  labelKey: "mints",          msg: "Amish, can I have some sweets and mints please" },
   ];
 
   const [active, setActive] = useState<Record<number, boolean>>({});
@@ -64,7 +65,7 @@ export default function ComfortItems({ t, onSpeak }: Props) {
                 boxShadow: isActive ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
               }}
             >
-              <div className="text-[26px] leading-none">{icon}</div>
+              <Icon name={icon} size={26} style={{ color: isActive ? "var(--lp-gold)" : "var(--text-primary)" }} />
               <div
                 className="text-[12px] tracking-[2px] uppercase font-bold text-center"
                 style={{ color: isActive ? "var(--lp-gold)" : "var(--text-primary)" }}
@@ -101,7 +102,7 @@ export default function ComfortItems({ t, onSpeak }: Props) {
             boxShadow: fastRoute ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
           }}
         >
-          <div className="text-[24px] leading-none">⚡</div>
+          <Icon name="zap" size={24} style={{ color: fastRoute ? "var(--lp-gold)" : "var(--text-primary)" }} />
           <div
             className="text-[12px] tracking-[1.5px] font-bold uppercase"
             style={{ color: fastRoute ? "var(--lp-gold)" : "var(--text-primary)" }}
@@ -121,7 +122,7 @@ export default function ComfortItems({ t, onSpeak }: Props) {
             border: "1px solid var(--lp-border)",
           }}
         >
-          <div className="text-[24px] leading-none">📍</div>
+          <Icon name="map-pin" size={24} style={{ color: "var(--text-primary)" }} />
           <div className="text-[12px] tracking-[1.5px] font-bold uppercase" style={{ color: "var(--text-primary)" }}>
             {t.changeDest}
           </div>
@@ -138,7 +139,7 @@ export default function ComfortItems({ t, onSpeak }: Props) {
             border: "1px solid var(--lp-border)",
           }}
         >
-          <div className="text-[24px] leading-none">🛣️</div>
+          <Icon name="road" size={24} style={{ color: "var(--text-primary)" }} />
           <div className="text-[12px] tracking-[1.5px] font-bold uppercase" style={{ color: "var(--text-primary)" }}>
             {t.motorway}
           </div>

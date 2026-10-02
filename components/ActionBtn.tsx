@@ -10,7 +10,7 @@ export default function ActionBtn({ accent, onClick, children }: { accent?: bool
     <motion.button
       whileTap={{ scale: 0.95, transition: { duration: 0.08 } }}
       onClick={onClick}
-      className="py-3.5 px-2 rounded-xl text-[11px] tracking-[1.5px] uppercase font-bold cursor-pointer"
+      className="py-3.5 px-2 rounded-xl text-[11px] tracking-[1.5px] uppercase font-bold cursor-pointer flex items-center justify-center gap-1.5"
       style={{
         background: accent ? "rgba(200,168,75,0.16)" : "var(--lp-surface-mid)",
         border: accent ? "1px solid rgba(200,168,75,0.55)" : "1px solid var(--lp-border)",

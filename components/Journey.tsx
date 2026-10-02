@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import SectionHeader from "./SectionHeader";
+import { Icon } from "./Icon";
 import type { Translation } from "@/lib/translations";
 
 interface Props {
@@ -84,7 +85,7 @@ export default function Journey({ t, onSpeak }: Props) {
             boxShadow: temp === "warm" ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
           }}
         >
-          <div className="text-[24px] leading-none">🔥</div>
+          <Icon name="flame" size={24} style={{ color: temp === "warm" ? "var(--lp-gold)" : "var(--text-primary)" }} />
           <div
             className="text-[12px] tracking-[1.5px] font-bold uppercase"
             style={{ color: temp === "warm" ? "var(--lp-gold)" : "var(--text-primary)" }}
@@ -109,7 +110,7 @@ export default function Journey({ t, onSpeak }: Props) {
             boxShadow: temp === "cold" ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
           }}
         >
-          <div className="text-[24px] leading-none">🧊</div>
+          <Icon name="snowflake" size={24} style={{ color: temp === "cold" ? "var(--lp-gold)" : "var(--text-primary)" }} />
           <div
             className="text-[12px] tracking-[1.5px] font-bold uppercase"
             style={{ color: temp === "cold" ? "var(--lp-gold)" : "var(--text-primary)" }}

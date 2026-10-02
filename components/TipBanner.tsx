@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { Icon } from "./Icon";
 import type { Translation } from "@/lib/translations";
 
 interface Props {
@@ -91,9 +92,9 @@ export default function TipBanner({ t, onShowQR, onSpeak }: Props) {
       {/* Payment options — Cash · Uber · Bank Transfer (QR) */}
       <div className="grid grid-cols-3 gap-2 mt-2.5">
         {[
-          { id: "cash", icon: "💵", label: t.payCash, onTap: () => onSpeak("Thank you. Please hand your cash tip to Amish at drop-off.") },
-          { id: "uber", icon: "🚗", label: t.payUber, onTap: handleUberTap },
-          { id: "bank", icon: "🏦", label: t.payBank, onTap: onShowQR },
+          { id: "cash", icon: "cash" as const, label: t.payCash, onTap: () => onSpeak("Thank you. Please hand your cash tip to Amish at drop-off.") },
+          { id: "uber", icon: "car" as const, label: t.payUber, onTap: handleUberTap },
+          { id: "bank", icon: "bank" as const, label: t.payBank, onTap: onShowQR },
         ].map(({ id, icon, label, onTap }) => (
           <motion.button
             key={id}
@@ -108,7 +109,7 @@ export default function TipBanner({ t, onShowQR, onSpeak }: Props) {
               color: "var(--lp-gold-text)",
             }}
           >
-            <span className="text-[16px] leading-none">{icon}</span>
+            <Icon name={icon} size={16} />
             {label}
           </motion.button>
         ))}

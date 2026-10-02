@@ -7,6 +7,7 @@ import type { Topic, Riddle, QuizItem } from "@/lib/content";
 import type { LangContent } from "@/lib/content-by-lang";
 import GamesGallery from "./games/GamesGallery";
 import ActionBtn from "./ActionBtn";
+import { Icon, type IconName } from "./Icon";
 
 const panelVariants = {
   hidden: { opacity: 0, height: 0, overflow: "hidden" },
@@ -127,10 +128,10 @@ export default function MiddleSplit({ t, onSpeak, content }: Props) {
     hard:   { bg: "rgba(248,113,113,0.14)", border: "rgba(248,113,113,0.55)" },
   };
 
-  const cards: { id: Exclude<Mode, null>; icon: string; label: string; sub: string }[] = [
-    { id: "games",  icon: "🕹️", label: t.games,    sub: t.gamesSub },
-    { id: "chat",   icon: "💬", label: t.openChat, sub: t.chatSub  },
-    { id: "trivia", icon: "🧠", label: t.playGame, sub: t.gameSub  },
+  const cards: { id: Exclude<Mode, null>; icon: IconName; label: string; sub: string }[] = [
+    { id: "games",  icon: "gamepad",  label: t.games,    sub: t.gamesSub },
+    { id: "chat",   icon: "comment",  label: t.openChat, sub: t.chatSub  },
+    { id: "trivia", icon: "lightbulb", label: t.playGame, sub: t.gameSub  },
   ];
 
   return (
@@ -154,7 +155,7 @@ export default function MiddleSplit({ t, onSpeak, content }: Props) {
                 transition: "border-color 200ms ease, background 200ms ease",
               }}
             >
-              <div className="text-[36px]">{icon}</div>
+              <Icon name={icon} size={32} style={{ color: active ? "var(--lp-gold)" : "var(--text-primary)" }} />
               <div
                 className="text-[15px] tracking-[2px] font-extrabold uppercase"
                 style={{ color: active ? "var(--lp-gold)" : "var(--text-primary)" }}
@@ -204,7 +205,11 @@ export default function MiddleSplit({ t, onSpeak, content }: Props) {
                 className="rounded-2xl p-6 text-center min-h-[130px] flex flex-col items-center justify-center mb-3.5"
                 style={{ background: "var(--lp-surface)", border: "1px solid var(--lp-border)" }}
               >
-                <div className="text-[38px] mb-2">{curTopic?.i ?? "🎲"}</div>
+                {curTopic ? (
+                  <div className="text-[38px] mb-2 leading-none">{curTopic.i}</div>
+                ) : (
+                  <Icon name="dice" size={38} style={{ color: "var(--text-muted)", marginBottom: 8 }} />
+                )}
                 <div className="text-[18px] font-semibold text-primary leading-relaxed">
                   {curTopic?.t ?? t.tapNext}
                 </div>
@@ -217,7 +222,7 @@ export default function MiddleSplit({ t, onSpeak, content }: Props) {
               <div className="grid grid-cols-3 gap-2">
                 <ActionBtn onClick={nextTopic}>▶ {t.nextTopic}</ActionBtn>
                 <ActionBtn onClick={redoTopic}>↻ {t.redo}</ActionBtn>
-                <ActionBtn accent onClick={() => playWithDriver("topic")}>🎮 {t.playDriver}</ActionBtn>
+                <ActionBtn accent onClick={() => playWithDriver("topic")}><Icon name="gamepad" size={14} /> {t.playDriver}</ActionBtn>
               </div>
             </div>
           </motion.div>
@@ -249,7 +254,10 @@ export default function MiddleSplit({ t, onSpeak, content }: Props) {
                       borderBottom: on ? "2px solid var(--lp-gold)" : "2px solid transparent",
                     }}
                   >
-                    {g === "quiz" ? `🧠 ${t.quizTab}` : `❓ ${t.riddlesTab}`}
+                    <span className="inline-flex items-center gap-1.5">
+                      <Icon name={g === "quiz" ? "lightbulb" : "help-circle"} size={15} />
+                      {g === "quiz" ? t.quizTab : t.riddlesTab}
+                    </span>
                   </button>
                 );
               })}
@@ -262,14 +270,15 @@ export default function MiddleSplit({ t, onSpeak, content }: Props) {
                     <button
                       key={l}
                       onClick={() => setLevel(l)}
-                      className="py-3 px-1.5 rounded-xl text-[12px] tracking-[1.5px] uppercase font-bold transition-all"
+                      className="py-3 px-1.5 rounded-xl text-[12px] tracking-[1.5px] uppercase font-bold transition-all flex items-center justify-center gap-1.5"
                       style={{
                         background: quizLevel === l ? levelStyles[l].bg : "var(--lp-surface-mid)",
                         border: quizLevel === l ? `1px solid ${levelStyles[l].border}` : "1px solid var(--lp-border)",
                         color: "var(--text-primary)",
                       }}
                     >
-                      {l === "easy" ? "😄" : l === "medium" ? "🧠" : "🔥"} {t[l]}
+                      <Icon name={l === "easy" ? "smile" : l === "medium" ? "lightbulb" : "flame"} size={14} />
+                      {t[l]}
                     </button>
                   ))}
                 </div>
@@ -298,8 +307,8 @@ export default function MiddleSplit({ t, onSpeak, content }: Props) {
                 </AnimatePresence>
                 <div className="grid grid-cols-3 gap-2">
                   <ActionBtn onClick={nextQ}>▶ {t.nextQuestion}</ActionBtn>
-                  <ActionBtn accent onClick={() => setShowAns(true)}>✓ {t.showAnswer}</ActionBtn>
-                  <ActionBtn onClick={() => playWithDriver("quiz")}>🎮 {t.playDriver}</ActionBtn>
+                  <ActionBtn accent onClick={() => setShowAns(true)}><Icon name="check" size={14} /> {t.showAnswer}</ActionBtn>
+                  <ActionBtn onClick={() => playWithDriver("quiz")}><Icon name="gamepad" size={14} /> {t.playDriver}</ActionBtn>
                 </div>
               </div>
             ) : (
@@ -308,7 +317,11 @@ export default function MiddleSplit({ t, onSpeak, content }: Props) {
                   className="rounded-2xl px-5 py-5 text-center min-h-[130px] flex flex-col items-center justify-center mb-3.5"
                   style={{ background: "var(--lp-surface)", border: "1px solid var(--lp-border)" }}
                 >
-                  <div className="text-[38px] mb-2">{curRiddle?.i ?? "🧩"}</div>
+                  {curRiddle ? (
+                    <div className="text-[38px] mb-2 leading-none">{curRiddle.i}</div>
+                  ) : (
+                    <Icon name="help-circle" size={38} style={{ color: "var(--text-muted)", marginBottom: 8 }} />
+                  )}
                   <div className="text-[18px] font-semibold text-primary leading-relaxed">
                     {curRiddle?.q ?? t.tapNextRiddle}
                   </div>
@@ -327,8 +340,8 @@ export default function MiddleSplit({ t, onSpeak, content }: Props) {
                 </AnimatePresence>
                 <div className="grid grid-cols-3 gap-2">
                   <ActionBtn onClick={nextRiddle}>▶ {t.nextRiddle}</ActionBtn>
-                  <ActionBtn accent onClick={() => setShowRA(true)}>✓ {t.showAnswer}</ActionBtn>
-                  <ActionBtn onClick={() => playWithDriver("riddle")}>🎮 {t.playDriver}</ActionBtn>
+                  <ActionBtn accent onClick={() => setShowRA(true)}><Icon name="check" size={14} /> {t.showAnswer}</ActionBtn>
+                  <ActionBtn onClick={() => playWithDriver("riddle")}><Icon name="gamepad" size={14} /> {t.playDriver}</ActionBtn>
                 </div>
               </div>
             )}
