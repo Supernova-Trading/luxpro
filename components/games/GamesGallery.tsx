@@ -20,9 +20,9 @@ export default function GamesGallery({ t }: Props) {
   const [selected, setSelected] = useState<GameId | null>(null);
 
   const games: { id: GameId; icon: IconName; color: string; label: string }[] = [
-    { id: "tictactoe", icon: "tic-tac-toe", color: "#A78BFA", label: t.ticTacToe },
-    { id: "rps",       icon: "hand",        color: "#FB923C", label: t.rockPaperScissors },
-    { id: "memory",    icon: "grid",        color: "#22D3EE", label: t.memoryMatch },
+    { id: "tictactoe", icon: "tic-tac-toe", color: "var(--icon-violet)", label: t.ticTacToe },
+    { id: "rps",       icon: "hand",        color: "var(--icon-orange)", label: t.rockPaperScissors },
+    { id: "memory",    icon: "grid",        color: "var(--icon-cyan)", label: t.memoryMatch },
   ];
 
   if (!selected) {

@@ -92,9 +92,9 @@ export default function TipBanner({ t, onShowQR, onSpeak }: Props) {
       {/* Payment options — Cash · Uber · Bank Transfer (QR) */}
       <div className="grid grid-cols-3 gap-2 mt-2.5">
         {[
-          { id: "cash", icon: "cash" as const, color: "#4ADE80", label: t.payCash, onTap: () => onSpeak("Thank you. Please hand your cash tip to Amish at drop-off.") },
-          { id: "uber", icon: "car" as const, color: "#FB923C", label: t.payUber, onTap: handleUberTap },
-          { id: "bank", icon: "bank" as const, color: "#2DD4BF", label: t.payBank, onTap: onShowQR },
+          { id: "cash", icon: "cash" as const, color: "var(--accent-positive)", label: t.payCash, onTap: () => onSpeak("Thank you. Please hand your cash tip to Amish at drop-off.") },
+          { id: "uber", icon: "car" as const, color: "var(--icon-orange)", label: t.payUber, onTap: handleUberTap },
+          { id: "bank", icon: "bank" as const, color: "var(--icon-teal)", label: t.payBank, onTap: onShowQR },
         ].map(({ id, icon, color, label, onTap }) => (
           <motion.button
             key={id}

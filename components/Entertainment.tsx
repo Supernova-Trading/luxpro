@@ -219,7 +219,7 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
             boxShadow: "none",
           }}
         >
-          <Icon name="bluetooth" size={26} style={{ color: "#60A5FA" }} />
+          <Icon name="bluetooth" size={26} style={{ color: "var(--icon-blue)" }} />
           <div
             className="text-[13px] tracking-[2px] uppercase font-bold"
             style={{ color: "var(--text-primary)" }}
@@ -241,7 +241,7 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
             boxShadow: open === "radio" ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
           }}
         >
-          <Icon name="radio" size={26} style={{ color: open === "radio" ? "var(--lp-gold)" : "#C084FC" }} />
+          <Icon name="radio" size={26} style={{ color: open === "radio" ? "var(--lp-gold)" : "var(--icon-purple)" }} />
           <div
             className="text-[13px] tracking-[2px] uppercase font-bold"
             style={{ color: open === "radio" ? "var(--lp-gold)" : "var(--text-primary)" }}
@@ -271,7 +271,7 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
             boxShadow: open === "playlist" ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
           }}
         >
-          <Icon name="headphones" size={26} style={{ color: open === "playlist" ? "var(--lp-gold)" : "#F472B6" }} />
+          <Icon name="headphones" size={26} style={{ color: open === "playlist" ? "var(--lp-gold)" : "var(--icon-pink)" }} />
           <div
             className="text-[13px] tracking-[2px] uppercase font-bold"
             style={{ color: open === "playlist" ? "var(--lp-gold)" : "var(--text-primary)" }}
@@ -304,7 +304,7 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
           >
             {/* Panel bar */}
             <div className="flex items-center gap-3 px-5 py-3.5" style={panelHeaderStyle}>
-              <Icon name="radio" size={22} style={{ color: "#C084FC" }} />
+              <Icon name="radio" size={22} style={{ color: "var(--icon-purple)" }} />
               <div className="flex-1 ml-2">
                 <div className="text-[9px] tracking-[2.5px] text-muted uppercase font-semibold">{t.nowPlaying}</div>
                 <div className="text-[14px] font-bold text-primary tracking-[1px] mt-0.5">
@@ -450,7 +450,7 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
               {activePL >= 0 ? (
                 <span className="text-[22px]">{PLAYLISTS[activePL].i}</span>
               ) : (
-                <Icon name="music-note" size={22} style={{ color: "#F472B6" }} />
+                <Icon name="music-note" size={22} style={{ color: "var(--icon-pink)" }} />
               )}
               <div className="flex-1 ml-2">
                 <div className="text-[9px] tracking-[2.5px] text-muted uppercase font-semibold">{t.nowPlaying}</div>

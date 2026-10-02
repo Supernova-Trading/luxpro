@@ -129,9 +129,9 @@ export default function MiddleSplit({ t, onSpeak, content }: Props) {
   };
 
   const cards: { id: Exclude<Mode, null>; icon: IconName; color: string; label: string; sub: string }[] = [
-    { id: "games",  icon: "gamepad",   color: "#A78BFA", label: t.games,    sub: t.gamesSub },
-    { id: "chat",   icon: "comment",   color: "#22D3EE", label: t.openChat, sub: t.chatSub  },
-    { id: "trivia", icon: "lightbulb", color: "#FACC15", label: t.playGame, sub: t.gameSub  },
+    { id: "games",  icon: "gamepad",   color: "var(--icon-violet)", label: t.games,    sub: t.gamesSub },
+    { id: "chat",   icon: "comment",   color: "var(--icon-cyan)", label: t.openChat, sub: t.chatSub  },
+    { id: "trivia", icon: "lightbulb", color: "var(--icon-yellow)", label: t.playGame, sub: t.gameSub  },
   ];
 
   return (

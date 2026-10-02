@@ -13,10 +13,10 @@ interface Props {
 
 export default function ComfortItems({ t, onSpeak }: Props) {
   const items: { icon: IconName; color: string; labelKey: "charger" | "specialSnacks" | "wipes" | "mints"; msg: string }[] = [
-    { icon: "plug",    color: "#4ADE80", labelKey: "charger",       msg: "Amish, can I use the phone charger please" },
-    { icon: "cookie",  color: "#FB923C", labelKey: "specialSnacks", msg: "Amish, can I have some special snacks please" },
-    { icon: "droplet", color: "#38BDF8", labelKey: "wipes",         msg: "Amish, can I have some wet wipes please" },
-    { icon: "candy",   color: "#F472B6", labelKey: "mints",         msg: "Amish, can I have some sweets and mints please" },
+    { icon: "plug",    color: "var(--accent-positive)", labelKey: "charger",       msg: "Amish, can I use the phone charger please" },
+    { icon: "cookie",  color: "var(--icon-orange)", labelKey: "specialSnacks", msg: "Amish, can I have some special snacks please" },
+    { icon: "droplet", color: "var(--icon-sky)", labelKey: "wipes",         msg: "Amish, can I have some wet wipes please" },
+    { icon: "candy",   color: "var(--icon-pink)", labelKey: "mints",         msg: "Amish, can I have some sweets and mints please" },
   ];
 
   const [active, setActive] = useState<Record<number, boolean>>({});
@@ -110,7 +110,7 @@ export default function ComfortItems({ t, onSpeak }: Props) {
             boxShadow: fastRoute ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
           }}
         >
-          <Icon name="zap" size={24} style={{ color: fastRoute ? "var(--lp-gold)" : "#FACC15" }} />
+          <Icon name="zap" size={24} style={{ color: fastRoute ? "var(--lp-gold)" : "var(--icon-yellow)" }} />
           <div
             className="text-[12px] tracking-[1.5px] font-bold uppercase"
             style={{ color: fastRoute ? "var(--lp-gold)" : "var(--text-primary)" }}
@@ -131,7 +131,7 @@ export default function ComfortItems({ t, onSpeak }: Props) {
             boxShadow: justTapped === "dest" ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
           }}
         >
-          <Icon name="map-pin" size={24} style={{ color: justTapped === "dest" ? "var(--lp-gold)" : "#F87171" }} />
+          <Icon name="map-pin" size={24} style={{ color: justTapped === "dest" ? "var(--lp-gold)" : "var(--icon-red)" }} />
           <div className="text-[12px] tracking-[1.5px] font-bold uppercase" style={{ color: justTapped === "dest" ? "var(--lp-gold)" : "var(--text-primary)" }}>
             {t.changeDest}
           </div>
@@ -149,7 +149,7 @@ export default function ComfortItems({ t, onSpeak }: Props) {
             boxShadow: justTapped === "motorway" ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
           }}
         >
-          <Icon name="road" size={24} style={{ color: justTapped === "motorway" ? "var(--lp-gold)" : "#94A3B8" }} />
+          <Icon name="road" size={24} style={{ color: justTapped === "motorway" ? "var(--lp-gold)" : "var(--icon-gray)" }} />
           <div className="text-[12px] tracking-[1.5px] font-bold uppercase" style={{ color: justTapped === "motorway" ? "var(--lp-gold)" : "var(--text-primary)" }}>
             {t.motorway}
           </div>
