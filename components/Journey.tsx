@@ -82,13 +82,13 @@ export default function Journey({ t, onSpeak }: Props) {
             ...glassCard,
             border: "none",
             background: "var(--lp-warm-tint)",
-            boxShadow: temp === "warm" ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
+            boxShadow: temp === "warm" ? "inset 0 0 0 1.5px var(--active-ring)" : "none",
           }}
         >
-          <Icon name="flame" size={24} style={{ color: temp === "warm" ? "var(--lp-gold)" : "var(--icon-orange)" }} />
+          <Icon name="flame" size={24} style={{ color: temp === "warm" ? "var(--active-accent)" : "var(--icon-orange)" }} />
           <div
             className="text-[12px] tracking-[1.5px] font-bold uppercase"
-            style={{ color: temp === "warm" ? "var(--lp-gold)" : "var(--text-primary)" }}
+            style={{ color: temp === "warm" ? "var(--active-accent)" : "var(--text-primary)" }}
           >
             {t.warm}
           </div>
@@ -107,13 +107,13 @@ export default function Journey({ t, onSpeak }: Props) {
             ...glassCard,
             border: "none",
             background: "var(--lp-cold-tint)",
-            boxShadow: temp === "cold" ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
+            boxShadow: temp === "cold" ? "inset 0 0 0 1.5px var(--active-ring)" : "none",
           }}
         >
-          <Icon name="snowflake" size={24} style={{ color: temp === "cold" ? "var(--lp-gold)" : "var(--icon-sky)" }} />
+          <Icon name="snowflake" size={24} style={{ color: temp === "cold" ? "var(--active-accent)" : "var(--icon-sky)" }} />
           <div
             className="text-[12px] tracking-[1.5px] font-bold uppercase"
-            style={{ color: temp === "cold" ? "var(--lp-gold)" : "var(--text-primary)" }}
+            style={{ color: temp === "cold" ? "var(--active-accent)" : "var(--text-primary)" }}
           >
             {t.cold}
           </div>

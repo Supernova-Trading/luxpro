@@ -65,6 +65,31 @@
   --lp-navy2:       var(--prim-navy-700);
   --lp-blue2:       var(--prim-blue-400);
 
+  /* ── "This is selected/pressed" accent — theme-aware ──────────────────────
+     Dark mode: gold pulls away from the near-black surface. Light mode's
+     surface is already light, so gold doesn't carry the same punch — invert
+     to near-black instead, the same "pull away from the base" logic in the
+     opposite direction. Covers toggle/selection states only (radio station
+     picks, Warm/Cold choice, Comfort Items toggles, trigger tiles) — not
+     category-identity colours (difficulty levels) or static CTA emphasis
+     (ActionBtn's accent), which mean something else and shouldn't invert. */
+  --active-bg:        rgba(200, 168, 75, 0.10);
+  --active-bg-strong: rgba(200, 168, 75, 0.16);
+  --active-border:    rgba(200, 168, 75, 0.55);
+  --active-ring:      rgba(200, 168, 75, 0.70);
+  --active-text:      var(--lp-gold);
+  /* Solid (non-translucent) fill for pill-style selected buttons (theme/
+     voice-mode toggles) that were a full-opacity gold block, not a tint —
+     reusing --active-bg-strong there would weaken them in dark mode. */
+  --active-solid:     var(--lp-gold);
+  /* For icon/label colour where the tile's own background does NOT invert
+     (Warm/Cold keep their orange/blue tint when selected) — needs to stay
+     legible on a background that's still light in light mode, so it can't
+     use --active-text (white, meant for the solid dark fill the other
+     tiles get). Same accent value as --active-bg's light-mode solid fill,
+     reused here as a foreground colour instead. */
+  --active-accent:    var(--lp-gold);
+
   /* ── Semantic text tokens (open-design warm-editorial, hex→OKLCH) ─────────
      Contrast verified vs worst-case surface = --lp-surface-hi over bg2 (#353D49):
      primary 10.3:1 · secondary 6.2:1 · muted 4.7:1 · on-accent vs gold 8.3:1 */
@@ -361,6 +386,17 @@
      legible against a light, already-warm page background. ── */
   --lp-warm-tint: color-mix(in srgb, var(--prim-warm-500) 28%, transparent);
   --lp-cold-tint: color-mix(in srgb, var(--prim-cold-500) 28%, transparent);
+
+  /* ── "Selected" accent, inverted for light mode: near-black instead of
+     gold, so pressing a tile still reads as a clear, high-contrast pop
+     against the light surface instead of a faint amber tint. ── */
+  --active-bg:        oklch(0.22 0.015 75);
+  --active-bg-strong: oklch(0.16 0.015 75);
+  --active-border:    oklch(0.22 0.015 75);
+  --active-ring:      oklch(0.95 0.004 75 / 0.40);
+  --active-text:      oklch(0.98 0.002 75);
+  --active-accent:    oklch(0.22 0.015 75);
+  --active-solid:     oklch(0.22 0.015 75);
 
   /* ── Icon accent colours — darker/more saturated so they hold contrast
      against the light card surface (the dark-mode pastels wash out here). ── */

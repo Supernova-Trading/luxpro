@@ -236,15 +236,15 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
           className="relative cursor-pointer rounded-[18px] flex flex-col items-center gap-2 py-3 px-3"
           style={{
             ...glassCard,
-            background: open === "radio" ? "rgba(200,168,75,0.10)" : "var(--lp-surface)",
-            border: open === "radio" ? "1px solid rgba(200,168,75,0.55)" : "1px solid var(--lp-border)",
-            boxShadow: open === "radio" ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
+            background: open === "radio" ? "var(--active-bg)" : "var(--lp-surface)",
+            border: open === "radio" ? "1px solid var(--active-border)" : "1px solid var(--lp-border)",
+            boxShadow: open === "radio" ? "inset 0 0 0 1.5px var(--active-ring)" : "none",
           }}
         >
-          <Icon name="radio" size={26} style={{ color: open === "radio" ? "var(--lp-gold)" : "var(--icon-purple)" }} />
+          <Icon name="radio" size={26} style={{ color: open === "radio" ? "var(--active-text)" : "var(--icon-purple)" }} />
           <div
             className="text-[13px] tracking-[2px] uppercase font-bold"
-            style={{ color: open === "radio" ? "var(--lp-gold)" : "var(--text-primary)" }}
+            style={{ color: open === "radio" ? "var(--active-text)" : "var(--text-primary)" }}
           >
             {t.radio}
           </div>
@@ -266,15 +266,15 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
           className="relative cursor-pointer rounded-[18px] flex flex-col items-center gap-2 py-3 px-3"
           style={{
             ...glassCard,
-            background: open === "playlist" ? "rgba(200,168,75,0.10)" : "var(--lp-surface)",
-            border: open === "playlist" ? "1px solid rgba(200,168,75,0.55)" : "1px solid var(--lp-border)",
-            boxShadow: open === "playlist" ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
+            background: open === "playlist" ? "var(--active-bg)" : "var(--lp-surface)",
+            border: open === "playlist" ? "1px solid var(--active-border)" : "1px solid var(--lp-border)",
+            boxShadow: open === "playlist" ? "inset 0 0 0 1.5px var(--active-ring)" : "none",
           }}
         >
-          <Icon name="headphones" size={26} style={{ color: open === "playlist" ? "var(--lp-gold)" : "var(--icon-pink)" }} />
+          <Icon name="headphones" size={26} style={{ color: open === "playlist" ? "var(--active-text)" : "var(--icon-pink)" }} />
           <div
             className="text-[13px] tracking-[2px] uppercase font-bold"
-            style={{ color: open === "playlist" ? "var(--lp-gold)" : "var(--text-primary)" }}
+            style={{ color: open === "playlist" ? "var(--active-text)" : "var(--text-primary)" }}
           >
             {t.playlist}
           </div>
@@ -336,20 +336,20 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
                     className="relative flex flex-col items-center gap-1.5 rounded-xl px-2.5 py-3.5 cursor-pointer flex-none w-[110px]"
                     style={{
                       background: isCurrent
-                        ? "rgba(200,168,75,0.15)"
+                        ? "var(--active-bg-strong)"
                         : isBroken
                         ? "rgba(255,60,60,0.06)"
                         : station.f
                         ? "rgba(200,168,75,0.07)"
                         : "var(--lp-surface)",
                       border: isCurrent
-                        ? "1px solid rgba(200,168,75,0.60)"
+                        ? "1px solid var(--active-border)"
                         : isBroken
                         ? "1px solid rgba(255,60,60,0.35)"
                         : station.f
                         ? "1px solid rgba(200,168,75,0.30)"
                         : "1px solid var(--lp-border)",
-                      boxShadow: isCurrent ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : undefined,
+                      boxShadow: isCurrent ? "inset 0 0 0 1.5px var(--active-ring)" : undefined,
                       opacity: isBroken && !isCurrent ? 0.65 : 1,
                       transition: "all 200ms ease",
                     }}
@@ -357,7 +357,7 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
                     <span className="text-[24px]">{station.i}</span>
                     <span
                       className="text-[10px] font-bold uppercase text-center leading-tight"
-                      style={{ color: isCurrent ? "var(--lp-gold)" : isBroken ? "rgba(255,100,100,0.80)" : "var(--text-primary)" }}
+                      style={{ color: isCurrent ? "var(--active-text)" : isBroken ? "rgba(255,100,100,0.80)" : "var(--text-primary)" }}
                     >
                       {station.n}
                     </span>
@@ -478,18 +478,18 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
                   onClick={() => handleSelectPlaylist(pl, idx)}
                   className="flex flex-col items-center gap-1.5 rounded-xl px-2.5 py-3.5 cursor-pointer flex-none w-[110px]"
                   style={{
-                    background: activePL === idx ? "rgba(200,168,75,0.15)" : "var(--lp-surface)",
+                    background: activePL === idx ? "var(--active-bg-strong)" : "var(--lp-surface)",
                     border: activePL === idx
-                      ? "1px solid rgba(200,168,75,0.60)"
+                      ? "1px solid var(--active-border)"
                       : "1px solid var(--lp-border)",
-                    boxShadow: activePL === idx ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : undefined,
+                    boxShadow: activePL === idx ? "inset 0 0 0 1.5px var(--active-ring)" : undefined,
                     transition: "all 200ms ease",
                   }}
                 >
                   <span className="text-[24px]">{pl.i}</span>
                   <span
                     className="text-[10px] font-bold uppercase text-center leading-tight"
-                    style={{ color: activePL === idx ? "var(--lp-gold)" : "var(--text-primary)" }}
+                    style={{ color: activePL === idx ? "var(--active-text)" : "var(--text-primary)" }}
                   >
                     {pl.n}
                   </span>

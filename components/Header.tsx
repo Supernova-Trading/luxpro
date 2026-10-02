@@ -168,12 +168,12 @@ export default function Header({ lang, t, onSetLang, onOpenSettings }: Props) {
               style={{
                 lineHeight: 1,
                 border: l === lang
-                  ? "1px solid rgba(200,168,75,0.70)"
+                  ? "1px solid var(--active-border)"
                   : "1px solid var(--lp-overlay-border)",
                 background: l === lang
-                  ? "rgba(200,168,75,0.18)"
+                  ? "var(--active-bg-strong)"
                   : "var(--lp-overlay-btn)",
-                color: l === lang ? "var(--lp-gold-text)" : "var(--lp-text-sub)",
+                color: l === lang ? "var(--active-text)" : "var(--lp-text-sub)",
                 transition: "all 200ms ease",
               }}
             >

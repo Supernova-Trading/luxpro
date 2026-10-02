@@ -149,16 +149,16 @@ export default function MiddleSplit({ t, onSpeak, content }: Props) {
               onClick={() => tapCard(id)}
               className="cursor-pointer rounded-[18px] flex flex-col items-center gap-2.5 py-5 px-3 text-center"
               style={{
-                background: active ? "rgba(200,168,75,0.10)" : "var(--lp-surface)",
-                border: active ? "1px solid rgba(200,168,75,0.55)" : "1px solid var(--lp-border)",
-                boxShadow: active ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
+                background: active ? "var(--active-bg)" : "var(--lp-surface)",
+                border: active ? "1px solid var(--active-border)" : "1px solid var(--lp-border)",
+                boxShadow: active ? "inset 0 0 0 1.5px var(--active-ring)" : "none",
                 transition: "border-color 200ms ease, background 200ms ease, box-shadow 200ms ease",
               }}
             >
-              <Icon name={icon} size={32} style={{ color: active ? "var(--lp-gold)" : color }} />
+              <Icon name={icon} size={32} style={{ color: active ? "var(--active-text)" : color }} />
               <div
                 className="text-[15px] tracking-[2px] font-extrabold uppercase"
-                style={{ color: active ? "var(--lp-gold)" : "var(--text-primary)" }}
+                style={{ color: active ? "var(--active-text)" : "var(--text-primary)" }}
               >
                 {label}
               </div>
@@ -250,8 +250,8 @@ export default function MiddleSplit({ t, onSpeak, content }: Props) {
                     onClick={() => setGameType(g)}
                     className="flex-1 py-3.5 px-2 text-center text-[12px] tracking-[1.5px] font-bold uppercase transition-all"
                     style={{
-                      color: on ? "var(--lp-gold)" : "var(--text-muted)",
-                      borderBottom: on ? "2px solid var(--lp-gold)" : "2px solid transparent",
+                      color: on ? "var(--active-accent)" : "var(--text-muted)",
+                      borderBottom: on ? "2px solid var(--active-accent)" : "2px solid transparent",
                     }}
                   >
                     <span className="inline-flex items-center gap-1.5">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import SectionHeader from "./SectionHeader";
 import { Icon, type IconName } from "./Icon";
@@ -10,6 +10,8 @@ interface Props {
   t: Translation;
   onSpeak: (text: string) => void;
 }
+
+const AUTO_RESET_MS = 23000;
 
 export default function ComfortItems({ t, onSpeak }: Props) {
   const items: { icon: IconName; color: string; labelKey: "charger" | "specialSnacks" | "wipes" | "mints"; msg: string }[] = [
@@ -21,9 +23,10 @@ export default function ComfortItems({ t, onSpeak }: Props) {
 
   const [active, setActive] = useState<Record<number, boolean>>({});
   const [fastRoute, setFastRoute] = useState(false);
+  const fastRouteTimer = useRef<ReturnType<typeof setTimeout>>();
   // Change Dest / Motorway are one-shot requests, not persistent toggles —
-  // there's nothing to turn back off — so they get a brief gold confirmation
-  // flash on tap instead of a lasting selected state.
+  // there's nothing to turn back off — so they get a confirmation flash on
+  // tap instead of a lasting selected state.
   const [justTapped, setJustTapped] = useState<"dest" | "motorway" | null>(null);
 
   function toggle(idx: number, msg: string) {
@@ -33,15 +36,22 @@ export default function ComfortItems({ t, onSpeak }: Props) {
   }
 
   function toggleFastRoute() {
+    clearTimeout(fastRouteTimer.current);
     const next = !fastRoute;
     setFastRoute(next);
     onSpeak(next ? "Amish, please take the fastest route" : "Fast route off");
+    if (next) {
+      // Auto-reverts to neutral if the passenger never taps it off — same
+      // ~23s window as Change Dest / Motorway's confirmation flash, so the
+      // whole row behaves consistently.
+      fastRouteTimer.current = setTimeout(() => setFastRoute(false), AUTO_RESET_MS);
+    }
   }
 
   function tapOneShot(id: "dest" | "motorway", msg: string) {
     setJustTapped(id);
     onSpeak(msg);
-    setTimeout(() => setJustTapped((cur) => (cur === id ? null : cur)), 1400);
+    setTimeout(() => setJustTapped((cur) => (cur === id ? null : cur)), AUTO_RESET_MS);
   }
 
   // No backdrop-filter — 4 of these render simultaneously, and blur on
@@ -68,17 +78,17 @@ export default function ComfortItems({ t, onSpeak }: Props) {
               className="relative flex flex-col items-center gap-2 py-3 px-2 rounded-[18px] cursor-pointer"
               style={{
                 ...glassCard,
-                background: isActive ? "rgba(200,168,75,0.10)" : "var(--lp-surface)",
+                background: isActive ? "var(--active-bg)" : "var(--lp-surface)",
                 border: isActive
-                  ? "1px solid rgba(200,168,75,0.55)"
+                  ? "1px solid var(--active-border)"
                   : "1px solid var(--lp-border)",
-                boxShadow: isActive ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
+                boxShadow: isActive ? "inset 0 0 0 1.5px var(--active-ring)" : "none",
               }}
             >
-              <Icon name={icon} size={26} style={{ color: isActive ? "var(--lp-gold)" : color }} />
+              <Icon name={icon} size={26} style={{ color: isActive ? "var(--active-text)" : color }} />
               <div
                 className="text-[12px] tracking-[2px] uppercase font-bold text-center"
-                style={{ color: isActive ? "var(--lp-gold)" : "var(--text-primary)" }}
+                style={{ color: isActive ? "var(--active-text)" : "var(--text-primary)" }}
               >
                 {t[labelKey]}
               </div>
@@ -105,15 +115,15 @@ export default function ComfortItems({ t, onSpeak }: Props) {
           className="flex flex-col items-center gap-2 text-center rounded-[18px] cursor-pointer py-3 px-2"
           style={{
             ...glassCard,
-            background: fastRoute ? "rgba(200,168,75,0.12)" : "var(--lp-surface)",
-            border: fastRoute ? "1px solid rgba(200,168,75,0.55)" : "1px solid var(--lp-border)",
-            boxShadow: fastRoute ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
+            background: fastRoute ? "var(--active-bg-strong)" : "var(--lp-surface)",
+            border: fastRoute ? "1px solid var(--active-border)" : "1px solid var(--lp-border)",
+            boxShadow: fastRoute ? "inset 0 0 0 1.5px var(--active-ring)" : "none",
           }}
         >
-          <Icon name="zap" size={24} style={{ color: fastRoute ? "var(--lp-gold)" : "var(--icon-yellow)" }} />
+          <Icon name="zap" size={24} style={{ color: fastRoute ? "var(--active-text)" : "var(--icon-yellow)" }} />
           <div
             className="text-[12px] tracking-[1.5px] font-bold uppercase"
-            style={{ color: fastRoute ? "var(--lp-gold)" : "var(--text-primary)" }}
+            style={{ color: fastRoute ? "var(--active-text)" : "var(--text-primary)" }}
           >
             {t.fastRoute}
           </div>
@@ -126,13 +136,13 @@ export default function ComfortItems({ t, onSpeak }: Props) {
           className="flex flex-col items-center gap-2 text-center rounded-[18px] cursor-pointer py-3 px-2"
           style={{
             ...glassCard,
-            background: justTapped === "dest" ? "rgba(200,168,75,0.12)" : "var(--lp-surface)",
-            border: justTapped === "dest" ? "1px solid rgba(200,168,75,0.55)" : "1px solid var(--lp-border)",
-            boxShadow: justTapped === "dest" ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
+            background: justTapped === "dest" ? "var(--active-bg-strong)" : "var(--lp-surface)",
+            border: justTapped === "dest" ? "1px solid var(--active-border)" : "1px solid var(--lp-border)",
+            boxShadow: justTapped === "dest" ? "inset 0 0 0 1.5px var(--active-ring)" : "none",
           }}
         >
-          <Icon name="map-pin" size={24} style={{ color: justTapped === "dest" ? "var(--lp-gold)" : "var(--icon-red)" }} />
-          <div className="text-[12px] tracking-[1.5px] font-bold uppercase" style={{ color: justTapped === "dest" ? "var(--lp-gold)" : "var(--text-primary)" }}>
+          <Icon name="map-pin" size={24} style={{ color: justTapped === "dest" ? "var(--active-text)" : "var(--icon-red)" }} />
+          <div className="text-[12px] tracking-[1.5px] font-bold uppercase" style={{ color: justTapped === "dest" ? "var(--active-text)" : "var(--text-primary)" }}>
             {t.changeDest}
           </div>
         </motion.div>
@@ -144,13 +154,13 @@ export default function ComfortItems({ t, onSpeak }: Props) {
           className="flex flex-col items-center gap-2 text-center rounded-[18px] cursor-pointer py-3 px-2"
           style={{
             ...glassCard,
-            background: justTapped === "motorway" ? "rgba(200,168,75,0.12)" : "var(--lp-surface)",
-            border: justTapped === "motorway" ? "1px solid rgba(200,168,75,0.55)" : "1px solid var(--lp-border)",
-            boxShadow: justTapped === "motorway" ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
+            background: justTapped === "motorway" ? "var(--active-bg-strong)" : "var(--lp-surface)",
+            border: justTapped === "motorway" ? "1px solid var(--active-border)" : "1px solid var(--lp-border)",
+            boxShadow: justTapped === "motorway" ? "inset 0 0 0 1.5px var(--active-ring)" : "none",
           }}
         >
-          <Icon name="road" size={24} style={{ color: justTapped === "motorway" ? "var(--lp-gold)" : "var(--icon-gray)" }} />
-          <div className="text-[12px] tracking-[1.5px] font-bold uppercase" style={{ color: justTapped === "motorway" ? "var(--lp-gold)" : "var(--text-primary)" }}>
+          <Icon name="road" size={24} style={{ color: justTapped === "motorway" ? "var(--active-text)" : "var(--icon-gray)" }} />
+          <div className="text-[12px] tracking-[1.5px] font-bold uppercase" style={{ color: justTapped === "motorway" ? "var(--active-text)" : "var(--text-primary)" }}>
             {t.motorway}
           </div>
         </motion.div>
