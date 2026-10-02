@@ -337,25 +337,25 @@
   --lp-bg:           oklch(0.975 0.003 250);
   --lp-bg2:          oklch(0.960 0.005 250);
   --lp-bg3:          oklch(0.945 0.007 250);
-  --lp-surface:      oklch(0.860 0.016 70);   /* warm-tan card fill — 0.115 L below lp-bg for a real, visible card */
-  --lp-surface-mid:  oklch(0.790 0.020 70);   /* one step deeper for active / nested surfaces */
+  --lp-surface:      oklch(0.900 0.006 75);   /* clean warm-grey card fill — low chroma so it reads crisp, not muddy */
+  --lp-surface-mid:  oklch(0.850 0.007 75);   /* one step deeper for active / nested surfaces */
   --lp-surface-hi:   rgba(255, 255, 255, 0.95);
   --lp-text:         oklch(0.130 0.010 250);
   --lp-text-mid:     oklch(0.430 0.015 250);
   --lp-text-dim:     oklch(0.560 0.012 250);
-  --lp-border:       oklch(0.620 0.020 60 / 1);
+  --lp-border:       oklch(0.720 0.006 75 / 1);
   --lp-border-gold:  rgba(200, 168, 75, 0.45);
-  --lp-border-card:  oklch(0.620 0.020 60 / 1);
+  --lp-border-card:  oklch(0.720 0.006 75 / 1);
   --card-bg:         var(--lp-surface);
-  --card-border:     oklch(0.620 0.020 60 / 1);
-  --card-shadow:     0 8px 32px oklch(0 0 0 / 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.95);
-  --lp-shadow:       0 4px 24px oklch(0 0 0 / 0.16), 0 1px 3px oklch(0 0 0 / 0.08);
-  --lp-shadow-lg:    0 12px 48px oklch(0 0 0 / 0.20), 0 4px 16px oklch(0 0 0 / 0.12);
-  --lp-shadow-glass: 0 8px 32px oklch(0 0 0 / 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.90);
+  --card-border:     oklch(0.720 0.006 75 / 1);
+  --card-shadow:     0 8px 24px oklch(0 0 0 / 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  --lp-shadow:       0 4px 24px oklch(0 0 0 / 0.12), 0 1px 3px oklch(0 0 0 / 0.06);
+  --lp-shadow-lg:    0 12px 48px oklch(0 0 0 / 0.16), 0 4px 16px oklch(0 0 0 / 0.10);
+  --lp-shadow-glass: 0 8px 24px oklch(0 0 0 / 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.90);
   --overlay-bg:      oklch(0.975 0.003 250 / 0.92);
   --background:      oklch(0.975 0.003 250);
   --foreground:      var(--text-primary);
-  --border:          oklch(0.620 0.020 60 / 1);
+  --border:          oklch(0.720 0.006 75 / 1);
 
   /* ── Warm/Cold tint — stronger than the dark-mode 15% so Warm/Cold stay
      legible against a light, already-warm page background. ── */
@@ -377,15 +377,16 @@
   --icon-gray:   #64748B;
 
   /* ── Banner / header light surfaces ─────────────────────────────────────────
-     Banner base is oklch(0.940 0.014 80) — a touch deeper & warmer than the
-     standard --lp-surface (0.945 0.006) so the hero card still feels featured. */
+     Banner base is a touch deeper & warmer than the standard --lp-surface
+     (0.900 0.006) so the hero card still feels featured — these track the
+     surface value above; update both together if that one moves. */
   --lp-banner-bg:
-    radial-gradient(ellipse at 50% 120%, rgba(200,168,75,0.10) 0%, transparent 60%),
-    radial-gradient(ellipse at 20% -10%,  rgba(200,168,75,0.06) 0%, transparent 50%),
-    oklch(0.940 0.014 80);
+    radial-gradient(ellipse at 50% 120%, rgba(200,168,75,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse at 20% -10%,  rgba(200,168,75,0.08) 0%, transparent 50%),
+    oklch(0.885 0.014 80);
   --lp-header-bg:
-    radial-gradient(ellipse at 28% 60%, rgba(200,168,75,0.09) 0%, transparent 60%),
-    oklch(0.955 0.010 80);
+    radial-gradient(ellipse at 28% 60%, rgba(200,168,75,0.10) 0%, transparent 60%),
+    oklch(0.900 0.010 80);
   --lp-banner-shadow:  0 20px 40px rgba(0,0,0,0.07), 0 2px 8px rgba(200,168,75,0.10);
   --lp-header-shadow:  0 6px 32px rgba(0,0,0,0.08);
   --lp-header-divider: oklch(0.860 0.008 250 / 0.40);
