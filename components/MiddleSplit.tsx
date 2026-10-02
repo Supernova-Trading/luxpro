@@ -151,8 +151,8 @@ export default function MiddleSplit({ t, onSpeak, content }: Props) {
               style={{
                 background: active ? "rgba(200,168,75,0.10)" : "var(--lp-surface)",
                 border: active ? "1px solid rgba(200,168,75,0.55)" : "1px solid var(--lp-border)",
-                boxShadow: "0 8px 32px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.06)",
-                transition: "border-color 200ms ease, background 200ms ease",
+                boxShadow: active ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
+                transition: "border-color 200ms ease, background 200ms ease, box-shadow 200ms ease",
               }}
             >
               <Icon name={icon} size={32} style={{ color: active ? "var(--lp-gold)" : color }} />
