@@ -85,7 +85,7 @@ export default function Journey({ t, onSpeak }: Props) {
             boxShadow: temp === "warm" ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
           }}
         >
-          <Icon name="flame" size={24} style={{ color: temp === "warm" ? "var(--lp-gold)" : "var(--text-primary)" }} />
+          <Icon name="flame" size={24} style={{ color: temp === "warm" ? "var(--lp-gold)" : "#FB923C" }} />
           <div
             className="text-[12px] tracking-[1.5px] font-bold uppercase"
             style={{ color: temp === "warm" ? "var(--lp-gold)" : "var(--text-primary)" }}
@@ -110,7 +110,7 @@ export default function Journey({ t, onSpeak }: Props) {
             boxShadow: temp === "cold" ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
           }}
         >
-          <Icon name="snowflake" size={24} style={{ color: temp === "cold" ? "var(--lp-gold)" : "var(--text-primary)" }} />
+          <Icon name="snowflake" size={24} style={{ color: temp === "cold" ? "var(--lp-gold)" : "#38BDF8" }} />
           <div
             className="text-[12px] tracking-[1.5px] font-bold uppercase"
             style={{ color: temp === "cold" ? "var(--lp-gold)" : "var(--text-primary)" }}

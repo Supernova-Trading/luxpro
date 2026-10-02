@@ -128,10 +128,10 @@ export default function MiddleSplit({ t, onSpeak, content }: Props) {
     hard:   { bg: "rgba(248,113,113,0.14)", border: "rgba(248,113,113,0.55)" },
   };
 
-  const cards: { id: Exclude<Mode, null>; icon: IconName; label: string; sub: string }[] = [
-    { id: "games",  icon: "gamepad",  label: t.games,    sub: t.gamesSub },
-    { id: "chat",   icon: "comment",  label: t.openChat, sub: t.chatSub  },
-    { id: "trivia", icon: "lightbulb", label: t.playGame, sub: t.gameSub  },
+  const cards: { id: Exclude<Mode, null>; icon: IconName; color: string; label: string; sub: string }[] = [
+    { id: "games",  icon: "gamepad",   color: "#A78BFA", label: t.games,    sub: t.gamesSub },
+    { id: "chat",   icon: "comment",   color: "#22D3EE", label: t.openChat, sub: t.chatSub  },
+    { id: "trivia", icon: "lightbulb", color: "#FACC15", label: t.playGame, sub: t.gameSub  },
   ];
 
   return (
@@ -140,7 +140,7 @@ export default function MiddleSplit({ t, onSpeak, content }: Props) {
           without elevation payoff on 3 simultaneous small tiles (impeccable/
           DESIGN.md:287). The panel below keeps blur — it's a real overlay. */}
       <div className="grid grid-cols-3 gap-3.5 mb-3.5">
-        {cards.map(({ id, icon, label, sub }) => {
+        {cards.map(({ id, icon, color, label, sub }) => {
           const active = mode === id;
           return (
             <motion.div
@@ -155,7 +155,7 @@ export default function MiddleSplit({ t, onSpeak, content }: Props) {
                 transition: "border-color 200ms ease, background 200ms ease",
               }}
             >
-              <Icon name={icon} size={32} style={{ color: active ? "var(--lp-gold)" : "var(--text-primary)" }} />
+              <Icon name={icon} size={32} style={{ color: active ? "var(--lp-gold)" : color }} />
               <div
                 className="text-[15px] tracking-[2px] font-extrabold uppercase"
                 style={{ color: active ? "var(--lp-gold)" : "var(--text-primary)" }}
@@ -277,7 +277,7 @@ export default function MiddleSplit({ t, onSpeak, content }: Props) {
                         color: "var(--text-primary)",
                       }}
                     >
-                      <Icon name={l === "easy" ? "smile" : l === "medium" ? "lightbulb" : "flame"} size={14} />
+                      <Icon name={l === "easy" ? "smile" : l === "medium" ? "lightbulb" : "flame"} size={14} style={{ color: levelStyles[l].border }} />
                       {t[l]}
                     </button>
                   ))}

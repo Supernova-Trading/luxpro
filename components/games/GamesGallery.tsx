@@ -19,10 +19,10 @@ interface Props {
 export default function GamesGallery({ t }: Props) {
   const [selected, setSelected] = useState<GameId | null>(null);
 
-  const games: { id: GameId; icon: IconName; label: string }[] = [
-    { id: "tictactoe", icon: "tic-tac-toe", label: t.ticTacToe },
-    { id: "rps",       icon: "hand",        label: t.rockPaperScissors },
-    { id: "memory",    icon: "grid",        label: t.memoryMatch },
+  const games: { id: GameId; icon: IconName; color: string; label: string }[] = [
+    { id: "tictactoe", icon: "tic-tac-toe", color: "#A78BFA", label: t.ticTacToe },
+    { id: "rps",       icon: "hand",        color: "#FB923C", label: t.rockPaperScissors },
+    { id: "memory",    icon: "grid",        color: "#22D3EE", label: t.memoryMatch },
   ];
 
   if (!selected) {
@@ -35,14 +35,14 @@ export default function GamesGallery({ t }: Props) {
           {t.gamesGalleryTitle}
         </div>
         <div className="grid grid-cols-3 gap-2.5">
-          {games.map(({ id, icon, label }) => (
+          {games.map(({ id, icon, color, label }) => (
             <button
               key={id}
               onClick={() => setSelected(id)}
               className="flex flex-col items-center gap-2 py-5 px-2 rounded-2xl text-center"
               style={{ background: "var(--lp-surface)", border: "1px solid var(--lp-border)" }}
             >
-              <Icon name={icon} size={30} style={{ color: "var(--lp-gold)" }} />
+              <Icon name={icon} size={30} style={{ color }} />
               <div className="text-[12px] font-bold uppercase tracking-[1px]" style={{ color: "var(--text-primary)" }}>
                 {label}
               </div>
