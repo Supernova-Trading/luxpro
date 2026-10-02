@@ -58,12 +58,6 @@
   --text-on-accent: oklch(0.176 0.014 258); /* obsidian-950 on gold */
   --accent-positive: oklch(0.800 0.182 152); /* #4ADE80 — 6.3:1 on dark surfaces */
 
-  /* ── Glow tokens ─────────────────────────────────────────────────────────── */
-  --glow-gold:   0 0 20px rgba(200, 168, 75, 0.35), 0 0 40px rgba(200, 168, 75, 0.15);
-  --glow-warm:   0 0 20px rgba(249, 115, 22, 0.40), 0 0 40px rgba(249, 115, 22, 0.18);
-  --glow-cold:   0 0 20px rgba(14, 165, 233, 0.40), 0 0 40px rgba(14, 165, 233, 0.18);
-  --glow-subtle: 0 0 12px rgba(200, 168, 75, 0.18);
-
   /* ── Shadow tokens ───────────────────────────────────────────────────────── */
   --lp-shadow:    0 4px 24px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(0, 0, 0, 0.25);
   --lp-shadow-lg: 0 12px 48px rgba(0, 0, 0, 0.55), 0 4px 16px rgba(0, 0, 0, 0.35);
@@ -204,12 +198,6 @@
     box-shadow: var(--lp-shadow-glass);
     transition: border-color 200ms ease, box-shadow 200ms ease;
   }
-
-  /* Hover/active glow states */
-  .hover-glow-gold:hover { box-shadow: var(--glow-gold); border-color: rgba(200,168,75,0.50) !important; }
-  .active-glow-gold      { box-shadow: var(--glow-gold); border-color: rgba(200,168,75,0.60) !important; }
-  .active-glow-warm      { box-shadow: var(--glow-warm); }
-  .active-glow-cold      { box-shadow: var(--glow-cold); }
 
   /* Obsidian gradient backgrounds */
   .bg-lux-dark   { background: linear-gradient(135deg, var(--prim-obsidian-800), var(--prim-obsidian-700)); }

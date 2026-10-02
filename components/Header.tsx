@@ -144,14 +144,12 @@ export default function Header({ lang, t, onSetLang, onOpenSettings }: Props) {
               background: "var(--lp-overlay-mid)",
               border: "1px solid var(--lp-overlay-border)",
               color: "var(--text-primary)",
-              transition: "box-shadow 200ms ease, border-color 200ms ease",
+              transition: "border-color 200ms ease",
             }}
             onMouseEnter={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.boxShadow = "var(--glow-subtle)";
               (e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(200,168,75,0.40)";
             }}
             onMouseLeave={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.boxShadow = "none";
               (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--lp-overlay-border)";
             }}
             title="Settings"
@@ -176,7 +174,6 @@ export default function Header({ lang, t, onSetLang, onOpenSettings }: Props) {
                   ? "rgba(200,168,75,0.18)"
                   : "var(--lp-overlay-btn)",
                 color: l === lang ? "var(--lp-gold-text)" : "var(--lp-text-sub)",
-                boxShadow: l === lang ? "var(--glow-subtle)" : "none",
                 transition: "all 200ms ease",
               }}
             >

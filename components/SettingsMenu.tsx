@@ -109,7 +109,7 @@ export default function SettingsMenu({
                   className="flex-1 py-2 rounded-lg text-[10px] tracking-[1px] uppercase font-bold transition-all flex items-center justify-center gap-1.5"
                   style={
                     voiceMode === mode
-                      ? { background: "var(--lp-gold)", color: "var(--text-on-accent)", boxShadow: "var(--glow-subtle)" }
+                      ? { background: "var(--lp-gold)", color: "var(--text-on-accent)" }
                       : { background: "var(--lp-surface-mid)", color: "var(--text-secondary)", border: "1px solid var(--lp-border)" }
                   }
                 >
@@ -139,7 +139,7 @@ export default function SettingsMenu({
                   className="flex-1 py-2 rounded-lg text-[10px] tracking-[1px] uppercase font-bold transition-all flex items-center justify-center gap-1.5"
                   style={
                     themeMode === mode
-                      ? { background: "var(--lp-gold)", color: "var(--text-on-accent)", boxShadow: "var(--glow-subtle)" }
+                      ? { background: "var(--lp-gold)", color: "var(--text-on-accent)" }
                       : { background: "var(--lp-surface-mid)", color: "var(--text-secondary)", border: "1px solid var(--lp-border)" }
                   }
                 >

@@ -205,7 +205,7 @@ export function AdminModal({ show, t, voiceMode, onClose, onSetVoiceMode, onToas
               className="flex-1 py-2.5 rounded-xl text-[10px] tracking-[1px] uppercase font-bold transition-all"
               style={
                 voiceMode === mode
-                  ? { background: "var(--lp-gold)", color: "var(--text-on-accent)", boxShadow: "var(--glow-subtle)" }
+                  ? { background: "var(--lp-gold)", color: "var(--text-on-accent)" }
                   : { background: "var(--lp-surface-mid)", color: "var(--text-secondary)", border: "1px solid var(--lp-border)" }
               }
             >
