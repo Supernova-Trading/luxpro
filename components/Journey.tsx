@@ -40,14 +40,7 @@ const glassCard: React.CSSProperties = {
 };
 
 export default function Journey({ t, onSpeak }: Props) {
-  const [fastRoute, setFastRoute] = useState(false);
   const [temp, setTemp] = useState<TempChoice>(null);
-
-  function toggleFastRoute() {
-    const next = !fastRoute;
-    setFastRoute(next);
-    onSpeak(next ? "Amish, please take the fastest route" : "Fast route off");
-  }
 
   function selectTemp(t2: "warm" | "cold") {
     if (temp === t2) {
@@ -122,69 +115,6 @@ export default function Journey({ t, onSpeak }: Props) {
             style={{ color: temp === "cold" ? "var(--lp-gold)" : "var(--text-primary)" }}
           >
             {t.cold}
-          </div>
-        </motion.div>
-      </div>
-
-      {/* Fast Route | Change Dest | Quiet Ride — 3-col strip */}
-      <div className="grid grid-cols-3 gap-2">
-        {/* Fast Route */}
-        <motion.div
-          whileTap={{ scale: 0.95, transition: { duration: 0.08 } }}
-          whileHover={{ y: -2, transition: { type: "tween", duration: 0.2, ease: [0.16, 1, 0.3, 1] } }}
-          onClick={toggleFastRoute}
-          className="flex flex-col items-center gap-2 text-center rounded-[18px] cursor-pointer py-3 px-2"
-          style={{
-            ...glassCard,
-            background: fastRoute ? "rgba(200,168,75,0.12)" : "var(--lp-surface)",
-            border: fastRoute ? "1px solid rgba(200,168,75,0.55)" : "1px solid var(--lp-border)",
-            boxShadow: fastRoute ? "inset 0 0 0 1.5px rgba(200,168,75,0.70)" : "none",
-          }}
-        >
-          <div className="text-[24px] leading-none">⚡</div>
-          <div
-            className="text-[12px] tracking-[1.5px] font-bold uppercase"
-            style={{ color: fastRoute ? "var(--lp-gold)" : "var(--text-primary)" }}
-          >
-            {t.fastRoute}
-          </div>
-        </motion.div>
-
-        {/* Change Destination */}
-        <motion.div
-          whileTap={{ scale: 0.95, transition: { duration: 0.08 } }}
-          whileHover={{ y: -2, transition: { type: "tween", duration: 0.2, ease: [0.16, 1, 0.3, 1] } }}
-          onClick={() => onSpeak("Amish, the passenger would like to change the destination.")}
-          className="flex flex-col items-center gap-2 text-center rounded-[18px] cursor-pointer py-3 px-2"
-          style={{
-            ...glassCard,
-            background: "var(--lp-surface)",
-            border: "1px solid var(--lp-border)",
-            boxShadow: "none",
-          }}
-        >
-          <div className="text-[24px] leading-none">📍</div>
-          <div className="text-[12px] tracking-[1.5px] font-bold uppercase" style={{ color: "var(--text-primary)" }}>
-            {t.changeDest}
-          </div>
-        </motion.div>
-
-        {/* Motorway */}
-        <motion.div
-          whileTap={{ scale: 0.95, transition: { duration: 0.08 } }}
-          whileHover={{ y: -2, transition: { type: "tween", duration: 0.2, ease: [0.16, 1, 0.3, 1] } }}
-          onClick={() => onSpeak("Amish, please take the motorway.")}
-          className="flex flex-col items-center gap-2 text-center rounded-[18px] cursor-pointer py-3 px-2"
-          style={{
-            ...glassCard,
-            background: "var(--lp-surface)",
-            border: "1px solid var(--lp-border)",
-            boxShadow: "none",
-          }}
-        >
-          <div className="text-[24px] leading-none">🛣️</div>
-          <div className="text-[12px] tracking-[1.5px] font-bold uppercase" style={{ color: "var(--text-primary)" }}>
-            {t.motorway}
           </div>
         </motion.div>
       </div>

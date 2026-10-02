@@ -167,12 +167,14 @@ export default function LuxProPage() {
           <Journey t={t} onSpeak={speak} />
         </motion.div>
 
+        {/* Classic Games / Open to Chat / Trivia — reads as part of Journey:
+            no header of its own, sits directly under it. */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.18 }}
         >
-          <ComfortItems t={t} onSpeak={speak} />
+          <MiddleSplit t={t} onSpeak={speak} content={content} />
         </motion.div>
 
         <motion.div
@@ -180,7 +182,7 @@ export default function LuxProPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.24 }}
         >
-          <MiddleSplit t={t} onSpeak={speak} content={content} />
+          <ComfortItems t={t} onSpeak={speak} />
         </motion.div>
       </main>
 
