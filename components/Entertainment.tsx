@@ -370,7 +370,7 @@ export default function Entertainment({ t, radios, radio, onSpeak, onShowBT }: P
                       </span>
                     )}
                     {!isBroken && station.f && (
-                      <span className="text-[8px] font-extrabold" style={{ color: "var(--lp-gold)" }}>⭐ Fav</span>
+                      <span className="text-[8px] font-extrabold" style={{ color: "var(--lp-gold-text)" }}>⭐ Fav</span>
                     )}
                   </motion.div>
                 );

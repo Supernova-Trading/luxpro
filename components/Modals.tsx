@@ -84,7 +84,7 @@ export function BluetoothModal({ show, t, onClose }: BTProps) {
       </div>
       <div className="rounded-xl p-3.5 mb-3.5 text-left" style={{ background: "rgba(200,168,75,0.10)", border: "2px solid rgba(200,168,75,0.50)" }}>
         <div className="text-[9px] tracking-[2.5px] uppercase mb-1 font-semibold" style={{ color: "var(--text-muted)" }}>{t.btDeviceName}</div>
-        <div className="font-cormorant text-[22px] font-bold tracking-[2px]" style={{ color: "var(--lp-gold)", textShadow: "0 0 16px rgba(200,168,75,0.35)" }}>
+        <div className="font-cormorant text-[22px] font-bold tracking-[2px]" style={{ color: "var(--lp-gold-text)" }}>
           My Volvo Car
         </div>
       </div>
@@ -108,7 +108,7 @@ export function PhoneModal({ show, t, onClose }: PhoneProps) {
       <div className="text-[42px] mb-3">📞</div>
       <div className="text-[10px] tracking-[3px] uppercase mb-1.5 font-semibold" style={{ color: "var(--text-muted)" }}>{t.contactDriver}</div>
       <div className="font-cormorant text-[28px] font-bold text-primary tracking-[3px] mb-2" style={{ textShadow: "0 0 20px rgba(255,255,255,0.15)" }}>Amish</div>
-      <a href="tel:07438537561" className="block text-[22px] font-bold tracking-[2px] mb-4 no-underline" style={{ color: "var(--lp-gold)", textShadow: "0 0 16px rgba(200,168,75,0.40)" }}>
+      <a href="tel:07438537561" className="block text-[22px] font-bold tracking-[2px] mb-4 no-underline" style={{ color: "var(--lp-gold-text)" }}>
         07438 537 561
       </a>
       <ModalClose label={t.close} onClick={onClose} />
@@ -236,7 +236,7 @@ export function TipQRModal({ show, t, onClose }: QRProps) {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/qr-tip.png" alt={t.scanToTip} className="block" style={{ width: 200, height: 200 }} />
       </div>
-      <div className="font-cormorant text-[20px] font-bold tracking-[2px] mb-1" style={{ color: "var(--lp-gold)", textShadow: "0 0 16px rgba(200,168,75,0.35)" }}>
+      <div className="font-cormorant text-[20px] font-bold tracking-[2px] mb-1" style={{ color: "var(--lp-gold-text)" }}>
         Amish
       </div>
       <p className="text-[12px] leading-relaxed mb-4" style={{ color: "var(--text-secondary)" }}>

@@ -300,7 +300,7 @@ export default function MiddleSplit({ t, onSpeak, content }: Props) {
                       className="rounded-2xl px-4 py-4 mb-3.5"
                       style={{ background: "rgba(200,168,75,0.14)", border: "1px solid var(--lp-border-gold)" }}
                     >
-                      <div className="text-[10px] tracking-[2.5px] uppercase mb-1.5 font-bold" style={{ color: "var(--lp-gold)" }}>{t.answer}</div>
+                      <div className="text-[10px] tracking-[2.5px] uppercase mb-1.5 font-bold" style={{ color: "var(--lp-gold-text)" }}>{t.answer}</div>
                       <div className="text-[16px] font-semibold leading-relaxed text-primary">{curQ.a}</div>
                     </motion.div>
                   )}
@@ -333,7 +333,7 @@ export default function MiddleSplit({ t, onSpeak, content }: Props) {
                       className="rounded-2xl px-4 py-4 mb-3.5"
                       style={{ background: "rgba(200,168,75,0.14)", border: "1px solid var(--lp-border-gold)" }}
                     >
-                      <div className="text-[10px] tracking-[2.5px] uppercase mb-1.5 font-bold" style={{ color: "var(--lp-gold)" }}>{t.answer}</div>
+                      <div className="text-[10px] tracking-[2.5px] uppercase mb-1.5 font-bold" style={{ color: "var(--lp-gold-text)" }}>{t.answer}</div>
                       <div className="text-[16px] font-semibold leading-relaxed text-primary">{curRiddle.a}</div>
                     </motion.div>
                   )}

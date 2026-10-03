@@ -17,7 +17,7 @@ export default function ActionBtn({ accent, onClick, children }: { accent?: bool
       style={{
         background: "var(--lp-surface-mid)",
         border: accent ? "1px solid rgba(200,168,75,0.55)" : "1px solid var(--lp-border)",
-        color: accent ? "var(--lp-gold)" : "var(--text-primary)",
+        color: accent ? "var(--lp-gold-text)" : "var(--text-primary)",
         transition: "opacity 150ms ease",
       }}
     >
