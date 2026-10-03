@@ -11,7 +11,7 @@ const config: Config = {
     extend: {
       fontFamily: {
         sans:  ["Inter", "var(--font-inter)", "-apple-system", "BlinkMacSystemFont", "sans-serif"],
-        serif: ["Cormorant Garamond", "var(--font-cormorant)", "serif"],
+        serif: ["Newsreader", "var(--font-display)", "serif"],
       },
       colors: {
         background: "var(--background)",

@@ -112,7 +112,7 @@ export default function Header({ lang, t, onSetLang, onOpenSettings }: Props) {
           {t.welcomeAboard}
         </div>
         <div
-          className="font-cormorant font-bold italic leading-tight"
+          className="font-display font-bold italic leading-tight"
           style={{
             fontSize: "clamp(18px, 3.5vw, 26px)",
             color: "var(--lp-header-title-color)",

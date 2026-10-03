@@ -52,7 +52,7 @@ export default function TipBanner({ t, onShowQR, onSpeak }: Props) {
 
       {/* Heading */}
       <h2
-        className="font-cormorant font-bold uppercase mb-1.5 leading-tight"
+        className="font-display font-bold uppercase mb-1.5 leading-tight"
         style={{
           fontSize: "1.25rem",
           color: "var(--lp-gold-text)",
@@ -77,7 +77,7 @@ export default function TipBanner({ t, onShowQR, onSpeak }: Props) {
 
       {/* Quote */}
       <p
-        className="font-cormorant italic leading-snug"
+        className="font-display italic leading-snug"
         style={{
           fontSize: "0.875rem",
           color: "var(--lp-text-body)",
@@ -119,7 +119,7 @@ export default function TipBanner({ t, onShowQR, onSpeak }: Props) {
           initial={{ opacity: 0, y: 4 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0 }}
-          className="font-cormorant italic text-center mt-2"
+          className="font-display italic text-center mt-2"
           style={{ fontSize: "0.8rem", color: "var(--lp-text-sub)", letterSpacing: "0.3px" }}
         >
           {t.uberPrompt}

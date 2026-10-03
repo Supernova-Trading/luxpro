@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Cormorant_Garamond, Noto_Nastaliq_Urdu } from "next/font/google";
+import { Inter, Newsreader, Noto_Nastaliq_Urdu } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
@@ -8,15 +8,20 @@ const inter = Inter({
   display: "swap",
 });
 
-const cormorant = Cormorant_Garamond({
+// Display serif. Was Cormorant Garamond — on open-design's banned-font list
+// (hyperframes/references/typography.md: a training-data default every LLM
+// reaches for, same bucket as Playfair Display/EB Garamond/Cinzel). Newsreader
+// is a less-saturated editorial serif with a genuine weight range and real
+// italics, so the header/tagline/CTA styling didn't need to change.
+const display = Newsreader({
   subsets: ["latin"],
   weight: ["400", "600", "700"],
   style: ["normal", "italic"],
-  variable: "--font-cormorant",
+  variable: "--font-display",
   display: "swap",
 });
 
-// Cormorant Garamond has no Arabic-script glyphs — Urdu content renders with
+// Newsreader has no Arabic-script glyphs — Urdu content renders with
 // this instead, switched in via [data-lang="ur"] in globals.css.
 const notoNastaliq = Noto_Nastaliq_Urdu({
   subsets: ["arabic"],
@@ -40,7 +45,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${cormorant.variable} ${notoNastaliq.variable}`}>
+    <html lang="en" className={`${inter.variable} ${display.variable} ${notoNastaliq.variable}`}>
       <body className="antialiased">{children}</body>
     </html>
   );
