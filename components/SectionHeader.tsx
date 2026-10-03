@@ -4,7 +4,7 @@ interface Props {
 
 export default function SectionHeader({ label }: Props) {
   return (
-    <div className="mb-2" style={{ borderBottom: "1px solid var(--lp-gold)", paddingBottom: "6px" }}>
+    <div className="mb-2" style={{ borderBottom: "1px solid var(--lp-gold-text)", paddingBottom: "6px" }}>
       <span
         className="font-display"
         style={{
