@@ -27,7 +27,7 @@ Every design decision must trace to one of these local repos:
 - Production URL: https://luxpro-nu.vercel.app
 - Luxury ride tablet UI — passengers use it for 10-40 minutes in a moving car
 - Target viewport: 1280x800 landscape, everything must fit without scrolling
-- Brand: dark obsidian + gold (#C8A84B) + Cormorant Garamond
+- Brand: dark obsidian + gold (#C8A84B) + Newsreader (display serif; replaced Cormorant Garamond 2026-10-03 — see open-design/skills/hyperframes/references/typography.md banned-font list)
 - Theme system: [data-theme] with semantic OKLCH tokens, structured like impeccable's token file (impeccable/public/css/tokens.css) — text colors must use tokens, never hardcoded values. (Not open-design's warm-editorial: that theme is hex-based and a light paper aesthetic, not OKLCH or dark-obsidian — checked 2026-10-02.)
 - Known perf debt: 15–20 simultaneous backdrop-filter blur surfaces are the top sluggishness cause on Tab A — address in the UX/styling pass
 - Every session continues from where the last one left off
