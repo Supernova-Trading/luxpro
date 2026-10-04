@@ -8,7 +8,8 @@ import type { QuizLevel, V5Strings } from "./strings";
 import type { Deck } from "./useDeck";
 
 // Quiz and Riddles: one full screen, big targets for a moving car.
-// Question → "Show answer" → "Next". Nothing repeats within a ride (useDeck).
+// Question → "Show answer" → "Next". Random order; nothing repeats until the
+// whole list has been played, across rides too (useDeck).
 // The answer stays hidden until asked for, so Amish can play along.
 const LEVELS: QuizLevel[] = ["easy", "medium", "hard"];
 

@@ -186,7 +186,7 @@ export default function V5App() {
   function newRide() {
     speech.clear();
     music.reset();
-    deck.reset();
+    // The question deck is deliberately kept: Amish shouldn't hear repeats.
     lastTap.current = {};
     setGame(null);
     setQuizLevel("easy");
