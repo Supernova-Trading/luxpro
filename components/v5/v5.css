@@ -96,7 +96,20 @@
 .v5-pill[aria-pressed="true"] { background: var(--gold-tint); border-color: var(--gold); color: var(--gold); }
 
 /* ── Main column ───────────────────────────────────────────────────────── */
-.v5-main { flex: 0 0 auto; display: flex; flex-direction: column; gap: 16px; padding: 12px 20px 16px; }
+.v5-main { flex: 0 0 auto; display: flex; flex-direction: column; gap: 18px; padding: 12px 20px 16px; }
+
+/* Section headers: serif title, a hairline running across, a short hint —
+   a clear, quiet separation between sections without boxing each one */
+.v5-section-head { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.v5-section-title { font-family: var(--serif); font-size: 20px; line-height: 1.2; color: var(--ink); white-space: nowrap; }
+.v5-section-rule { flex: 1 1 auto; height: 1px; background: var(--line-strong); min-width: 16px; }
+.v5-section-hint { font-size: 13px; color: var(--muted); white-space: nowrap; }
+
+/* Bluetooth: three tiles in a row — phone · ask Amish · how to connect */
+.v5-bt-tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 6px; }
+.v5-bt-tile { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 4px; min-height: 84px; padding: 12px 14px; border-radius: 16px; background: color-mix(in oklch, var(--s1) 85%, transparent); border: 1px solid var(--line); text-align: start; position: relative; transition: background 150ms ease, transform 100ms ease; }
+button.v5-bt-tile:active { background: var(--s-press); transform: scale(0.97); }
+.v5-bt-tile[aria-pressed="true"] { border-color: var(--gold); box-shadow: inset 0 0 0 1px var(--gold); }
 
 /* Tip — mockup D's gold panel: the one deliberate outlier on the screen (owner, v5.3) */
 .v5-tip { border-radius: 24px; border: 1px solid var(--gold); background: var(--gold-tint); padding: 10px 10px 12px; }
@@ -187,7 +200,9 @@
 .v5[data-lang="ur"] .v5-sub,
 .v5[data-lang="ur"] .v5-told,
 .v5[data-lang="ur"] .v5-caption { line-height: 1.9; }
-.v5[data-lang="ur"] .v5-title { font-size: 19px; line-height: 1.9; }
+.v5[data-lang="ur"] .v5-title,
+.v5[data-lang="ur"] .v5-section-title { font-size: 19px; line-height: 1.7; }
+.v5[data-lang="ur"] .v5-section-hint { line-height: 1.8; }
 .v5[data-lang="ur"] .v5-display { font-size: 26px; line-height: 1.8; }
 .v5[data-lang="ur"] .v5-heading { font-size: 22px; line-height: 1.8; }
 .v5[data-lang="ur"] .v5-tip-opt small { line-height: 1.8; }

@@ -41,6 +41,11 @@ export interface V5Strings {
   qrSub: string;
   done: string;
   askAmish: string;
+  askAmishHint: string;
+  climateTitle: string;
+  climateHint: string;
+  gamesTitle: string;
+  gamesHint: string;
   requests: Record<Exclude<RequestKey, "bluetooth">, string>;
   didntHear: string;
   cooler: string;
@@ -101,6 +106,11 @@ export const STRINGS: Record<Lang, V5Strings> = {
     qrSub: "Scan with your phone's camera or the Revolut app. Choose any amount.",
     done: "Done",
     askAmish: "Ask Amish",
+    askAmishHint: "Tap again to cancel",
+    climateTitle: "Cabin temperature",
+    climateHint: "Amish will adjust it",
+    gamesTitle: "Games",
+    gamesHint: "One tap to start",
     requests: {
       charger: "Phone charger",
       snacks: "Snacks",
@@ -167,6 +177,11 @@ export const STRINGS: Record<Lang, V5Strings> = {
     qrSub: "Escanee con la cámara de su teléfono o la app de Revolut. Elija cualquier importe.",
     done: "Listo",
     askAmish: "Pedir a Amish",
+    askAmishHint: "Toque de nuevo para cancelar",
+    climateTitle: "Temperatura",
+    climateHint: "Amish la ajustará",
+    gamesTitle: "Juegos",
+    gamesHint: "Un toque para empezar",
     requests: {
       charger: "Cargador",
       snacks: "Aperitivos",
@@ -233,6 +248,11 @@ export const STRINGS: Record<Lang, V5Strings> = {
     qrSub: "اپنے فون کے کیمرے یا Revolut ایپ سے اسکین کریں۔ کوئی بھی رقم منتخب کریں۔",
     done: "ٹھیک ہے",
     askAmish: "امیش سے کہیں",
+    askAmishHint: "منسوخ کرنے کے لیے دوبارہ ٹچ کریں",
+    climateTitle: "کیبن کا درجہ حرارت",
+    climateHint: "امیش اسے ٹھیک کر دیں گے",
+    gamesTitle: "گیمز",
+    gamesHint: "شروع کرنے کے لیے ایک ٹچ",
     requests: {
       charger: "فون چارجر",
       snacks: "اسنیکس",

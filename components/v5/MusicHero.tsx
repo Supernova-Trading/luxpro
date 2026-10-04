@@ -94,22 +94,22 @@ export default function MusicHero({ s, lang, music, header, onPicker, btOn, onBt
         </div>
 
         {source === "bluetooth" ? (
-          <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 16, marginTop: 4 }}>
-            <div style={{ minWidth: 0 }}>
-              <div className="v5-display">{s.btTitle}</div>
-              <div className="v5-sub">{s.btSub}</div>
+          // Three tiles: the phone → car, ask Amish, how to connect
+          <div className="v5-bt-tiles">
+            <div className="v5-bt-tile">
+              <Icon name="bluetooth" size={22} style={{ color: "var(--i-blue)" }} />
+              <span className="v5-label">{s.btTitle}</span>
+              <span className="v5-sub">{s.btSub}</span>
             </div>
-            {/* Actions on the right, where the play controls sit for music */}
-            <div style={{ display: "grid", gap: 8, flexShrink: 0, justifyItems: "end" }}>
-              <button className="v5-pill" aria-pressed={btOn} onClick={onBtAsk}>
-                <Icon name={btOn ? "check" : "bluetooth"} size={16} />
-                {s.btAsk}
-              </button>
-              <button className="v5-pill" onClick={onBtHow}>
-                <Icon name="help-circle" size={16} />
-                {s.btHow}
-              </button>
-            </div>
+            <button className="v5-bt-tile" aria-pressed={btOn} onClick={onBtAsk}>
+              <Icon name="comment" size={22} style={{ color: "var(--i-teal)" }} />
+              <span className="v5-label">{s.btAsk}</span>
+              {btOn && <span className="v5-badge" aria-hidden style={{ top: 8, insetInlineEnd: 8 }}><Icon name="check" size={13} strokeWidth={2.4} /></span>}
+            </button>
+            <button className="v5-bt-tile" onClick={onBtHow}>
+              <Icon name="help-circle" size={22} style={{ color: "var(--i-lemon)" }} />
+              <span className="v5-label">{s.btHow}</span>
+            </button>
           </div>
         ) : (
           <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 16, marginTop: 4 }}>

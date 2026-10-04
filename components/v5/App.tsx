@@ -49,6 +49,16 @@ const TIPS: { key: TipKey; icon: IconName; color: string }[] = [
 
 const BUMP_MS = 400; // a jolt landing the same tap twice is ignored
 
+function SectionHead({ title, hint }: { title: string; hint?: string }) {
+  return (
+    <div className="v5-section-head">
+      <span className="v5-section-title">{title}</span>
+      <span className="v5-section-rule" aria-hidden />
+      {hint && <span className="v5-section-hint">{hint}</span>}
+    </div>
+  );
+}
+
 function Circle({ icon, color, label, on, onClick }: {
   icon: IconName; color: string; label: string; on?: boolean; onClick: () => void;
 }) {
@@ -226,7 +236,7 @@ export default function V5App() {
 
         {/* ── Ask Amish: on/off; "on" shows as a gold ring + check badge ── */}
         <section aria-label={s.askAmish}>
-          <div className="v5-caption" style={{ marginBottom: 8 }}>{s.askAmish}</div>
+          <SectionHead title={s.askAmish} hint={s.askAmishHint} />
           <div className="v5-grid4">
             {COMFORT.map((it) => (
               <Circle key={it.key} icon={it.icon} color={it.color}
@@ -245,6 +255,8 @@ export default function V5App() {
         </section>
 
         {/* ── Climate: Cooler | Warmer, no number ─────────────────────── */}
+        <section aria-label={s.climateTitle}>
+        <SectionHead title={s.climateTitle} hint={s.climateHint} />
         <div className="v5-climate">
           {(["cool", "warm"] as const).map((side) => {
             const on = climate === side;
@@ -257,10 +269,11 @@ export default function V5App() {
             );
           })}
         </div>
+        </section>
 
         {/* ── Play: five games, one tap each (built from v5.3) ─────────── */}
-        <section aria-label={s.play}>
-          <div className="v5-caption" style={{ marginBottom: 8 }}>{s.play}</div>
+        <section aria-label={s.gamesTitle}>
+          <SectionHead title={s.gamesTitle} hint={s.gamesHint} />
           <div className="v5-grid5">
             {GAMES.map((g) => (
               <Circle key={g.key} icon={g.icon} color={g.color} label={s.games[g.key]} onClick={() => showToast(s.gameSoon)} />
