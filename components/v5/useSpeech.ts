@@ -7,7 +7,9 @@ import { useCallback, useEffect, useRef } from "react";
 // withdrawn before its message is spoken is dropped silently.
 type Item = { key: string; text: string; onError?: () => void };
 
-export function useSpeech() {
+export function useSpeech(onDuck?: (ducked: boolean) => void) {
+  const duckRef = useRef(onDuck);
+  duckRef.current = onDuck;
   const queue = useRef<Item[]>([]);
   const current = useRef<Item | null>(null);
   const voice = useRef<SpeechSynthesisVoice | null>(null);
@@ -32,7 +34,12 @@ export function useSpeech() {
 
   const pumpRef = useRef<() => void>(() => {});
   pumpRef.current = () => {
-    if (current.current || queue.current.length === 0) return;
+    if (current.current) return;
+    if (queue.current.length === 0) {
+      duckRef.current?.(false); // queue drained: music back up
+      return;
+    }
+    duckRef.current?.(true); // music dips while Amish is spoken to
     const item = queue.current.shift()!;
     current.current = item;
     const u = new SpeechSynthesisUtterance(item.text);
@@ -71,6 +78,7 @@ export function useSpeech() {
   const clear = useCallback(() => {
     queue.current = [];
     current.current = null;
+    duckRef.current?.(false);
     if (typeof window !== "undefined" && "speechSynthesis" in window) window.speechSynthesis.cancel();
   }, []);
 

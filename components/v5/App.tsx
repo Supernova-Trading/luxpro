@@ -3,16 +3,18 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Icon, type IconName } from "../Icon";
 import { useLanguage } from "@/hooks/useLanguage";
+import { PLAYLISTS } from "@/lib/playlists";
 import type { Lang } from "@/lib/translations";
 import { STRINGS, SPEECH, type RequestKey, type TipKey, type GameKey, type V5Strings } from "./strings";
 import { useSpeech } from "./useSpeech";
+import { useMusic } from "./useMusic";
+import MusicHero from "./MusicHero";
 import { APP_VERSION, BUILD_ID } from "./version";
 
-// LuxPro v5.1 — P0 foundation + P1 home screen + P2 requests and voice
-// (roadmap: https://claude.ai/artifact/7pmPGqhwDth9LT7PtEnugD). Music arrives
-// in v5.2, games after that. Built from mockup D, only on design/v2-preview.
-
-type Source = "radio" | "playlists" | "bluetooth";
+// LuxPro v5 — built from mockup D, only on design/v2-preview.
+// Roadmap: https://claude.ai/artifact/7pmPGqhwDth9LT7PtEnugD
+// v5.2: music (P3) + owner feedback — no "Told Amish" labels (check badge
+// instead), and a lighter tip section without the gold box.
 
 const LANGS: { id: Lang; label: string }[] = [
   { id: "en", label: "EN" },
@@ -46,29 +48,31 @@ const TIPS: { key: TipKey; icon: IconName; color: string }[] = [
 
 const BUMP_MS = 400; // a jolt landing the same tap twice is ignored
 
-function Circle({ icon, color, label, on, error, onClick }: {
-  icon: IconName; color: string; label: string; on?: boolean; error?: string | null; onClick: () => void;
+function Circle({ icon, color, label, on, onClick }: {
+  icon: IconName; color: string; label: string; on?: boolean; onClick: () => void;
 }) {
   return (
-    <button className="v5-circle" aria-pressed={!!on} data-error={!!error} onClick={onClick}>
-      <span className="v5-ring"><Icon name={icon} size={28} style={{ color }} /></span>
-      <span className="v5-circle-label">{error ?? label}</span>
+    <button className="v5-circle" aria-pressed={!!on} onClick={onClick}>
+      <span className="v5-ring">
+        <Icon name={icon} size={28} style={{ color }} />
+        {on && <span className="v5-badge" aria-hidden><Icon name="check" size={13} strokeWidth={2.4} /></span>}
+      </span>
+      <span className="v5-circle-label">{label}</span>
     </button>
   );
 }
 
 export default function V5App() {
-  const { lang, setLang, isRTL } = useLanguage();
+  const { lang, setLang, isRTL, radios } = useLanguage();
   const s: V5Strings = STRINGS[lang];
-  const speech = useSpeech();
+  const music = useMusic(radios, lang);
+  const speech = useSpeech(music.duck);
 
-  const [source, setSource] = useState<Source>("playlists");
   const [requests, setRequests] = useState<Partial<Record<RequestKey, boolean>>>({});
-  const [errors, setErrors] = useState<Partial<Record<RequestKey, boolean>>>({});
   const [climate, setClimate] = useState<"cool" | "warm" | null>(null);
   const [tip, setTip] = useState<TipKey | null>(null);
   const [qr, setQr] = useState(false);
-  const [sheet, setSheet] = useState<"settings" | "bt" | null>(null);
+  const [sheet, setSheet] = useState<"settings" | "bt" | "picker" | null>(null);
   const [confirmNew, setConfirmNew] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [isFS, setIsFS] = useState(false);
@@ -86,7 +90,7 @@ export default function V5App() {
   const showToast = useCallback((msg: string) => {
     clearTimeout(toastTimer.current);
     setToast(msg);
-    toastTimer.current = setTimeout(() => setToast(null), 2600);
+    toastTimer.current = setTimeout(() => setToast(null), 3200);
   }, []);
 
   useEffect(() => {
@@ -95,19 +99,17 @@ export default function V5App() {
     return () => document.removeEventListener("fullscreenchange", onFS);
   }, []);
 
-  // If the device can't speak a request, never show "Told Amish" — switch it
-  // off and say so on the button for a few seconds.
+  // If the device can't speak a request, it must not look sent: switch it off
+  // and tell the passenger to say it directly.
   function failRequest(key: RequestKey) {
     setRequests((p) => ({ ...p, [key]: false }));
-    setErrors((p) => ({ ...p, [key]: true }));
-    setTimeout(() => setErrors((p) => ({ ...p, [key]: false })), 4000);
+    showToast(s.didntHear);
   }
 
   function toggleRequest(key: RequestKey) {
     if (!passBump(key)) return;
     const on = !requests[key];
     setRequests((p) => ({ ...p, [key]: on }));
-    setErrors((p) => ({ ...p, [key]: false }));
     if (on) {
       speech.say(key, SPEECH.requests[key].on, () => failRequest(key));
     } else if (!speech.withdraw(key)) {
@@ -127,7 +129,7 @@ export default function V5App() {
     setClimate(side);
     speech.say("climate", SPEECH.climate[side], () => {
       setClimate(null);
-      showToast(s.pleaseTell);
+      showToast(s.didntHear);
     });
   }
 
@@ -143,22 +145,21 @@ export default function V5App() {
     setTip(key);
     speech.say("tip", SPEECH.tip[key], () => {
       setTip(null);
-      showToast(s.pleaseTell);
+      showToast(s.didntHear);
     });
     if (key === "revolut") setQr(true);
   }
 
   function newRide() {
     speech.clear();
+    music.reset();
     lastTap.current = {};
     setRequests({});
-    setErrors({});
     setClimate(null);
     setTip(null);
     setQr(false);
     setSheet(null);
     setConfirmNew(false);
-    setSource("playlists");
     setLang("en");
   }
 
@@ -167,80 +168,43 @@ export default function V5App() {
     else document.exitFullscreen?.().catch(() => {});
   }
 
-  const reqLabel = (key: Exclude<RequestKey, "bluetooth">) => (requests[key] ? s.told : s.requests[key]);
+  const closeOnScrim = (e: React.MouseEvent) => { if (e.target === e.currentTarget) setSheet(null); };
+
+  const header = (
+    <header className="v5-header">
+      <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+        <span className="v5-wordmark">LuxPro</span>
+        <span className="v5-micro" dir="ltr">v{APP_VERSION} · {BUILD_ID}</span>
+      </div>
+      <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+        {LANGS.map((l) => (
+          <button key={l.id} className="v5-lang" aria-pressed={lang === l.id} onClick={() => setLang(l.id)}>{l.label}</button>
+        ))}
+        <button className="v5-iconbtn" style={{ marginInlineStart: 8 }} aria-label={s.settings} onClick={() => { setConfirmNew(false); setSheet("settings"); }}>
+          <Icon name="settings" size={18} />
+        </button>
+      </div>
+    </header>
+  );
 
   return (
     <div className="v5" data-lang={lang} dir={isRTL ? "rtl" : "ltr"}>
-      {/* ── Hero: header, source, now playing ─────────────────────────── */}
-      <section className="v5-hero">
-        <header className="v5-header">
-          <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
-            <span className="v5-wordmark">LuxPro</span>
-            <span className="v5-micro" dir="ltr">v{APP_VERSION} · {BUILD_ID}</span>
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-            {LANGS.map((l) => (
-              <button key={l.id} className="v5-lang" aria-pressed={lang === l.id} onClick={() => setLang(l.id)}>{l.label}</button>
-            ))}
-            <button className="v5-iconbtn" style={{ marginInlineStart: 8 }} aria-label={s.settings} onClick={() => { setConfirmNew(false); setSheet("settings"); }}>
-              <Icon name="settings" size={18} />
-            </button>
-          </div>
-        </header>
-
-        <div className="v5-hero-glyph" aria-hidden>
-          <Icon
-            name={source === "radio" ? "radio" : source === "bluetooth" ? "bluetooth" : "headphones"}
-            size={40}
-            style={{ color: source === "radio" ? "var(--i-violet)" : source === "bluetooth" ? "var(--i-blue)" : "var(--i-pink)" }}
-          />
-          <span className="v5-hero-rule" />
-        </div>
-
-        <div className="v5-hero-foot">
-          <div className="v5-tabs" role="tablist">
-            {([["radio", s.radio], ["playlists", s.playlists], ["bluetooth", s.bluetooth]] as [Source, string][]).map(([id, label]) => (
-              <button key={id} role="tab" className="v5-tab" aria-pressed={source === id} aria-selected={source === id} onClick={() => setSource(id)}>{label}</button>
-            ))}
-          </div>
-
-          {source === "bluetooth" ? (
-            <div style={{ display: "grid", gap: 10, marginTop: 4 }}>
-              <div>
-                <div className="v5-display">{s.btTitle}</div>
-                <div className="v5-sub">{s.btSub}</div>
-              </div>
-              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                <button className="v5-pill" aria-pressed={!!requests.bluetooth} onClick={() => toggleRequest("bluetooth")}>
-                  <Icon name={requests.bluetooth ? "check" : "bluetooth"} size={16} />
-                  {errors.bluetooth ? s.pleaseTell : requests.bluetooth ? s.told : s.btAsk}
-                </button>
-                <button className="v5-pill" onClick={() => setSheet("bt")}>{s.btHow}</button>
-              </div>
-            </div>
-          ) : (
-            <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 16, marginTop: 4 }}>
-              <div style={{ minWidth: 0 }}>
-                <div className="v5-display">{s.heroIdleTitle}</div>
-                <div className="v5-sub">{s.heroIdleSoon}</div>
-              </div>
-              {/* Media transport stays left-to-right in RTL; wired in v5.2 */}
-              <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }} dir="ltr">
-                <button className="v5-iconbtn" data-size="md" disabled aria-label="Previous"><Icon name="skip-back" size={18} /></button>
-                <button className="v5-iconbtn v5-play" disabled aria-label="Play"><Icon name="play" size={24} /></button>
-                <button className="v5-iconbtn" data-size="md" disabled aria-label="Next"><Icon name="skip-forward" size={18} /></button>
-              </div>
-            </div>
-          )}
-        </div>
-      </section>
+      <MusicHero
+        s={s}
+        music={music}
+        header={header}
+        onPicker={() => setSheet("picker")}
+        btOn={!!requests.bluetooth}
+        onBtAsk={() => toggleRequest("bluetooth")}
+        onBtHow={() => setSheet("bt")}
+      />
 
       <main className="v5-main">
-        {/* ── Tip: three options up front, each says what happens ─────── */}
+        {/* ── Tip: headline + three options; gold only once one is chosen ── */}
         <section className="v5-tip" aria-label={s.tipTitle}>
           <div className="v5-tip-head">
             <span className="v5-title">{tip ? s.tipThanksTitle : s.tipTitle}</span>
-            <span className="v5-sub" style={{ color: "var(--gold)" }}>{tip ? s.tipThanksSub : s.tipSub}</span>
+            <span className="v5-sub">{tip ? s.tipThanksSub : s.tipHint}</span>
           </div>
           <div className="v5-tip-opts">
             {TIPS.map((t) => {
@@ -248,34 +212,32 @@ export default function V5App() {
               return (
                 <button key={t.key} className="v5-tip-opt" aria-pressed={on} onClick={() => tapTip(t.key)}>
                   <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <Icon name={t.icon} size={20} style={{ color: on ? "currentColor" : t.color }} />
+                    <Icon name={on ? "check" : t.icon} size={20} style={{ color: on ? "currentColor" : t.color }} />
                     <span className="v5-label" style={{ color: "inherit", fontSize: 17 }}>{s.tip[t.key].label}</span>
                   </span>
-                  <small>{on ? s.told : s.tip[t.key].sub}</small>
+                  <small>{s.tip[t.key].sub}</small>
                 </button>
               );
             })}
           </div>
         </section>
 
-        {/* ── Ask Amish: every button a plain on/off request ──────────── */}
+        {/* ── Ask Amish: on/off; "on" shows as a gold ring + check badge ── */}
         <section aria-label={s.askAmish}>
           <div className="v5-caption" style={{ marginBottom: 8 }}>{s.askAmish}</div>
           <div className="v5-grid4">
             {COMFORT.map((it) => (
               <Circle key={it.key} icon={it.icon} color={it.color}
-                label={reqLabel(it.key as Exclude<RequestKey, "bluetooth">)}
-                on={!!requests[it.key]} error={errors[it.key] ? s.pleaseTell : null}
-                onClick={() => toggleRequest(it.key)} />
+                label={s.requests[it.key as Exclude<RequestKey, "bluetooth">]}
+                on={!!requests[it.key]} onClick={() => toggleRequest(it.key)} />
             ))}
           </div>
           {/* Three under four, inset half a column so each sits between two above */}
           <div className="v5-grid3">
             {ROUTES.map((it) => (
               <Circle key={it.key} icon={it.icon} color={it.color}
-                label={reqLabel(it.key as Exclude<RequestKey, "bluetooth">)}
-                on={!!requests[it.key]} error={errors[it.key] ? s.pleaseTell : null}
-                onClick={() => toggleRequest(it.key)} />
+                label={s.requests[it.key as Exclude<RequestKey, "bluetooth">]}
+                on={!!requests[it.key]} onClick={() => toggleRequest(it.key)} />
             ))}
           </div>
         </section>
@@ -286,9 +248,9 @@ export default function V5App() {
             const on = climate === side;
             return (
               <button key={side} data-side={side} aria-pressed={on} onClick={() => tapClimate(side)}>
-                <Icon name={side === "cool" ? "snowflake" : "flame"} size={24} style={{ color: side === "cool" ? "var(--i-sky)" : "var(--i-orange)" }} />
+                <Icon name={on ? "check" : side === "cool" ? "snowflake" : "flame"} size={24}
+                  style={{ color: on ? "var(--gold)" : side === "cool" ? "var(--i-sky)" : "var(--i-orange)" }} />
                 <span className="v5-label" style={{ fontSize: 17 }}>{side === "cool" ? s.cooler : s.warmer}</span>
-                {on && <span className="v5-told"><Icon name="check" size={14} />{s.told}</span>}
               </button>
             );
           })}
@@ -305,9 +267,54 @@ export default function V5App() {
         </section>
       </main>
 
+      {/* ── Station / playlist picker, with volume ───────────────────── */}
+      {sheet === "picker" && (
+        <div className="v5-overlay" onClick={closeOnScrim}>
+          <div className="v5-sheet" role="dialog" aria-label={music.source === "radio" ? s.chooseStation : s.choosePlaylist}>
+            <div className="v5-handle" />
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <span className="v5-heading">{music.source === "radio" ? s.chooseStation : s.choosePlaylist}</span>
+              <button className="v5-pill" onClick={() => setSheet(null)}>{s.close}</button>
+            </div>
+            {/* Volume: − / + steps, no slider — precise sliding fails on bumps */}
+            <div className="v5-vol" dir="ltr">
+              <span className="v5-caption" style={{ minWidth: 72 }}>{s.volume}</span>
+              <button className="v5-iconbtn" data-size="md" aria-label={`${s.volume} −`} onClick={() => music.setVolume(music.volume - 10)}><Icon name="minus" size={18} /></button>
+              <span className="v5-vol-bar" aria-hidden>
+                {Array.from({ length: 10 }, (_, i) => <i key={i} data-on={i < Math.round(music.volume / 10)} />)}
+              </span>
+              <button className="v5-iconbtn" data-size="md" aria-label={`${s.volume} +`} onClick={() => music.setVolume(music.volume + 10)}><Icon name="plus" size={18} /></button>
+            </div>
+            <div className="v5-pick">
+              {music.source === "radio"
+                ? radios.map((st, i) => {
+                    const offline = music.radio.brokenStations.has(i) && music.radio.currentIdx !== i;
+                    return (
+                      <button key={st.n + i} aria-pressed={music.radio.currentIdx === i} data-offline={offline}
+                        onClick={() => { music.chooseStation(i); setSheet(null); }}>
+                        <span style={{ display: "grid", minWidth: 0 }}>
+                          <span className="v5-label" style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{st.n}</span>
+                          {offline && <span className="v5-sub">{s.offline}</span>}
+                        </span>
+                        {music.radio.currentIdx === i && <Icon name="check" size={18} style={{ color: "var(--gold)", flexShrink: 0 }} />}
+                      </button>
+                    );
+                  })
+                : PLAYLISTS.map((pl, i) => (
+                    <button key={pl.n} aria-pressed={music.plIdx === i}
+                      onClick={() => { music.choosePlaylist(i); setSheet(null); }}>
+                      <span className="v5-label">{pl.n}</span>
+                      {music.plIdx === i && <Icon name="check" size={18} style={{ color: "var(--gold)", flexShrink: 0 }} />}
+                    </button>
+                  ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ── Settings ─────────────────────────────────────────────────── */}
       {sheet === "settings" && (
-        <div className="v5-overlay" onClick={(e) => { if (e.target === e.currentTarget) setSheet(null); }}>
+        <div className="v5-overlay" onClick={closeOnScrim}>
           <div className="v5-sheet" role="dialog" aria-label={s.settings}>
             <div className="v5-handle" />
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 4 }}>
@@ -340,7 +347,7 @@ export default function V5App() {
 
       {/* ── Bluetooth how-to ─────────────────────────────────────────── */}
       {sheet === "bt" && (
-        <div className="v5-overlay" onClick={(e) => { if (e.target === e.currentTarget) setSheet(null); }}>
+        <div className="v5-overlay" onClick={closeOnScrim}>
           <div className="v5-sheet" role="dialog" aria-label={s.btHow}>
             <div className="v5-handle" />
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 4 }}>
@@ -373,6 +380,20 @@ export default function V5App() {
       )}
 
       {toast && <div className="v5-toast" role="status">{toast}</div>}
+
+      {/* Hidden SoundCloud player — driven entirely by the hero's controls */}
+      {music.sc.src && (
+        <iframe
+          key={music.sc.src}
+          ref={music.sc.iframeRef}
+          src={music.sc.src}
+          title="Playlist player"
+          allow="autoplay"
+          aria-hidden
+          tabIndex={-1}
+          style={{ position: "absolute", width: 1, height: 1, opacity: 0, pointerEvents: "none", border: 0 }}
+        />
+      )}
     </div>
   );
 }

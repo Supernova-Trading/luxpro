@@ -14,15 +14,23 @@ export interface V5Strings {
   radio: string;
   playlists: string;
   bluetooth: string;
-  heroIdleTitle: string;
-  heroIdleSoon: string;
+  nowPlaying: string;
+  tapPlay: string;
+  chooseStation: string;
+  choosePlaylist: string;
+  live: string;
+  loading: string;
+  offline: string;
+  needInternet: string;
+  tryAgain: string;
+  volume: string;
   btTitle: string;
   btSub: string;
   btAsk: string;
   btHow: string;
   btSteps: string[];
   tipTitle: string;
-  tipSub: string;
+  tipHint: string;
   tipThanksTitle: string;
   tipThanksSub: string;
   tip: Record<TipKey, { label: string; sub: string }>;
@@ -31,8 +39,7 @@ export interface V5Strings {
   done: string;
   askAmish: string;
   requests: Record<Exclude<RequestKey, "bluetooth">, string>;
-  told: string;
-  pleaseTell: string;
+  didntHear: string;
   cooler: string;
   warmer: string;
   play: string;
@@ -54,8 +61,16 @@ export const STRINGS: Record<Lang, V5Strings> = {
     radio: "Radio",
     playlists: "Playlists",
     bluetooth: "Bluetooth",
-    heroIdleTitle: "Music for the journey",
-    heroIdleSoon: "Radio and playlists arrive in the next build.",
+    nowPlaying: "Now playing",
+    tapPlay: "Tap play",
+    chooseStation: "Choose a station",
+    choosePlaylist: "Choose a playlist",
+    live: "Live",
+    loading: "Loading…",
+    offline: "Offline · tap play to try again",
+    needInternet: "Playlists need internet",
+    tryAgain: "Try again",
+    volume: "Volume",
     btTitle: "Your phone",
     btSub: "Connect to My Volvo Car",
     btAsk: "Ask Amish to connect",
@@ -68,7 +83,7 @@ export const STRINGS: Record<Lang, V5Strings> = {
       "Play music from your phone.",
     ],
     tipTitle: "Tips go straight to Amish",
-    tipSub: "Cash, Uber or Revolut · Amish will know",
+    tipHint: "Tap one · Amish will know",
     tipThanksTitle: "Thank you",
     tipThanksSub: "Amish knows it's coming",
     tip: {
@@ -89,8 +104,7 @@ export const STRINGS: Record<Lang, V5Strings> = {
       motorway: "Motorway",
       changeDest: "Change destination",
     },
-    told: "Told Amish",
-    pleaseTell: "Please tell Amish",
+    didntHear: "Amish didn't hear that. Please tell him directly.",
     cooler: "Cooler",
     warmer: "Warmer",
     play: "Play",
@@ -110,8 +124,16 @@ export const STRINGS: Record<Lang, V5Strings> = {
     radio: "Radio",
     playlists: "Listas",
     bluetooth: "Bluetooth",
-    heroIdleTitle: "Música para el trayecto",
-    heroIdleSoon: "La radio y las listas llegan en la próxima versión.",
+    nowPlaying: "Sonando",
+    tapPlay: "Toque para reproducir",
+    chooseStation: "Elija una emisora",
+    choosePlaylist: "Elija una lista",
+    live: "En directo",
+    loading: "Cargando…",
+    offline: "Sin señal · toque para reintentar",
+    needInternet: "Las listas necesitan internet",
+    tryAgain: "Reintentar",
+    volume: "Volumen",
     btTitle: "Su teléfono",
     btSub: "Conéctese a My Volvo Car",
     btAsk: "Pedir a Amish que lo conecte",
@@ -124,7 +146,7 @@ export const STRINGS: Record<Lang, V5Strings> = {
       "Reproduzca música desde su teléfono.",
     ],
     tipTitle: "La propina es íntegramente para Amish",
-    tipSub: "Efectivo, Uber o Revolut · Amish lo sabrá",
+    tipHint: "Toque uno · Amish lo sabrá",
     tipThanksTitle: "Gracias",
     tipThanksSub: "Amish ya lo sabe",
     tip: {
@@ -145,8 +167,7 @@ export const STRINGS: Record<Lang, V5Strings> = {
       motorway: "Autopista",
       changeDest: "Cambiar destino",
     },
-    told: "Avisado a Amish",
-    pleaseTell: "Dígaselo a Amish",
+    didntHear: "Amish no lo oyó. Dígaselo directamente, por favor.",
     cooler: "Más fresco",
     warmer: "Más calor",
     play: "Jugar",
@@ -166,8 +187,16 @@ export const STRINGS: Record<Lang, V5Strings> = {
     radio: "ریڈیو",
     playlists: "پلے لسٹس",
     bluetooth: "بلوٹوتھ",
-    heroIdleTitle: "سفر کے لیے موسیقی",
-    heroIdleSoon: "ریڈیو اور پلے لسٹس اگلے ورژن میں آئیں گی۔",
+    nowPlaying: "ابھی چل رہا ہے",
+    tapPlay: "چلانے کے لیے ٹچ کریں",
+    chooseStation: "اسٹیشن منتخب کریں",
+    choosePlaylist: "پلے لسٹ منتخب کریں",
+    live: "براہ راست",
+    loading: "لوڈ ہو رہا ہے…",
+    offline: "آف لائن · دوبارہ کوشش کے لیے ٹچ کریں",
+    needInternet: "پلے لسٹس کے لیے انٹرنیٹ چاہیے",
+    tryAgain: "دوبارہ کوشش کریں",
+    volume: "آواز",
     btTitle: "آپ کا فون",
     btSub: "My Volvo Car سے جوڑیں",
     btAsk: "امیش سے جوڑنے کو کہیں",
@@ -180,7 +209,7 @@ export const STRINGS: Record<Lang, V5Strings> = {
       "اپنے فون سے موسیقی چلائیں۔",
     ],
     tipTitle: "ٹپ پوری کی پوری امیش کو جاتی ہے",
-    tipSub: "نقد، اوبر یا Revolut · امیش کو پتہ چل جائے گا",
+    tipHint: "ایک منتخب کریں · امیش کو پتہ چل جائے گا",
     tipThanksTitle: "شکریہ",
     tipThanksSub: "امیش کو معلوم ہو گیا ہے",
     tip: {
@@ -201,8 +230,7 @@ export const STRINGS: Record<Lang, V5Strings> = {
       motorway: "موٹروے",
       changeDest: "منزل تبدیل کریں",
     },
-    told: "امیش کو بتا دیا",
-    pleaseTell: "براہ کرم امیش کو بتائیں",
+    didntHear: "امیش نے نہیں سنا۔ براہ کرم انہیں خود بتائیں۔",
     cooler: "ٹھنڈا",
     warmer: "گرم",
     play: "کھیلیں",
