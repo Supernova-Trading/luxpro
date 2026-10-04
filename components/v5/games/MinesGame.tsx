@@ -4,10 +4,12 @@ import { useEffect, useRef, useState } from "react";
 import { Icon } from "../../Icon";
 import type { QuizLevel, V5Strings } from "../strings";
 import { newBoard, dig, toggleFlag, flagsLeft, type Board } from "./mines";
+import { useEndGuard } from "./useEndGuard";
 
 // Mines for a moving car: one board size with big squares (8 × 10), the level
 // only changes how many mines. No timer, no long-press — a Dig / Flag switch
 // instead, because a held finger in a car turns into an accidental dig.
+// One "Undo, was that a bump?" per game takes back the dig that hit a mine.
 const ROWS = 10;
 const COLS = 8;
 const MINES: Record<QuizLevel, number> = { easy: 10, medium: 14, hard: 18 };
@@ -17,7 +19,7 @@ const TAP_GUARD_MS = 300; // a jolt can land a second tap
 
 const NUM_COLOR = ["", "var(--i-sky)", "var(--i-green)", "var(--i-orange)", "var(--i-violet)", "var(--i-pink)", "var(--i-teal)", "var(--ink)", "var(--muted)"];
 
-export interface MinesSave { board: Board; level: QuizLevel }
+export interface MinesSave { board: Board; level: QuizLevel; before: Board | null; undoUsed: boolean }
 
 export default function MinesGame({ s, saved, onSave, onClose }: {
   s: V5Strings;
@@ -28,12 +30,14 @@ export default function MinesGame({ s, saved, onSave, onClose }: {
   const [level, setLevel] = useState<QuizLevel>(saved?.level ?? "easy");
   const [board, setBoard] = useState<Board>(saved?.board ?? newBoard(ROWS, COLS, MINES.easy));
   const [mode, setMode] = useState<"dig" | "flag">("dig");
+  const [before, setBefore] = useState<Board | null>(saved?.before ?? null); // the board before the last dig
+  const [undoUsed, setUndoUsed] = useState(saved?.undoUsed ?? false);
   const [size, setSize] = useState(0);
   const wrap = useRef<HTMLDivElement>(null);
   const lastTap = useRef(0);
 
   // Keep the game if the passenger pops Home and comes back.
-  useEffect(() => { onSave({ board, level }); }, [board, level, onSave]);
+  useEffect(() => { onSave({ board, level, before, undoUsed }); }, [board, level, before, undoUsed, onSave]);
 
   // Squares as large as the space allows (the old Tab A can't rely on
   // container-query units, so measure).
@@ -55,19 +59,33 @@ export default function MinesGame({ s, saved, onSave, onClose }: {
     setLevel(l);
     setBoard(newBoard(ROWS, COLS, MINES[l]));
     setMode("dig");
+    setBefore(null);
+    setUndoUsed(false);
+  }
+
+  function undo() {
+    if (!before || undoUsed) return;
+    setBoard(before);
+    setUndoUsed(true);
   }
 
   function tap(i: number) {
     const now = Date.now();
     if (now - lastTap.current < TAP_GUARD_MS) return;
     lastTap.current = now;
-    setBoard((b) => (mode === "flag" && b.state !== "ready" ? toggleFlag(b, i) : dig(b, i)));
+    if (mode === "flag" && board.state !== "ready") { setBoard(toggleFlag(board, i)); return; }
+    const next = dig(board, i);
+    if (next === board) return;
+    setBefore(board);
+    setBoard(next);
   }
 
   const over = board.state === "won" || board.state === "lost";
+  const againReady = useEndGuard(over);
+  const canUndo = board.state === "lost" && !undoUsed && !!before;
   const status =
-    board.state === "won" ? s.minesWon
-    : board.state === "lost" ? s.minesLost
+    board.state === "won" ? s.wellPlayed
+    : board.state === "lost" ? s.notThisTime
     : board.state === "ready" ? s.minesStart
     : null;
 
@@ -122,15 +140,23 @@ export default function MinesGame({ s, saved, onSave, onClose }: {
       </div>
 
       <div className="v5-game-foot">
-        <div className="v5-seg" data-n="2" role="radiogroup" aria-label={`${s.dig} / ${s.flag}`}>
-          <button role="radio" aria-checked={mode === "dig"} aria-pressed={mode === "dig"} onClick={() => setMode("dig")}>
-            <Icon name="hand" size={20} /> {s.dig}
+        {/* After a mine: one chance to take back a dig a bump may have caused */}
+        {canUndo ? (
+          <button className="v5-undo" onClick={undo}>
+            <Icon name="history" size={20} />
+            {s.undoBump}
           </button>
-          <button role="radio" aria-checked={mode === "flag"} aria-pressed={mode === "flag"} onClick={() => setMode("flag")}>
-            <Icon name="mine" size={20} /> {s.flag}
-          </button>
-        </div>
-        <button className="v5-newgame" data-over={over} onClick={() => restart()}>
+        ) : (
+          <div className="v5-seg" data-n="2" role="radiogroup" aria-label={`${s.dig} / ${s.flag}`}>
+            <button role="radio" aria-checked={mode === "dig"} aria-pressed={mode === "dig"} onClick={() => setMode("dig")}>
+              <Icon name="hand" size={20} /> {s.dig}
+            </button>
+            <button role="radio" aria-checked={mode === "flag"} aria-pressed={mode === "flag"} onClick={() => setMode("flag")}>
+              <Icon name="mine" size={20} /> {s.flag}
+            </button>
+          </div>
+        )}
+        <button className="v5-newgame" data-over={over} disabled={over && !againReady} onClick={() => restart()}>
           <Icon name="refresh" size={20} />
           {s.newGame}
         </button>

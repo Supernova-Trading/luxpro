@@ -1,7 +1,7 @@
 // Run: node --test "components/v5/games/*.test.mjs"   (Node 23.6+ reads the .ts directly)
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { newBlocks, start, move, rotate, tick, softDrop, hardDrop, landing, cellsOf, fits, fallMs, KEYS } from "./blocks.ts";
+import { newBlocks, start, move, rotate, tick, softDrop, hardDrop, landing, cellsOf, fits, fallMs, resting, lockPiece, KEYS } from "./blocks.ts";
 
 const playing = (key, extra = {}) => {
   const s = start(newBlocks(10, 20, () => 0));
@@ -61,13 +61,26 @@ test("hard drop lands where the ghost shows, and scores 2 per row", () => {
   assert.equal(n.score, 2 * (ghost.y - s.piece.y));
 });
 
-test("a resting piece locks on the next tick, not before", () => {
+test("gravity and Down never lock a resting piece; only lockPiece does", () => {
   let s = playing("O");
   s = { ...s, piece: landing(s) };
-  assert.equal(s.board.filter(Boolean).length, 0); // resting, still movable
-  const locked = tick(s);
+  assert.equal(resting(s), true);
+  assert.equal(tick(s), s);
+  assert.equal(softDrop(s), s);
+  assert.equal(move(s, -1).board.filter(Boolean).length, 0); // still movable
+  const locked = lockPiece(s);
   assert.equal(locked.board.filter(Boolean).length, 4);
   assert.equal(locked.piece.y, 0); // the next piece has spawned
+});
+
+test("a piece slid off a ledge can fall again", () => {
+  const s = playing("O");
+  const board = [...s.board];
+  board[19 * 10 + 4] = "Z"; board[19 * 10 + 5] = "Z";
+  let p = { ...s, board, piece: { key: "O", rot: 0, x: 4, y: 17 } };
+  assert.equal(resting(p), true);
+  p = move(move(p, 1), 1);
+  assert.equal(resting(p), false);
 });
 
 test("soft drop moves down a row for 1 point", () => {

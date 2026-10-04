@@ -4,14 +4,16 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Icon, type IconName } from "../../Icon";
 import type { V5Strings } from "../strings";
 import {
-  newBlocks, start, move, rotate, tick, softDrop, hardDrop, landing, cellsOf, fallMs,
+  newBlocks, start, move, rotate, tick, softDrop, landing, cellsOf, fallMs, resting, lockPiece, LOCK_MS,
   type Blocks, type Key,
 } from "./blocks";
 import { resolveColor, rounded, readBest, saveBest, prepare } from "./canvas";
+import { useEndGuard } from "./useEndGuard";
 
-// Blocks for a moving car: big buttons only (no swipes), "Relaxed" speed by
-// default, Left / Right / Down repeat while held, Drop ignores a second
-// press for 0.4 s so a jolt can't drop two pieces. Canvas + one rAF loop.
+// Blocks for a moving car (roadmap P5): four big buttons — Left, Right,
+// Rotate, Down — no swipes and no instant drop. Left / Right / Down repeat
+// while held; a resting piece waits half a second before it locks.
+// "Relaxed" speed by default. Home keeps the game, paused. Canvas + one rAF loop.
 const COLS = 10;
 const ROWS = 20;
 type Speed = "relaxed" | "normal" | "fast";
@@ -20,36 +22,48 @@ const FALL: Record<Speed, [number, number]> = { relaxed: [1000, 400], normal: [7
 const BEST_KEY = "luxpro.v5.blocksBest";
 const REPEAT_DELAY = 260;
 const REPEAT_EVERY = 110;
-const DROP_GUARD_MS = 400;
 
 const PIECE_TOKENS: Record<Key, [string, string]> = {
   I: ["--i-sky", "#5bb8e8"], O: ["--i-lemon", "#e5cf5a"], T: ["--i-violet", "#a68be8"],
   S: ["--i-green", "#5fbf7a"], Z: ["--i-red", "#e4675d"], J: ["--i-blue", "#6c8ff0"], L: ["--i-orange", "#ec9a4f"],
 };
 
-type Action = "left" | "right" | "rotate" | "down" | "drop";
+type Action = "left" | "right" | "rotate" | "down";
 
-export default function BlocksGame({ s, onClose }: { s: V5Strings; onClose: () => void }) {
-  const [speed, setSpeed] = useState<Speed>("relaxed");
-  const [view, setView] = useState({ status: "ready" as Blocks["status"], score: 0, lines: 0, level: 1, next: "T" as Key });
+export interface BlocksSave { game: Blocks; speed: Speed }
+
+export default function BlocksGame({ s, saved, onSave, onClose }: {
+  s: V5Strings;
+  saved: BlocksSave | null;
+  onSave: (g: BlocksSave) => void;
+  onClose: () => void;
+}) {
+  const g0 = saved?.game ?? null;
+  const resumed = g0?.status === "playing";
+  const [speed, setSpeed] = useState<Speed>(saved?.speed ?? "relaxed");
+  const [view, setView] = useState({
+    status: g0?.status ?? ("ready" as Blocks["status"]),
+    score: g0?.score ?? 0, lines: g0?.lines ?? 0, level: g0?.level ?? 1, next: g0?.next ?? ("T" as Key),
+  });
   const [best, setBest] = useState(0);
-  const [paused, setPaused] = useState(false);
+  const [paused, setPaused] = useState(resumed);
   const [size, setSize] = useState(0);
 
-  const game = useRef<Blocks>(newBlocks(COLS, ROWS));
-  const pausedRef = useRef(false);
-  const speedRef = useRef<Speed>("relaxed");
+  const game = useRef<Blocks>(g0 ?? newBlocks(COLS, ROWS));
+  const pausedRef = useRef(resumed);
+  const speedRef = useRef<Speed>(saved?.speed ?? "relaxed");
   const dirty = useRef(true);
   const wrap = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const nextCanvas = useRef<HTMLCanvasElement>(null);
   const colors = useRef<Record<string, string>>({});
   const repeat = useRef<{ t?: ReturnType<typeof setTimeout>; i?: ReturnType<typeof setInterval> }>({});
-  const lastDrop = useRef(0);
 
   useEffect(() => { setBest(readBest(BEST_KEY)); }, []);
   useEffect(() => { speedRef.current = speed; }, [speed]);
   useEffect(() => { pausedRef.current = paused; }, [paused]);
+  // Leaving for Home hands the game back to the app, to resume later.
+  useEffect(() => () => onSave({ game: game.current, speed: speedRef.current }), [onSave]);
 
   useEffect(() => {
     const el = wrap.current;
@@ -116,6 +130,7 @@ export default function BlocksGame({ s, onClose }: { s: V5Strings; onClose: () =
     let raf = 0;
     let last = performance.now();
     let acc = 0;
+    let rest = 0; // how long the piece has been resting
     const frame = (t: number) => {
       const dt = Math.min(t - last, 250);
       last = t;
@@ -125,11 +140,16 @@ export default function BlocksGame({ s, onClose }: { s: V5Strings; onClose: () =
         let every = fallMs(game.current.level, base, floor);
         while (acc >= every) {
           acc -= every;
-          game.current = tick(game.current);
-          dirty.current = true;
+          const n = tick(game.current);
+          if (n !== game.current) { game.current = n; dirty.current = true; }
           every = fallMs(game.current.level, base, floor);
         }
-      } else acc = 0;
+        // Half a second on the floor before it locks (sliding off a ledge resets this)
+        if (resting(game.current)) {
+          rest += dt;
+          if (rest >= LOCK_MS) { game.current = lockPiece(game.current); rest = 0; acc = 0; dirty.current = true; }
+        } else rest = 0;
+      } else { acc = 0; rest = 0; }
       if (dirty.current) {
         dirty.current = false;
         draw();
@@ -155,17 +175,11 @@ export default function BlocksGame({ s, onClose }: { s: V5Strings; onClose: () =
     if (pausedRef.current) return;
     const g = game.current;
     if (g.status === "ready") { game.current = start(g); dirty.current = true; return; }
-    if (a === "drop") {
-      const now = Date.now();
-      if (now - lastDrop.current < DROP_GUARD_MS) return;
-      lastDrop.current = now;
-    }
     game.current =
       a === "left" ? move(g, -1)
       : a === "right" ? move(g, 1)
       : a === "rotate" ? rotate(g)
-      : a === "down" ? softDrop(g)
-      : hardDrop(g);
+      : softDrop(g);
     dirty.current = true;
   }, []);
 
@@ -177,7 +191,7 @@ export default function BlocksGame({ s, onClose }: { s: V5Strings; onClose: () =
   useEffect(() => stopRepeat, [stopRepeat]);
 
   useEffect(() => {
-    const map: Record<string, Action> = { ArrowLeft: "left", ArrowRight: "right", ArrowUp: "rotate", ArrowDown: "down", " ": "drop" };
+    const map: Record<string, Action> = { ArrowLeft: "left", ArrowRight: "right", ArrowUp: "rotate", ArrowDown: "down" };
     const onKey = (e: KeyboardEvent) => { const a = map[e.key]; if (a) { e.preventDefault(); act(a); } };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -192,6 +206,7 @@ export default function BlocksGame({ s, onClose }: { s: V5Strings; onClose: () =
 
   const playing = view.status === "playing";
   const over = view.status === "over";
+  const againReady = useEndGuard(over);
 
   // Act on touch-down; Left / Right / Down keep going while held.
   const control = (a: Action, icon: IconName, label: string, cls: string, rotateDeg = 0, held = false) => (
@@ -207,7 +222,7 @@ export default function BlocksGame({ s, onClose }: { s: V5Strings; onClose: () =
       onPointerUp={stopRepeat} onPointerLeave={stopRepeat} onPointerCancel={stopRepeat}
       onClick={(e) => { if (e.detail === 0) act(a); }}>
       <Icon name={icon} size={28} style={rotateDeg ? { transform: `rotate(${rotateDeg}deg)` } : undefined} />
-      {(a === "rotate" || a === "drop" || a === "down") && <span className="v5-arrow-label">{label}</span>}
+      {(a === "rotate" || a === "down") && <span className="v5-arrow-label">{label}</span>}
     </button>
   );
 
@@ -249,9 +264,9 @@ export default function BlocksGame({ s, onClose }: { s: V5Strings; onClose: () =
             )}
             {over && (
               <div className="v5-snake-note" data-solid>
-                <span className="v5-heading">{s.gameOver}</span>
+                <span className="v5-heading">{view.score > 0 ? s.wellPlayed : s.notThisTime}</span>
                 <span className="v5-label" style={{ color: "var(--muted)" }}>{s.score} <b dir="ltr" style={{ color: "var(--ink)" }}>{view.score}</b></span>
-                <button className="v5-next" style={{ minWidth: 180 }} onClick={restart}>
+                <button className="v5-next" style={{ minWidth: 180 }} disabled={!againReady} onClick={restart}>
                   <Icon name="refresh" size={20} />{s.playAgain}
                 </button>
               </div>
@@ -279,7 +294,6 @@ export default function BlocksGame({ s, onClose }: { s: V5Strings; onClose: () =
         {control("right", "arrow-up", "Right", "v5-b-right", 90, true)}
         {control("rotate", "refresh", s.rotate, "v5-b-rotate")}
         {control("down", "arrow-up", s.down, "v5-b-down", 180, true)}
-        {control("drop", "download", s.drop, "v5-b-drop")}
       </div>
     </div>
   );

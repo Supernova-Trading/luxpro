@@ -68,8 +68,6 @@ export interface V5Strings {
   newGame: string;
   minesLeft: string;
   minesStart: string;
-  minesWon: string;
-  minesLost: string;
   speeds: Record<"relaxed" | "normal" | "fast", string>;
   score: string;
   best: string;
@@ -77,11 +75,12 @@ export interface V5Strings {
   resume: string;
   paused: string;
   snakeStart: string;
-  gameOver: string;
   playAgain: string;
+  wellPlayed: string;
+  notThisTime: string;
+  undoBump: string;
   rotate: string;
   down: string;
-  drop: string;
   nextPiece: string;
   lines: string;
   level: string;
@@ -181,8 +180,6 @@ export const STRINGS: Record<Lang, V5Strings> = {
     newGame: "New game",
     minesLeft: "Mines left",
     minesStart: "Tap any square to start",
-    minesWon: "Board cleared. Well done!",
-    minesLost: "A mine! Try a new game",
     speeds: { relaxed: "Relaxed", normal: "Normal", fast: "Fast" },
     score: "Score",
     best: "Best",
@@ -190,11 +187,12 @@ export const STRINGS: Record<Lang, V5Strings> = {
     resume: "Resume",
     paused: "Paused",
     snakeStart: "Tap an arrow to start",
-    gameOver: "Game over",
     playAgain: "Play again",
+    wellPlayed: "Well played",
+    notThisTime: "Not this time",
+    undoBump: "Undo, was that a bump?",
     rotate: "Rotate",
     down: "Down",
-    drop: "Drop",
     nextPiece: "Next",
     lines: "Lines",
     level: "Level",
@@ -292,8 +290,6 @@ export const STRINGS: Record<Lang, V5Strings> = {
     newGame: "Nueva partida",
     minesLeft: "Minas restantes",
     minesStart: "Toque cualquier casilla para empezar",
-    minesWon: "¡Tablero despejado! Muy bien",
-    minesLost: "¡Una mina! Pruebe otra partida",
     speeds: { relaxed: "Tranquila", normal: "Normal", fast: "Rápida" },
     score: "Puntos",
     best: "Récord",
@@ -301,11 +297,12 @@ export const STRINGS: Record<Lang, V5Strings> = {
     resume: "Seguir",
     paused: "En pausa",
     snakeStart: "Toque una flecha para empezar",
-    gameOver: "Fin de la partida",
     playAgain: "Jugar otra vez",
+    wellPlayed: "Bien jugado",
+    notThisTime: "Esta vez no",
+    undoBump: "Deshacer: ¿fue un bache?",
     rotate: "Girar",
     down: "Bajar",
-    drop: "Soltar",
     nextPiece: "Siguiente",
     lines: "Líneas",
     level: "Nivel",
@@ -403,8 +400,6 @@ export const STRINGS: Record<Lang, V5Strings> = {
     newGame: "نیا گیم",
     minesLeft: "باقی مائنز",
     minesStart: "شروع کرنے کے لیے کوئی بھی خانہ چھوئیں",
-    minesWon: "بورڈ صاف! شاباش",
-    minesLost: "مائن! نیا گیم آزمائیں",
     speeds: { relaxed: "آرام سے", normal: "نارمل", fast: "تیز" },
     score: "اسکور",
     best: "بہترین",
@@ -412,11 +407,12 @@ export const STRINGS: Record<Lang, V5Strings> = {
     resume: "جاری رکھیں",
     paused: "رکا ہوا",
     snakeStart: "شروع کرنے کے لیے کوئی تیر دبائیں",
-    gameOver: "گیم ختم",
     playAgain: "دوبارہ کھیلیں",
+    wellPlayed: "بہت خوب",
+    notThisTime: "اس بار نہیں",
+    undoBump: "واپس کریں، کیا یہ جھٹکا تھا؟",
     rotate: "گھمائیں",
     down: "نیچے",
-    drop: "گرائیں",
     nextPiece: "اگلا",
     lines: "لائنیں",
     level: "لیول",

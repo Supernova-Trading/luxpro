@@ -1,8 +1,11 @@
 // Blocks — pure game rules (falling-block puzzle), no React or canvas, so they
 // can be tested on their own (node --test "components/v5/games/*.test.mjs"). Every move
-// returns a new state. Car-friendly choices: one rotate button (clockwise)
-// with simple wall kicks, and a resting piece gets one full fall-interval
-// of grace before it locks, so a jolt doesn't fix it in the wrong place.
+// returns a new state. Car-friendly choices (roadmap P5): one rotate button
+// (clockwise) with simple wall kicks, no instant drop in the game, and a
+// resting piece waits LOCK_MS before it locks — the screen times that and
+// calls lockPiece — so a jolt doesn't fix a piece in the wrong place.
+
+export const LOCK_MS = 500;
 
 export type Key = "I" | "O" | "T" | "S" | "Z" | "J" | "L";
 export type BlocksStatus = "ready" | "playing" | "over";
@@ -107,6 +110,16 @@ export function landing(s: Blocks): Piece {
   return p;
 }
 
+/** True when the piece can't fall any further. */
+export function resting(s: Blocks): boolean {
+  return !fits(s, { ...s.piece, y: s.piece.y + 1 });
+}
+
+/** Fix the piece in place, clear rows, score, and bring in the next piece. */
+export function lockPiece(s: Blocks, rand: () => number = Math.random): Blocks {
+  return s.status === "playing" ? lock(s, rand) : s;
+}
+
 function lock(s: Blocks, rand: () => number): Blocks {
   const board = [...s.board];
   let above = false;
@@ -137,21 +150,22 @@ function lock(s: Blocks, rand: () => number): Blocks {
   return out;
 }
 
-/** Gravity: fall one row, or lock if resting (the resting interval is the grace). */
-export function tick(s: Blocks, rand: () => number = Math.random): Blocks {
+/** Gravity: fall one row. Never locks — a resting piece waits for lockPiece. */
+export function tick(s: Blocks): Blocks {
   if (s.status !== "playing") return s;
   const p = { ...s.piece, y: s.piece.y + 1 };
-  return fits(s, p) ? { ...s, piece: p } : lock(s, rand);
+  return fits(s, p) ? { ...s, piece: p } : s;
 }
 
-/** "Down" button: one row faster, +1 point; locks only if already resting. */
-export function softDrop(s: Blocks, rand: () => number = Math.random): Blocks {
+/** "Down" button: one row faster, +1 point. On a resting piece it does nothing. */
+export function softDrop(s: Blocks): Blocks {
   if (s.status !== "playing") return s;
   const p = { ...s.piece, y: s.piece.y + 1 };
-  return fits(s, p) ? { ...s, piece: p, score: s.score + 1 } : lock(s, rand);
+  return fits(s, p) ? { ...s, piece: p, score: s.score + 1 } : s;
 }
 
-/** "Drop" button: straight to the bottom and lock, +2 points per row. */
+/** Straight to the bottom and lock, +2 points per row. Not a button in the
+ *  game (roadmap: no instant drop in a moving car) — used to set up tests. */
 export function hardDrop(s: Blocks, rand: () => number = Math.random): Blocks {
   if (s.status !== "playing") return s;
   const p = landing(s);

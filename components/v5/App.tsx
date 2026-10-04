@@ -15,6 +15,8 @@ import { GENRES, PLAYLIST_META, groupStations } from "./genres";
 import { useDeck } from "./useDeck";
 import WordGame from "./WordGame";
 import type { MinesSave } from "./games/MinesGame";
+import type { SnakeSave } from "./games/SnakeGame";
+import type { BlocksSave } from "./games/BlocksGame";
 
 // Action games load only when opened (roadmap P5: keep the home screen light).
 const MinesGame = dynamic(() => import("./games/MinesGame"), { ssr: false });
@@ -87,14 +89,14 @@ function SectionHead({ title, hint }: { title: string; hint?: string }) {
   );
 }
 
-function Circle({ icon, color, label, on, onClick }: {
-  icon: IconName; color: string; label: string; on?: boolean; onClick: () => void;
+function Circle({ icon, color, label, on, badge = "check", onClick }: {
+  icon: IconName; color: string; label: string; on?: boolean; badge?: IconName; onClick: () => void;
 }) {
   return (
     <button className="v5-circle" aria-pressed={!!on} onClick={onClick}>
       <span className="v5-ring">
         <Icon name={icon} size={28} style={{ color }} />
-        {on && <span className="v5-badge" aria-hidden><Icon name="check" size={13} strokeWidth={2.4} /></span>}
+        {on && <span className="v5-badge" aria-hidden><Icon name={badge} size={13} strokeWidth={2.4} /></span>}
       </span>
       <span className="v5-circle-label">{label}</span>
     </button>
@@ -118,8 +120,15 @@ export default function V5App() {
   const [toast, setToast] = useState<string | null>(null);
   const [isFS, setIsFS] = useState(false);
   const [game, setGame] = useState<GameKey | null>(null);
-  const minesSave = useRef<MinesSave | null>(null);
-  const saveMines = useCallback((m: MinesSave) => { minesSave.current = m; }, []);
+  // Games left via Home wait, paused, until the passenger comes back (roadmap P5).
+  const [minesSave, setMinesSave] = useState<MinesSave | null>(null);
+  const [snakeSave, setSnakeSave] = useState<SnakeSave | null>(null);
+  const [blocksSave, setBlocksSave] = useState<BlocksSave | null>(null);
+  const resumable: Partial<Record<GameKey, boolean>> = {
+    mines: minesSave?.board.state === "playing",
+    snake: snakeSave?.game.status === "playing",
+    blocks: blocksSave?.game.status === "playing",
+  };
   const [quizLevel, setQuizLevel] = useState<QuizLevel>("easy");
   const [asked, setAsked] = useState<Partial<Record<"quiz" | "riddles", boolean>>>({});
 
@@ -236,7 +245,9 @@ export default function V5App() {
     // The question deck is deliberately kept: Amish shouldn't hear repeats.
     lastTap.current = {};
     setGame(null);
-    minesSave.current = null;
+    setMinesSave(null);
+    setSnakeSave(null);
+    setBlocksSave(null);
     setQuizLevel("easy");
     setAsked({});
     setRequests({});
@@ -350,7 +361,8 @@ export default function V5App() {
           <SectionHead title={s.gamesTitle} hint={s.gamesHint} />
           <div className="v5-grid5">
             {GAMES.map((g) => (
-              <Circle key={g.key} icon={g.icon} color={g.color} label={s.games[g.key]} onClick={() => openGame(g.key)} />
+              <Circle key={g.key} icon={g.icon} color={g.color} label={resumable[g.key] ? s.resume : s.games[g.key]}
+                on={resumable[g.key]} badge="play" onClick={() => openGame(g.key)} />
             ))}
           </div>
         </section>
@@ -518,10 +530,10 @@ export default function V5App() {
           onClose={() => setGame(null)}
         />
       )}
-      {game === "snake" && <SnakeGame s={s} onClose={() => setGame(null)} />}
-      {game === "blocks" && <BlocksGame s={s} onClose={() => setGame(null)} />}
+      {game === "snake" && <SnakeGame s={s} saved={snakeSave} onSave={setSnakeSave} onClose={() => setGame(null)} />}
+      {game === "blocks" && <BlocksGame s={s} saved={blocksSave} onSave={setBlocksSave} onClose={() => setGame(null)} />}
       {game === "mines" && (
-        <MinesGame s={s} saved={minesSave.current} onSave={saveMines} onClose={() => setGame(null)} />
+        <MinesGame s={s} saved={minesSave} onSave={setMinesSave} onClose={() => setGame(null)} />
       )}
 
       {/* ── Revolut QR ───────────────────────────────────────────────── */}

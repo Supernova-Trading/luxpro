@@ -5,9 +5,11 @@ import { Icon } from "../../Icon";
 import type { V5Strings } from "../strings";
 import { newSnake, turn, step, type Dir, type Snake } from "./snake";
 import { resolveColor, rounded, readBest, saveBest, prepare } from "./canvas";
+import { useEndGuard } from "./useEndGuard";
 
 // Snake for a moving car: big arrow buttons (no swipes), "Relaxed" speed by
 // default, edges wrap round, pauses itself if the screen goes away.
+// Home keeps the game, paused, until the passenger comes back (roadmap P5).
 // Drawn on one canvas with requestAnimationFrame — the old Tab A stutters if
 // every square is a DOM element re-rendering by React.
 const COLS = 12;
@@ -17,24 +19,35 @@ const SPEEDS: Speed[] = ["relaxed", "normal", "fast"];
 const STEP_MS: Record<Speed, number> = { relaxed: 280, normal: 190, fast: 130 };
 const BEST_KEY = "luxpro.v5.snakeBest";
 
-export default function SnakeGame({ s, onClose }: { s: V5Strings; onClose: () => void }) {
-  const [speed, setSpeed] = useState<Speed>("relaxed");
-  const [status, setStatus] = useState<Snake["status"]>("ready");
-  const [score, setScore] = useState(0);
+export interface SnakeSave { game: Snake; speed: Speed }
+
+export default function SnakeGame({ s, saved, onSave, onClose }: {
+  s: V5Strings;
+  saved: SnakeSave | null;
+  onSave: (g: SnakeSave) => void;
+  onClose: () => void;
+}) {
+  const resumed = saved?.game.status === "playing";
+  const [speed, setSpeed] = useState<Speed>(saved?.speed ?? "relaxed");
+  const [status, setStatus] = useState<Snake["status"]>(saved?.game.status ?? "ready");
+  const [score, setScore] = useState(saved?.game.score ?? 0);
   const [best, setBest] = useState(0);
-  const [paused, setPaused] = useState(false);
+  const [paused, setPaused] = useState(resumed);
   const [size, setSize] = useState(0);
 
-  const game = useRef<Snake>(newSnake(COLS, ROWS));
-  const pausedRef = useRef(false);
-  const stepMs = useRef(STEP_MS.relaxed);
+  const game = useRef<Snake>(saved?.game ?? newSnake(COLS, ROWS));
+  const pausedRef = useRef(resumed);
+  const stepMs = useRef(STEP_MS[saved?.speed ?? "relaxed"]);
+  const speedRef = useRef<Speed>(saved?.speed ?? "relaxed");
   const dirty = useRef(true);
   const wrap = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const colors = useRef<Record<string, string>>({});
 
   useEffect(() => { setBest(readBest(BEST_KEY)); }, []);
-  useEffect(() => { stepMs.current = STEP_MS[speed]; }, [speed]);
+  useEffect(() => { stepMs.current = STEP_MS[speed]; speedRef.current = speed; }, [speed]);
+  // Leaving for Home hands the game back to the app, to resume later.
+  useEffect(() => () => onSave({ game: game.current, speed: speedRef.current }), [onSave]);
   useEffect(() => { pausedRef.current = paused; }, [paused]);
 
   // Biggest square size that fits the space between the header and controls.
@@ -159,6 +172,7 @@ export default function SnakeGame({ s, onClose }: { s: V5Strings; onClose: () =>
 
   const playing = status === "playing";
   const over = status === "over" || status === "won";
+  const againReady = useEndGuard(over);
 
   // Press on touch-down, not release: a car's motion makes taps slow to lift.
   const arrow = (d: Dir, rotate: number, cls: string) => (
@@ -213,9 +227,9 @@ export default function SnakeGame({ s, onClose }: { s: V5Strings; onClose: () =>
           )}
           {over && (
             <div className="v5-snake-note" data-solid>
-              <span className="v5-heading">{s.gameOver}</span>
+              <span className="v5-heading">{score > 0 ? s.wellPlayed : s.notThisTime}</span>
               <span className="v5-label" style={{ color: "var(--muted)" }}>{s.score} <b dir="ltr" style={{ color: "var(--ink)" }}>{score}</b></span>
-              <button className="v5-next" style={{ minWidth: 200 }} onClick={restart}>
+              <button className="v5-next" style={{ minWidth: 200 }} disabled={!againReady} onClick={restart}>
                 <Icon name="refresh" size={20} />{s.playAgain}
               </button>
             </div>
