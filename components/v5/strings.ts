@@ -71,6 +71,15 @@ export interface V5Strings {
   minesStart: string;
   minesWon: string;
   minesLost: string;
+  speeds: Record<"relaxed" | "normal" | "fast", string>;
+  score: string;
+  best: string;
+  pause: string;
+  resume: string;
+  paused: string;
+  snakeStart: string;
+  gameOver: string;
+  playAgain: string;
   newRide: string;
   newRideSub: string;
   newRideConfirm: string;
@@ -161,6 +170,15 @@ export const STRINGS: Record<Lang, V5Strings> = {
     minesStart: "Tap any square to start",
     minesWon: "Board cleared. Well done!",
     minesLost: "A mine! Try a new game",
+    speeds: { relaxed: "Relaxed", normal: "Normal", fast: "Fast" },
+    score: "Score",
+    best: "Best",
+    pause: "Pause",
+    resume: "Resume",
+    paused: "Paused",
+    snakeStart: "Tap an arrow to start",
+    gameOver: "Game over",
+    playAgain: "Play again",
     newRide: "New ride",
     newRideSub: "Clears requests, tip and climate for the next passenger.",
     newRideConfirm: "Start a new ride?",
@@ -249,6 +267,15 @@ export const STRINGS: Record<Lang, V5Strings> = {
     minesStart: "Toque cualquier casilla para empezar",
     minesWon: "¡Tablero despejado! Muy bien",
     minesLost: "¡Una mina! Pruebe otra partida",
+    speeds: { relaxed: "Tranquila", normal: "Normal", fast: "Rápida" },
+    score: "Puntos",
+    best: "Récord",
+    pause: "Pausa",
+    resume: "Seguir",
+    paused: "En pausa",
+    snakeStart: "Toque una flecha para empezar",
+    gameOver: "Fin de la partida",
+    playAgain: "Jugar otra vez",
     newRide: "Nuevo viaje",
     newRideSub: "Borra las peticiones, la propina y el clima para el siguiente pasajero.",
     newRideConfirm: "¿Empezar un nuevo viaje?",
@@ -337,6 +364,15 @@ export const STRINGS: Record<Lang, V5Strings> = {
     minesStart: "شروع کرنے کے لیے کوئی بھی خانہ چھوئیں",
     minesWon: "بورڈ صاف! شاباش",
     minesLost: "مائن! نیا گیم آزمائیں",
+    speeds: { relaxed: "آرام سے", normal: "نارمل", fast: "تیز" },
+    score: "اسکور",
+    best: "بہترین",
+    pause: "روکیں",
+    resume: "جاری رکھیں",
+    paused: "رکا ہوا",
+    snakeStart: "شروع کرنے کے لیے کوئی تیر دبائیں",
+    gameOver: "گیم ختم",
+    playAgain: "دوبارہ کھیلیں",
     newRide: "نیا سفر",
     newRideSub: "اگلے مسافر کے لیے درخواستیں، ٹپ اور درجہ حرارت صاف کریں۔",
     newRideConfirm: "نیا سفر شروع کریں؟",

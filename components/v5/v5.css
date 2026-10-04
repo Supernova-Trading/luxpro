@@ -222,6 +222,19 @@ button.v5-bt-tile:active { background: var(--s-press); transform: scale(0.97); }
 .v5-game-foot > .v5-seg { align-self: center; }
 .v5-newgame { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 62px; padding-inline: 20px; border-radius: 9999px; border: 1px solid var(--line-strong); color: var(--ink); font-size: 17px; font-weight: 500; transition: background 150ms ease, transform 100ms ease; }
 .v5-newgame:active { background: var(--s-press); transform: scale(0.97); }
+/* Snake (v5.8) */
+.v5-pill:disabled { color: var(--muted-soft); border-color: var(--line); }
+.v5-snake-board { position: relative; }
+.v5-snake-note { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 24px; text-align: center; pointer-events: none; }
+.v5-snake-note > span:only-child { padding: 12px 20px; border-radius: 9999px; background: var(--s2); border: 1px solid var(--line-strong); color: var(--ink); font-size: 17px; font-weight: 500; }
+.v5-snake-note[data-solid] { pointer-events: auto; background: color-mix(in srgb, var(--s0) 92%, transparent); border-radius: 16px; animation: v5-fade 200ms var(--ease-out); }
+.v5-dpad { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: 68px 68px; gap: 8px; }
+.v5-arrow { display: flex; align-items: center; justify-content: center; border-radius: 20px; background: var(--s2); border: 1px solid var(--line-strong); color: var(--ink); touch-action: none; user-select: none; -webkit-user-select: none; transition: background 100ms ease, transform 80ms ease; }
+.v5-arrow:active { background: var(--s-press); transform: scale(0.96); }
+.v5-arrow-left { grid-column: 1; grid-row: 1 / span 2; }
+.v5-arrow-up { grid-column: 2; grid-row: 1; }
+.v5-arrow-down { grid-column: 2; grid-row: 2; }
+.v5-arrow-right { grid-column: 3; grid-row: 1 / span 2; }
 .v5-newgame[data-over="true"] { background: var(--gold); border-color: var(--gold); color: var(--on-gold); font-weight: 600; }
 
 @keyframes v5-fade { from { opacity: 0; } to { opacity: 1; } }
