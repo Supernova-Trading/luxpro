@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-// One-off device check: open on the tablet, photograph, send. Tells us the
+// One-off device check at /v5/diag (moved from /lab/diag in P6): open on the tablet, photograph, send. Tells us the
 // real viewport and whether this Chrome supports what the new design uses
 // (oklch / color-mix need Chrome 111+, dvh needs 108+).
 export default function Diag() {

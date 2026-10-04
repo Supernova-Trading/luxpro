@@ -185,6 +185,7 @@ a.v5-row { color: inherit; text-decoration: none; }
 .v5-row-stack { flex-direction: column; align-items: stretch; gap: 4px; }
 .v5-row-stack .v5-vol { padding-block: 4px 0; }
 .v5-set-line { display: flex; align-items: center; gap: 16px; }
+.v5-sheet .v5-seg > button { height: 44px; }
 .v5-full { position: absolute; inset: 0; z-index: 30; background: var(--s0); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; padding: 24px; text-align: center; animation: v5-fade 240ms var(--ease-out); }
 .v5-qr { background: oklch(0.985 0.002 90); padding: 16px; border-radius: 4px; line-height: 0; }
 .v5-toast { position: absolute; inset-inline: 20px; bottom: 20px; z-index: 25; padding: 14px 18px; border-radius: 16px; background: var(--s2); border: 1px solid var(--line-strong); color: var(--ink); font-size: 15px; text-align: center; animation: v5-fade 200ms var(--ease-out); }
@@ -293,3 +294,53 @@ a.v5-row { color: inherit; text-decoration: none; }
 /* Board numbers stay plain digits — Nastaliq numerals read poorly at a glance */
 .v5[data-lang="ur"] .v5-cell,
 .v5[data-lang="ur"] .v5-mines-count b { font-family: var(--font-inter), "Inter", system-ui, sans-serif; }
+
+/* ── Night (roadmap P6): dimmer text, icons and art after sunset ─────────
+   Same hues one step down; data-night is set by the app (auto by the
+   sunset table, or forced on/off in Settings). Mixed tokens follow. */
+.v5[data-night="true"] {
+  --ink: oklch(0.86 0.006 81);
+  --body: oklch(0.74 0.01 77);
+  --muted: oklch(0.6 0.01 72);
+  --muted-soft: oklch(0.46 0.008 72);
+  --gold: oklch(0.66 0.1 90);
+  --i-red: oklch(0.66 0.11 25);
+  --i-orange: oklch(0.68 0.11 58);
+  --i-lemon: oklch(0.76 0.12 102);
+  --i-green: oklch(0.69 0.12 152);
+  --i-teal: oklch(0.7 0.09 195);
+  --i-sky: oklch(0.68 0.1 232);
+  --i-blue: oklch(0.64 0.1 262);
+  --i-violet: oklch(0.64 0.11 300);
+  --i-pink: oklch(0.66 0.11 350);
+}
+.v5[data-night="true"] .v5-hero-art { opacity: 0.6; }
+
+/* ── Old Chrome (before 111: no oklch, no color-mix) ─────────────────────
+   The same colours as plain hex, converted from the tokens above
+   (scratch script oklch_hex.py; gold comes out #c8a84a ≈ brand #C8A84B). */
+@supports not (color: oklch(0 0 0)) {
+  .v5 {
+    --s0: #100e0b; --s1: #1c1915; --s2: #23201c; --s-press: #2a2723;
+    --line: #2e2b27; --line-strong: #403d38;
+    --ink: #f5f3ef; --body: #cfcac2; --muted: #a09a93; --muted-soft: #6d6863;
+    --gold: #c8a84a; --on-gold: #191511;
+    --gold-tint: #352c1f; --gold-line: #c8a84a73; --scrim: #100e0bb8;
+    --i-red: #f98f87; --i-orange: #f5a15e; --i-lemon: #eadb64; --i-green: #6dd48d; --i-teal: #57d4d4;
+    --i-sky: #5cc5f7; --i-blue: #81aaf7; --i-violet: #b897f0; --i-pink: #ee8dbd;
+    --cool-bg: #283b42; --cool-bg-on: #345a6b; --warm-bg: #473424; --warm-bg-on: #6e4d31;
+  }
+  .v5[data-night="true"] {
+    --ink: #d3d1cd; --body: #aeaaa4; --muted: #847f7a; --muted-soft: #5b5753; --gold: #aa8f44;
+    --i-red: #cd7670; --i-orange: #cb8650; --i-lemon: #c0b452; --i-green: #5cb176; --i-teal: #50b0b0;
+    --i-sky: #50a3cb; --i-blue: #6a8cc9; --i-violet: #977cc5; --i-pink: #c4759c;
+  }
+  .v5-hero-scrim { background: linear-gradient(to bottom, #100e0be0 0%, #100e0b4d 26%, transparent 38%, #100e0bbf 62%, #100e0b 100%); }
+  .v5-bt-tile { background: #1c1915d9; }
+  .v5-genre-btn { background: #100e0b8c; }
+  .v5-board[data-mode="flag"] .v5-cell:not([data-open="true"]) { border-color: #8a5e58; }
+  .v5-cell[data-hit="true"] { background: #623b36; }
+  .v5-mine-dot { box-shadow: 0 0 0 4px #f98f8740; }
+  .v5-snake-note[data-solid] { background: #100e0beb; }
+  .v5-undo { border-color: #a66a63; }
+}

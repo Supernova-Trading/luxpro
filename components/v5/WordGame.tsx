@@ -80,17 +80,23 @@ export default function WordGame({ kind, s, lang, content, deck, level, onLevel,
         <span className="v5-caption" dir="auto">
           {caption}{kind === "quiz" ? ` · ${s.levels[level]}` : ""}
         </span>
-        <p className="v5-question">{item?.q ?? ""}</p>
+        {!item ? (
+          <p className="v5-label" style={{ fontWeight: 400, color: "var(--body)" }}>{s.questionsFailed}</p>
+        ) : (
+        <>
+        <p className="v5-question">{item.q}</p>
         {revealed ? (
           <div className="v5-answer">
             <span className="v5-caption" style={{ color: "var(--gold)" }}>{s.answerLabel}</span>
-            <span className="v5-answer-text">{item?.a ?? ""}</span>
+            <span className="v5-answer-text">{item.a}</span>
           </div>
         ) : (
           <button className="v5-reveal" onClick={() => setRevealed(true)}>
             <Icon name="eye" size={22} />
             {s.showAnswer}
           </button>
+        )}
+        </>
         )}
       </section>
 

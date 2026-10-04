@@ -20,7 +20,7 @@ export default function MusicHero({ s, lang, music, header, onPicker, btOn, onBt
   onBtAsk: () => void;
   onBtHow: () => void;
 }) {
-  const { source, sc, radio, plIdx } = music;
+  const { source, sc, radio, plIdx, stalled, online } = music;
   const art = source === "playlists" && sc.track?.artwork ? sc.track.artwork : "";
   const plName = PLAYLISTS[plIdx]?.n ?? "";
   const plGenre = PLAYLIST_META[plName]?.label[lang] ?? plName;
@@ -33,11 +33,11 @@ export default function MusicHero({ s, lang, music, header, onPicker, btOn, onBt
     playing = sc.playing;
     title = sc.track?.title || plGenre;
     sub = sc.track?.artist || "";
-    caption = sc.failed ? s.needInternet : sc.playing ? `${s.nowPlaying} · ${plGenre}` : `${plGenre} · ${sc.ready ? s.tapPlay : s.loading}`;
+    caption = sc.failed || (!online && !sc.playing) ? s.needInternet : sc.playing ? `${s.nowPlaying} · ${plGenre}` : `${plGenre} · ${sc.ready ? s.tapPlay : s.loading}`;
   } else if (source === "radio") {
     playing = radio.playing;
     const st = radio.currentStation;
-    const broken = radio.currentIdx >= 0 && radio.brokenStations.has(radio.currentIdx);
+    const broken = radio.currentIdx >= 0 && (radio.brokenStations.has(radio.currentIdx) || stalled || !online);
     const genre = st ? GENRES[stationGenre(st.n)].label[lang] : "";
     title = st ? st.n : s.chooseStation;
     caption = !st

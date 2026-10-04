@@ -13,6 +13,7 @@ import MusicHero from "./MusicHero";
 import { APP_VERSION, BUILD_ID } from "./version";
 import { GENRES, PLAYLIST_META, groupStations } from "./genres";
 import { useDeck } from "./useDeck";
+import { nightFor, type NightMode } from "./night";
 import WordGame from "./WordGame";
 import type { MinesSave } from "./games/MinesGame";
 import type { SnakeSave } from "./games/SnakeGame";
@@ -108,6 +109,9 @@ export default function V5App() {
   const s: V5Strings = STRINGS[lang];
   const music = useMusic(radios, lang);
   const [voiceVol, setVoiceVol] = useState(100);
+  const [nightMode, setNightMode] = useState<NightMode>("auto");
+  const [night, setNight] = useState(false);
+  const [qrFailed, setQrFailed] = useState(false);
   const speech = useSpeech(music.duck, voiceVol / 100);
   const deck = useDeck();
 
@@ -153,17 +157,38 @@ export default function V5App() {
     try {
       const saved = JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}");
       if (typeof saved.voiceVolume === "number") setVoiceVol(Math.max(VOICE_MIN, Math.min(100, saved.voiceVolume)));
+      if (saved.night === "auto" || saved.night === "on" || saved.night === "off") setNightMode(saved.night);
     } catch { /* storage blocked: defaults */ }
   }, []);
+
+  function saveSettings(next: { voiceVolume?: number; night?: NightMode }) {
+    try {
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify({ voiceVolume: voiceVol, night: nightMode, ...next }));
+    } catch { /* fine */ }
+  }
 
   function changeVoiceVol(v: number) {
     const next = Math.max(VOICE_MIN, Math.min(100, Math.round(v / 10) * 10));
     setVoiceVol(next);
-    try { localStorage.setItem(SETTINGS_KEY, JSON.stringify({ voiceVolume: next })); } catch { /* fine */ }
+    saveSettings({ voiceVolume: next });
   }
+
+  function changeNight(m: NightMode) {
+    setNightMode(m);
+    saveSettings({ night: m });
+  }
+
+  // Night: re-checked every minute so the screen dims at sunset on its own.
+  useEffect(() => {
+    const check = () => setNight(nightFor(nightMode, new Date()));
+    check();
+    const t = setInterval(check, 60_000);
+    return () => clearInterval(t);
+  }, [nightMode]);
 
   useEffect(() => {
     if (!qr) return;
+    setQrFailed(false); // each opening tries the image again
     const t = setTimeout(() => setQr(false), QR_CLOSE_MS);
     return () => clearTimeout(t);
   }, [qr]);
@@ -284,7 +309,7 @@ export default function V5App() {
   );
 
   return (
-    <div className="v5" data-lang={lang} dir={isRTL ? "rtl" : "ltr"}>
+    <div className="v5" data-lang={lang} data-night={night} dir={isRTL ? "rtl" : "ltr"}>
       <MusicHero
         s={s}
         lang={lang}
@@ -462,6 +487,22 @@ export default function V5App() {
               </span>
               <Volume label={s.musicVolume} value={music.volume} onChange={music.setVolume} />
             </div>
+            <div className="v5-row v5-row-stack">
+              <span className="v5-set-line">
+                <Icon name="moon" size={20} style={{ color: "var(--i-violet)" }} />
+                <span className="v5-set-text">
+                  <span className="v5-label">{s.nightMode}</span>
+                  <span className="v5-sub">{s.nightSub}</span>
+                </span>
+              </span>
+              <div className="v5-seg" role="radiogroup" aria-label={s.nightMode}>
+                {(["auto", "on", "off"] as const).map((m) => (
+                  <button key={m} role="radio" aria-checked={nightMode === m} aria-pressed={nightMode === m} onClick={() => changeNight(m)}>
+                    {s.nightModes[m]}
+                  </button>
+                ))}
+              </div>
+            </div>
             <a className="v5-row" href={`tel:${AMISH_PHONE.tel}`}>
               <Icon name="phone" size={20} style={{ color: "var(--i-green)" }} />
               <span className="v5-set-text">
@@ -540,11 +581,19 @@ export default function V5App() {
       {qr && (
         <div className="v5-full" role="dialog" aria-label={s.qrTitle}>
           <span className="v5-heading">{s.qrTitle}</span>
-          <div className="v5-qr">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/qr-tip.png" alt={s.qrTitle} width={260} height={260} />
-          </div>
-          <span className="v5-label" style={{ fontWeight: 400, color: "var(--body)", maxWidth: 420 }}>{s.qrSub}</span>
+          {qrFailed ? (
+            // The image is on the tablet, so this is rare — but never a blank square
+            <div style={{ display: "grid", gap: 12, maxWidth: 420 }}>
+              <span className="v5-label" style={{ fontWeight: 400, color: "var(--body)" }}>{s.qrFailed}</span>
+              <span className="v5-title" style={{ color: "var(--gold)" }} dir="auto">{s.qrHandle}</span>
+            </div>
+          ) : (
+            <div className="v5-qr">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/qr-tip.png" alt={s.qrTitle} width={260} height={260} onError={() => setQrFailed(true)} />
+            </div>
+          )}
+          {!qrFailed && <span className="v5-label" style={{ fontWeight: 400, color: "var(--body)", maxWidth: 420 }}>{s.qrSub}</span>}
           <button className="v5-pill" style={{ minWidth: 160, height: 56 }} onClick={() => setQr(false)}>{s.done}</button>
         </div>
       )}

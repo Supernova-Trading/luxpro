@@ -93,6 +93,12 @@ export interface V5Strings {
   testVoice: string;
   contactAmish: string;
   contactSub: string;
+  nightMode: string;
+  nightSub: string;
+  nightModes: Record<"auto" | "on" | "off", string>;
+  qrFailed: string;
+  qrHandle: string;
+  questionsFailed: string;
   newRide: string;
   newRideSub: string;
   newRideConfirm: string;
@@ -205,6 +211,12 @@ export const STRINGS: Record<Lang, V5Strings> = {
     testVoice: "Test",
     contactAmish: "Contact Amish",
     contactSub: "Lost property, or to book Amish again",
+    nightMode: "Night mode",
+    nightSub: "Dimmer screen after sunset",
+    nightModes: { auto: "Auto", on: "On", off: "Off" },
+    qrFailed: "The QR code didn't load. Cash or Uber still work.",
+    qrHandle: "Or open Revolut and send to @amishg4sqm",
+    questionsFailed: "Questions didn't load. Try Snake or Mines.",
     newRide: "New ride",
     newRideSub: "Clears requests, tip and climate for the next passenger.",
     newRideConfirm: "Start a new ride?",
@@ -315,6 +327,12 @@ export const STRINGS: Record<Lang, V5Strings> = {
     testVoice: "Probar",
     contactAmish: "Contactar con Amish",
     contactSub: "Objetos perdidos, o para reservar otra vez con Amish",
+    nightMode: "Modo noche",
+    nightSub: "Pantalla más tenue al anochecer",
+    nightModes: { auto: "Auto", on: "Sí", off: "No" },
+    qrFailed: "El código QR no se cargó. El efectivo o Uber siguen funcionando.",
+    qrHandle: "O abra Revolut y envíe a @amishg4sqm",
+    questionsFailed: "Las preguntas no se cargaron. Pruebe Serpiente o Minas.",
     newRide: "Nuevo viaje",
     newRideSub: "Borra las peticiones, la propina y el clima para el siguiente pasajero.",
     newRideConfirm: "¿Empezar un nuevo viaje?",
@@ -425,6 +443,12 @@ export const STRINGS: Record<Lang, V5Strings> = {
     testVoice: "سنیں",
     contactAmish: "امیش سے رابطہ",
     contactSub: "گمشدہ سامان، یا امیش کے ساتھ دوبارہ سفر کے لیے",
+    nightMode: "نائٹ موڈ",
+    nightSub: "غروبِ آفتاب کے بعد اسکرین مدھم",
+    nightModes: { auto: "خودکار", on: "آن", off: "آف" },
+    qrFailed: "کیو آر کوڈ لوڈ نہیں ہوا۔ نقد یا اوبر اب بھی کام کرتے ہیں۔",
+    qrHandle: "یا ریولٹ کھولیں اور @amishg4sqm کو بھیجیں",
+    questionsFailed: "سوالات لوڈ نہیں ہوئے۔ سانپ یا مائنز آزمائیں۔",
     newRide: "نیا سفر",
     newRideSub: "اگلے مسافر کے لیے درخواستیں، ٹپ اور درجہ حرارت صاف کریں۔",
     newRideConfirm: "نیا سفر شروع کریں؟",
