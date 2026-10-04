@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import dynamic from "next/dynamic";
 import { Icon, type IconName } from "../Icon";
 import { useLanguage } from "@/hooks/useLanguage";
 import { PLAYLISTS } from "@/lib/playlists";
@@ -13,12 +14,16 @@ import { APP_VERSION, BUILD_ID } from "./version";
 import { GENRES, PLAYLIST_META, groupStations } from "./genres";
 import { useDeck } from "./useDeck";
 import WordGame from "./WordGame";
+import type { MinesSave } from "./games/MinesGame";
+
+// Action games load only when opened (roadmap P5: keep the home screen light).
+const MinesGame = dynamic(() => import("./games/MinesGame"), { ssr: false });
 
 // LuxPro v5 — built from mockup D, only on design/v2-preview.
 // Roadmap: https://claude.ai/artifact/7pmPGqhwDth9LT7PtEnugD
 // v5.3: D's gold tip panel back, music chosen by genre (playlists and radio),
 // Bluetooth actions on the right. Requests show a check badge, never "Told Amish".
-// v5.5: Quiz and Riddles playable; Snake, Blocks and Mines follow.
+// v5.5: Quiz and Riddles playable. v5.7: Mines. Snake and Blocks follow.
 
 const LANGS: { id: Lang; label: string }[] = [
   { id: "en", label: "EN" },
@@ -91,7 +96,9 @@ export default function V5App() {
   const [confirmNew, setConfirmNew] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [isFS, setIsFS] = useState(false);
-  const [game, setGame] = useState<"quiz" | "riddles" | null>(null);
+  const [game, setGame] = useState<GameKey | null>(null);
+  const minesSave = useRef<MinesSave | null>(null);
+  const saveMines = useCallback((m: MinesSave) => { minesSave.current = m; }, []);
   const [quizLevel, setQuizLevel] = useState<QuizLevel>("easy");
   const [asked, setAsked] = useState<Partial<Record<"quiz" | "riddles", boolean>>>({});
 
@@ -169,7 +176,7 @@ export default function V5App() {
   }
 
   function openGame(key: GameKey) {
-    if (key === "quiz" || key === "riddles") setGame(key);
+    if (key === "quiz" || key === "riddles" || key === "mines") setGame(key);
     else showToast(s.gameSoon);
   }
 
@@ -189,6 +196,7 @@ export default function V5App() {
     // The question deck is deliberately kept: Amish shouldn't hear repeats.
     lastTap.current = {};
     setGame(null);
+    minesSave.current = null;
     setQuizLevel("easy");
     setAsked({});
     setRequests({});
@@ -430,7 +438,7 @@ export default function V5App() {
       )}
 
       {/* ── Quiz / Riddles ───────────────────────────────────────────── */}
-      {game && (
+      {(game === "quiz" || game === "riddles") && (
         <WordGame
           kind={game}
           s={s}
@@ -443,6 +451,9 @@ export default function V5App() {
           onAsk={() => askAmishToPlay(game)}
           onClose={() => setGame(null)}
         />
+      )}
+      {game === "mines" && (
+        <MinesGame s={s} saved={minesSave.current} onSave={saveMines} onClose={() => setGame(null)} />
       )}
 
       {/* ── Revolut QR ───────────────────────────────────────────────── */}

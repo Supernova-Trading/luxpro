@@ -64,6 +64,13 @@ export interface V5Strings {
   nextRiddle: string;
   playWithAmish: string;
   playWithAmishSub: string;
+  dig: string;
+  flag: string;
+  newGame: string;
+  minesLeft: string;
+  minesStart: string;
+  minesWon: string;
+  minesLost: string;
   newRide: string;
   newRideSub: string;
   newRideConfirm: string;
@@ -147,6 +154,13 @@ export const STRINGS: Record<Lang, V5Strings> = {
     nextRiddle: "Next riddle",
     playWithAmish: "Play with Amish",
     playWithAmishSub: "Amish will join in",
+    dig: "Dig",
+    flag: "Flag",
+    newGame: "New game",
+    minesLeft: "Mines left",
+    minesStart: "Tap any square to start",
+    minesWon: "Board cleared. Well done!",
+    minesLost: "A mine! Try a new game",
     newRide: "New ride",
     newRideSub: "Clears requests, tip and climate for the next passenger.",
     newRideConfirm: "Start a new ride?",
@@ -228,6 +242,13 @@ export const STRINGS: Record<Lang, V5Strings> = {
     nextRiddle: "Siguiente adivinanza",
     playWithAmish: "Jugar con Amish",
     playWithAmishSub: "Amish se unirá",
+    dig: "Excavar",
+    flag: "Bandera",
+    newGame: "Nueva partida",
+    minesLeft: "Minas restantes",
+    minesStart: "Toque cualquier casilla para empezar",
+    minesWon: "¡Tablero despejado! Muy bien",
+    minesLost: "¡Una mina! Pruebe otra partida",
     newRide: "Nuevo viaje",
     newRideSub: "Borra las peticiones, la propina y el clima para el siguiente pasajero.",
     newRideConfirm: "¿Empezar un nuevo viaje?",
@@ -309,6 +330,13 @@ export const STRINGS: Record<Lang, V5Strings> = {
     nextRiddle: "اگلی پہیلی",
     playWithAmish: "امیش کے ساتھ کھیلیں",
     playWithAmishSub: "امیش ساتھ کھیلیں گے",
+    dig: "کھودیں",
+    flag: "جھنڈا",
+    newGame: "نیا گیم",
+    minesLeft: "باقی مائنز",
+    minesStart: "شروع کرنے کے لیے کوئی بھی خانہ چھوئیں",
+    minesWon: "بورڈ صاف! شاباش",
+    minesLost: "مائن! نیا گیم آزمائیں",
     newRide: "نیا سفر",
     newRideSub: "اگلے مسافر کے لیے درخواستیں، ٹپ اور درجہ حرارت صاف کریں۔",
     newRideConfirm: "نیا سفر شروع کریں؟",

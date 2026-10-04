@@ -201,6 +201,29 @@ button.v5-bt-tile:active { background: var(--s-press); transform: scale(0.97); }
 .v5-next:active { transform: scale(0.97); filter: brightness(0.92); }
 [dir="rtl"] .v5-flip { transform: scaleX(-1); }
 
+/* Mines (v5.7) */
+.v5-mines-status { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 28px; }
+.v5-mines-count { display: inline-flex; align-items: center; gap: 8px; font-size: 15px; color: var(--muted); }
+.v5-mines-count b { font-size: 18px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+.v5-mines-msg { font-size: 15px; font-weight: 500; color: var(--body); text-align: end; }
+.v5-mines-status[data-state="won"] .v5-mines-msg { color: var(--gold); }
+.v5-mines-status[data-state="lost"] .v5-mines-msg { color: var(--i-red); }
+.v5-board-wrap { flex: 1 1 auto; min-height: 0; display: flex; align-items: center; justify-content: center; }
+.v5-board { display: grid; }
+.v5-cell { display: flex; align-items: center; justify-content: center; border-radius: 10px; background: var(--s2); border: 1px solid var(--line-strong); font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1; transition: background 120ms ease, transform 80ms ease; }
+.v5-cell:active:not(:disabled) { background: var(--s-press); transform: scale(0.94); }
+.v5-board[data-mode="flag"] .v5-cell:not([data-open="true"]) { border-color: color-mix(in srgb, var(--i-red) 40%, var(--line-strong)); }
+.v5-cell[data-open="true"] { background: var(--s0); border-color: var(--line); cursor: default; }
+.v5-cell[data-hit="true"] { background: color-mix(in srgb, var(--i-red) 35%, var(--s0)); border-color: var(--i-red); }
+.v5-mine-dot { width: 40%; height: 40%; border-radius: 9999px; background: var(--i-red); box-shadow: 0 0 0 4px color-mix(in srgb, var(--i-red) 25%, transparent); }
+.v5-cell[data-hit="true"] .v5-mine-dot { background: var(--ink); }
+.v5-seg[data-n="2"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.v5-seg > button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.v5-game-foot > .v5-seg { align-self: center; }
+.v5-newgame { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 62px; padding-inline: 20px; border-radius: 9999px; border: 1px solid var(--line-strong); color: var(--ink); font-size: 17px; font-weight: 500; transition: background 150ms ease, transform 100ms ease; }
+.v5-newgame:active { background: var(--s-press); transform: scale(0.97); }
+.v5-newgame[data-over="true"] { background: var(--gold); border-color: var(--gold); color: var(--on-gold); font-weight: 600; }
+
 @keyframes v5-fade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes v5-rise { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
 
@@ -230,4 +253,10 @@ button.v5-bt-tile:active { background: var(--s-press); transform: scale(0.97); }
 .v5[data-lang="ur"] .v5-answer-text { font-size: 24px; line-height: 1.8; }
 .v5[data-lang="ur"] .v5-seg > button,
 .v5[data-lang="ur"] .v5-reveal,
-.v5[data-lang="ur"] .v5-next { line-height: 1.8; }
+.v5[data-lang="ur"] .v5-next,
+.v5[data-lang="ur"] .v5-newgame,
+.v5[data-lang="ur"] .v5-mines-msg,
+.v5[data-lang="ur"] .v5-mines-count { line-height: 1.8; }
+/* Board numbers stay plain digits — Nastaliq numerals read poorly at a glance */
+.v5[data-lang="ur"] .v5-cell,
+.v5[data-lang="ur"] .v5-mines-count b { font-family: var(--font-inter), "Inter", system-ui, sans-serif; }
