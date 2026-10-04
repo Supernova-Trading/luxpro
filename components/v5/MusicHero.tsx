@@ -2,14 +2,17 @@
 
 import { Icon } from "../Icon";
 import { PLAYLISTS } from "@/lib/playlists";
+import type { Lang } from "@/lib/translations";
 import type { V5Strings } from "./strings";
 import type { Music, Source } from "./useMusic";
+import { GENRES, PLAYLIST_META, stationGenre } from "./genres";
 
 // The top third: the music is the picture (owner's pick from mockups C/D).
 // Playlists show the real artwork of what's playing; radio and Bluetooth have
 // no artwork, so they get a typographic hero instead of a blank.
-export default function MusicHero({ s, music, header, onPicker, btOn, onBtAsk, onBtHow }: {
+export default function MusicHero({ s, lang, music, header, onPicker, btOn, onBtAsk, onBtHow }: {
   s: V5Strings;
+  lang: Lang;
   music: Music;
   header: React.ReactNode;
   onPicker: () => void;
@@ -20,6 +23,7 @@ export default function MusicHero({ s, music, header, onPicker, btOn, onBtAsk, o
   const { source, sc, radio, plIdx } = music;
   const art = source === "playlists" && sc.track?.artwork ? sc.track.artwork : "";
   const plName = PLAYLISTS[plIdx]?.n ?? "";
+  const plGenre = PLAYLIST_META[plName]?.label[lang] ?? plName;
 
   let caption: React.ReactNode = "";
   let title = "";
@@ -27,21 +31,22 @@ export default function MusicHero({ s, music, header, onPicker, btOn, onBtAsk, o
   let playing = false;
   if (source === "playlists") {
     playing = sc.playing;
-    title = sc.track?.title || plName;
+    title = sc.track?.title || plGenre;
     sub = sc.track?.artist || "";
-    caption = sc.failed ? s.needInternet : sc.playing ? `${s.nowPlaying} · ${plName}` : `${plName} · ${sc.ready ? s.tapPlay : s.loading}`;
+    caption = sc.failed ? s.needInternet : sc.playing ? `${s.nowPlaying} · ${plGenre}` : `${plGenre} · ${sc.ready ? s.tapPlay : s.loading}`;
   } else if (source === "radio") {
     playing = radio.playing;
     const st = radio.currentStation;
     const broken = radio.currentIdx >= 0 && radio.brokenStations.has(radio.currentIdx);
+    const genre = st ? GENRES[stationGenre(st.n)].label[lang] : "";
     title = st ? st.n : s.chooseStation;
     caption = !st
       ? s.radio
       : broken
       ? s.offline
       : radio.playing
-      ? <><span className="v5-live" aria-hidden />{s.live}</>
-      : radio.statusText.startsWith("Loading") ? s.loading : s.tapPlay;
+      ? <><span className="v5-live" aria-hidden />{s.live} · {genre}</>
+      : radio.statusText.startsWith("Loading") ? s.loading : `${genre} · ${s.tapPlay}`;
   }
 
   const tabs: [Source, string][] = [["radio", s.radio], ["playlists", s.playlists], ["bluetooth", s.bluetooth]];
@@ -71,31 +76,44 @@ export default function MusicHero({ s, music, header, onPicker, btOn, onBtAsk, o
       </div>
 
       <div className="v5-hero-foot">
-        <div className="v5-tabs" role="tablist">
-          {tabs.map(([id, label]) => (
-            <button key={id} role="tab" className="v5-tab" aria-pressed={source === id} aria-selected={source === id} onClick={() => music.setSource(id)}>
-              {label}
+        <div className="v5-tabs-row">
+          <div className="v5-tabs" role="tablist">
+            {tabs.map(([id, label]) => (
+              <button key={id} role="tab" className="v5-tab" aria-pressed={source === id} aria-selected={source === id} onClick={() => music.setSource(id)}>
+                {label}
+              </button>
+            ))}
+          </div>
+          {/* Visible way into genres — not only a tap on the title */}
+          {source !== "bluetooth" && (
+            <button className="v5-genre-btn" onClick={onPicker}>
+              <Icon name="sliders" size={16} />
+              {source === "radio" ? s.stationsBtn : s.genresBtn}
             </button>
-          ))}
+          )}
         </div>
 
         {source === "bluetooth" ? (
-          <div style={{ display: "grid", gap: 10, marginTop: 4 }}>
-            <div>
+          <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 16, marginTop: 4 }}>
+            <div style={{ minWidth: 0 }}>
               <div className="v5-display">{s.btTitle}</div>
               <div className="v5-sub">{s.btSub}</div>
             </div>
-            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            {/* Actions on the right, where the play controls sit for music */}
+            <div style={{ display: "grid", gap: 8, flexShrink: 0, justifyItems: "end" }}>
               <button className="v5-pill" aria-pressed={btOn} onClick={onBtAsk}>
                 <Icon name={btOn ? "check" : "bluetooth"} size={16} />
                 {s.btAsk}
               </button>
-              <button className="v5-pill" onClick={onBtHow}>{s.btHow}</button>
+              <button className="v5-pill" onClick={onBtHow}>
+                <Icon name="help-circle" size={16} />
+                {s.btHow}
+              </button>
             </div>
           </div>
         ) : (
           <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 16, marginTop: 4 }}>
-            {/* Tap the title to choose a station or playlist */}
+            {/* Tap the title to choose too */}
             <button className="v5-now" onClick={onPicker}>
               <span className="v5-caption">{caption}</span>
               <span className="v5-now-title v5-display">

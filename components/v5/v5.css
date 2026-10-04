@@ -98,11 +98,11 @@
 /* ── Main column ───────────────────────────────────────────────────────── */
 .v5-main { flex: 0 0 auto; display: flex; flex-direction: column; gap: 16px; padding: 12px 20px 16px; }
 
-/* Tip — no box and no gold at rest; gold only marks the chosen option (owner, v5.2) */
-.v5-tip { padding: 0; }
-.v5-tip-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+/* Tip — mockup D's gold panel: the one deliberate outlier on the screen (owner, v5.3) */
+.v5-tip { border-radius: 24px; border: 1px solid var(--gold); background: var(--gold-tint); padding: 10px 10px 12px; }
+.v5-tip-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding-inline: 8px; }
 .v5-tip-opts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 8px; }
-.v5-tip-opt { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 68px; padding: 6px; border-radius: 9999px; background: var(--s1); border: 1px solid var(--line); color: var(--ink); transition: background 150ms ease, transform 100ms ease; }
+.v5-tip-opt { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 68px; padding: 6px; border-radius: 9999px; background: var(--s0); border: 1px solid var(--gold-line); color: var(--ink); transition: background 150ms ease, transform 100ms ease; }
 .v5-tip-opt:active { transform: scale(0.96); }
 .v5-tip-opt[aria-pressed="true"] { background: var(--gold); border-color: var(--gold); color: var(--on-gold); }
 .v5-tip-opt small { font-size: 13px; opacity: 0.75; }
@@ -134,6 +134,18 @@
 .v5-now-title { display: flex; align-items: center; gap: 8px; min-width: 0; }
 .v5-now-title > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .v5-live { display: inline-block; width: 8px; height: 8px; border-radius: 9999px; background: var(--i-red); margin-inline-end: 6px; vertical-align: 1px; }
+
+/* Genre button beside the source tabs */
+.v5-tabs-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.v5-genre-btn { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding-inline: 14px; border-radius: 9999px; border: 1px solid var(--line-strong); background: color-mix(in oklch, var(--s0) 55%, transparent); font-size: 15px; font-weight: 500; color: var(--ink); transition: background 150ms ease, transform 100ms ease; }
+.v5-genre-btn:active { background: var(--s-press); transform: scale(0.96); }
+
+/* Genre tiles */
+.v5-genre-head { display: flex; align-items: center; gap: 8px; margin: 16px 0 8px; }
+.v5-gtile { display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 10px 14px; border-radius: 16px; background: var(--s1); border: 1px solid var(--line); text-align: start; transition: background 150ms ease; }
+.v5-gtile:active { background: var(--s-press); }
+.v5-gtile[aria-pressed="true"] { border-color: var(--gold); box-shadow: inset 0 0 0 1px var(--gold); }
+.v5-gtile-icon { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 9999px; background: var(--s0); flex-shrink: 0; }
 
 /* Picker */
 .v5-pick { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }

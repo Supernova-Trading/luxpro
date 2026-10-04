@@ -24,6 +24,11 @@ export interface V5Strings {
   needInternet: string;
   tryAgain: string;
   volume: string;
+  genresBtn: string;
+  stationsBtn: string;
+  chooseMusic: string;
+  byStyle: string;
+  aroundWorld: string;
   btTitle: string;
   btSub: string;
   btAsk: string;
@@ -31,8 +36,6 @@ export interface V5Strings {
   btSteps: string[];
   tipTitle: string;
   tipHint: string;
-  tipThanksTitle: string;
-  tipThanksSub: string;
   tip: Record<TipKey, { label: string; sub: string }>;
   qrTitle: string;
   qrSub: string;
@@ -71,6 +74,11 @@ export const STRINGS: Record<Lang, V5Strings> = {
     needInternet: "Playlists need internet",
     tryAgain: "Try again",
     volume: "Volume",
+    genresBtn: "Genres",
+    stationsBtn: "Stations",
+    chooseMusic: "Choose your music",
+    byStyle: "By style",
+    aroundWorld: "From around the world",
     btTitle: "Your phone",
     btSub: "Connect to My Volvo Car",
     btAsk: "Ask Amish to connect",
@@ -82,10 +90,8 @@ export const STRINGS: Record<Lang, V5Strings> = {
       "Confirm the code on both screens.",
       "Play music from your phone.",
     ],
-    tipTitle: "Tips go straight to Amish",
+    tipTitle: "Leave Amish a tip",
     tipHint: "Tap one · Amish will know",
-    tipThanksTitle: "Thank you",
-    tipThanksSub: "Amish knows it's coming",
     tip: {
       cash: { label: "Cash", sub: "At drop-off" },
       uber: { label: "Uber", sub: "In the Uber app" },
@@ -134,6 +140,11 @@ export const STRINGS: Record<Lang, V5Strings> = {
     needInternet: "Las listas necesitan internet",
     tryAgain: "Reintentar",
     volume: "Volumen",
+    genresBtn: "Géneros",
+    stationsBtn: "Emisoras",
+    chooseMusic: "Elija su música",
+    byStyle: "Por estilo",
+    aroundWorld: "Del mundo",
     btTitle: "Su teléfono",
     btSub: "Conéctese a My Volvo Car",
     btAsk: "Pedir a Amish que lo conecte",
@@ -145,10 +156,8 @@ export const STRINGS: Record<Lang, V5Strings> = {
       "Confirme el código en ambas pantallas.",
       "Reproduzca música desde su teléfono.",
     ],
-    tipTitle: "La propina es íntegramente para Amish",
+    tipTitle: "Deje una propina a Amish",
     tipHint: "Toque uno · Amish lo sabrá",
-    tipThanksTitle: "Gracias",
-    tipThanksSub: "Amish ya lo sabe",
     tip: {
       cash: { label: "Efectivo", sub: "Al llegar" },
       uber: { label: "Uber", sub: "En la app de Uber" },
@@ -197,6 +206,11 @@ export const STRINGS: Record<Lang, V5Strings> = {
     needInternet: "پلے لسٹس کے لیے انٹرنیٹ چاہیے",
     tryAgain: "دوبارہ کوشش کریں",
     volume: "آواز",
+    genresBtn: "اصناف",
+    stationsBtn: "اسٹیشنز",
+    chooseMusic: "اپنی موسیقی منتخب کریں",
+    byStyle: "انداز کے لحاظ سے",
+    aroundWorld: "دنیا بھر سے",
     btTitle: "آپ کا فون",
     btSub: "My Volvo Car سے جوڑیں",
     btAsk: "امیش سے جوڑنے کو کہیں",
@@ -208,10 +222,8 @@ export const STRINGS: Record<Lang, V5Strings> = {
       "دونوں اسکرینوں پر کوڈ کی تصدیق کریں۔",
       "اپنے فون سے موسیقی چلائیں۔",
     ],
-    tipTitle: "ٹپ پوری کی پوری امیش کو جاتی ہے",
+    tipTitle: "امیش کو ٹپ دیں",
     tipHint: "ایک منتخب کریں · امیش کو پتہ چل جائے گا",
-    tipThanksTitle: "شکریہ",
-    tipThanksSub: "امیش کو معلوم ہو گیا ہے",
     tip: {
       cash: { label: "نقد", sub: "منزل پر" },
       uber: { label: "اوبر", sub: "اوبر ایپ میں" },

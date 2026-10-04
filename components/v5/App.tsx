@@ -10,11 +10,12 @@ import { useSpeech } from "./useSpeech";
 import { useMusic } from "./useMusic";
 import MusicHero from "./MusicHero";
 import { APP_VERSION, BUILD_ID } from "./version";
+import { GENRES, PLAYLIST_META, groupStations } from "./genres";
 
 // LuxPro v5 — built from mockup D, only on design/v2-preview.
 // Roadmap: https://claude.ai/artifact/7pmPGqhwDth9LT7PtEnugD
-// v5.2: music (P3) + owner feedback — no "Told Amish" labels (check badge
-// instead), and a lighter tip section without the gold box.
+// v5.3: D's gold tip panel back, music chosen by genre (playlists and radio),
+// Bluetooth actions on the right. Requests show a check badge, never "Told Amish".
 
 const LANGS: { id: Lang; label: string }[] = [
   { id: "en", label: "EN" },
@@ -191,6 +192,7 @@ export default function V5App() {
     <div className="v5" data-lang={lang} dir={isRTL ? "rtl" : "ltr"}>
       <MusicHero
         s={s}
+        lang={lang}
         music={music}
         header={header}
         onPicker={() => setSheet("picker")}
@@ -203,8 +205,8 @@ export default function V5App() {
         {/* ── Tip: headline + three options; gold only once one is chosen ── */}
         <section className="v5-tip" aria-label={s.tipTitle}>
           <div className="v5-tip-head">
-            <span className="v5-title">{tip ? s.tipThanksTitle : s.tipTitle}</span>
-            <span className="v5-sub">{tip ? s.tipThanksSub : s.tipHint}</span>
+            <span className="v5-title">{s.tipTitle}</span>
+            <span className="v5-sub" style={{ color: "var(--gold)" }}>{s.tipHint}</span>
           </div>
           <div className="v5-tip-opts">
             {TIPS.map((t) => {
@@ -270,10 +272,10 @@ export default function V5App() {
       {/* ── Station / playlist picker, with volume ───────────────────── */}
       {sheet === "picker" && (
         <div className="v5-overlay" onClick={closeOnScrim}>
-          <div className="v5-sheet" role="dialog" aria-label={music.source === "radio" ? s.chooseStation : s.choosePlaylist}>
+          <div className="v5-sheet" role="dialog" aria-label={music.source === "radio" ? s.chooseStation : s.chooseMusic}>
             <div className="v5-handle" />
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <span className="v5-heading">{music.source === "radio" ? s.chooseStation : s.choosePlaylist}</span>
+              <span className="v5-heading">{music.source === "radio" ? s.chooseStation : s.chooseMusic}</span>
               <button className="v5-pill" onClick={() => setSheet(null)}>{s.close}</button>
             </div>
             {/* Volume: − / + steps, no slider — precise sliding fails on bumps */}
@@ -285,29 +287,51 @@ export default function V5App() {
               </span>
               <button className="v5-iconbtn" data-size="md" aria-label={`${s.volume} +`} onClick={() => music.setVolume(music.volume + 10)}><Icon name="plus" size={18} /></button>
             </div>
-            <div className="v5-pick">
-              {music.source === "radio"
-                ? radios.map((st, i) => {
-                    const offline = music.radio.brokenStations.has(i) && music.radio.currentIdx !== i;
-                    return (
-                      <button key={st.n + i} aria-pressed={music.radio.currentIdx === i} data-offline={offline}
-                        onClick={() => { music.chooseStation(i); setSheet(null); }}>
-                        <span style={{ display: "grid", minWidth: 0 }}>
-                          <span className="v5-label" style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{st.n}</span>
-                          {offline && <span className="v5-sub">{s.offline}</span>}
-                        </span>
-                        {music.radio.currentIdx === i && <Icon name="check" size={18} style={{ color: "var(--gold)", flexShrink: 0 }} />}
-                      </button>
-                    );
-                  })
-                : PLAYLISTS.map((pl, i) => (
-                    <button key={pl.n} aria-pressed={music.plIdx === i}
-                      onClick={() => { music.choosePlaylist(i); setSheet(null); }}>
-                      <span className="v5-label">{pl.n}</span>
-                      {music.plIdx === i && <Icon name="check" size={18} style={{ color: "var(--gold)", flexShrink: 0 }} />}
-                    </button>
-                  ))}
-            </div>
+            {music.source === "radio" ? (
+              // Stations grouped by genre for this language's list
+              groupStations(radios).map(({ genre, items }) => (
+                <div key={genre}>
+                  <div className="v5-genre-head">
+                    <Icon name={GENRES[genre].icon} size={18} style={{ color: GENRES[genre].color }} />
+                    <span className="v5-caption">{GENRES[genre].label[lang]}</span>
+                  </div>
+                  <div className="v5-pick">
+                    {items.map(({ st, idx }) => {
+                      const offline = music.radio.brokenStations.has(idx) && music.radio.currentIdx !== idx;
+                      return (
+                        <button key={st.n + idx} aria-pressed={music.radio.currentIdx === idx} data-offline={offline}
+                          onClick={() => { music.chooseStation(idx); setSheet(null); }}>
+                          <span style={{ display: "grid", minWidth: 0 }}>
+                            <span className="v5-label" style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{st.n}</span>
+                            {offline && <span className="v5-sub">{s.offline}</span>}
+                          </span>
+                          {music.radio.currentIdx === idx && <Icon name="check" size={18} style={{ color: "var(--gold)", flexShrink: 0 }} />}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))
+            ) : (
+              // Playlists as genres: styles first, then music from around the world
+              (["style", "world"] as const).map((group) => (
+                <div key={group}>
+                  <div className="v5-genre-head"><span className="v5-caption">{group === "style" ? s.byStyle : s.aroundWorld}</span></div>
+                  <div className="v5-pick">
+                    {PLAYLISTS.map((pl, i) => ({ pl, i, meta: PLAYLIST_META[pl.n] }))
+                      .filter(({ meta }) => (meta?.group ?? "style") === group)
+                      .map(({ pl, i, meta }) => (
+                        <button key={pl.n} className="v5-gtile" aria-pressed={music.plIdx === i}
+                          onClick={() => { music.choosePlaylist(i); setSheet(null); }}>
+                          <span className="v5-gtile-icon"><Icon name={meta?.icon ?? "music-note"} size={20} style={{ color: meta?.color ?? "var(--ink)" }} /></span>
+                          <span className="v5-label" style={{ flex: 1, minWidth: 0 }}>{meta?.label[lang] ?? pl.n}</span>
+                          {music.plIdx === i && <Icon name="check" size={18} style={{ color: "var(--gold)", flexShrink: 0 }} />}
+                        </button>
+                      ))}
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       )}
