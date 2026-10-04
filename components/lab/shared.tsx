@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Icon, type IconName } from "../Icon";
+import { APP_VERSION, BUILD_ID } from "./version";
 
 // Shared content and behaviour for the three /lab direction mockups, so the
 // owner compares composition only — same words, same data, same states.
@@ -110,7 +111,12 @@ export function LabHeader({ overlay = false }: { overlay?: boolean }) {
       className="flex items-center justify-between px-5 flex-shrink-0"
       style={{ height: 56, position: overlay ? "absolute" : "relative", top: 0, left: 0, right: 0, zIndex: 2 }}
     >
-      <div className="bx-wordmark">LuxPro</div>
+      <div className="flex items-baseline gap-2">
+        <span className="bx-wordmark">LuxPro</span>
+        <span style={{ fontSize: 11, letterSpacing: 0.5, color: "var(--bx-muted)" }}>
+          v{APP_VERSION} · {BUILD_ID}
+        </span>
+      </div>
       <div className="flex items-center">
         <button className="bx-nav" aria-pressed>EN</button>
         <button className="bx-nav">ES</button>
