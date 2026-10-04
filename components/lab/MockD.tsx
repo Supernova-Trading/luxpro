@@ -3,20 +3,21 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Icon, type IconName } from "../Icon";
-import { COMFORT, ROUTES, TRACK, LabHeader, Told, useDaypart, useFlash, useToggles } from "./shared";
+import { COMFORT, ROUTES, TRACK, LabHeader, Told, useFlash, useToggles } from "./shared";
 
 const tap = { scale: 0.95, transition: { duration: 0.1 } };
 
 const GAMES: { key: string; icon: IconName; color: string; label: string }[] = [
-  { key: "trivia", icon: "lightbulb",   color: "var(--icon-yellow)", label: "Trivia" },
-  { key: "ttt",    icon: "tic-tac-toe", color: "var(--icon-violet)", label: "Tic-tac-toe" },
-  { key: "rps",    icon: "hand",        color: "var(--icon-orange)", label: "Rock paper scissors" },
-  { key: "memory", icon: "grid",        color: "var(--icon-cyan)",   label: "Memory match" },
+  { key: "quiz",    icon: "lightbulb",   color: "var(--icon-yellow)", label: "Quiz" },
+  { key: "riddles", icon: "help-circle", color: "var(--icon-cyan)",   label: "Riddles" },
+  { key: "snake",   icon: "snake",       color: "var(--accent-positive)", label: "Snake" },
+  { key: "tetris",  icon: "blocks",      color: "var(--icon-violet)", label: "Tetris" },
+  { key: "mines",   icon: "mine",        color: "var(--icon-red)",    label: "Mines" },
 ];
 
-function Circle({ icon, color, label, on, onClick }: { icon: IconName; color: string; label: string; on?: boolean; onClick?: () => void }) {
+function Circle({ icon, color, label, on, onClick, width = 120 }: { icon: IconName; color: string; label: string; on?: boolean; onClick?: () => void; width?: number }) {
   return (
-    <motion.button whileTap={tap} className="lab-circle" aria-pressed={!!on} onClick={onClick} style={{ width: 120 }}>
+    <motion.button whileTap={tap} className="lab-circle" aria-pressed={!!on} onClick={onClick} style={{ width }}>
       <span style={{ width: 64, height: 64 }}><Icon name={icon} size={26} style={{ color }} /></span>
       <span className="bx-label text-center" style={{ fontSize: 13, lineHeight: 1.25, color: on ? "var(--bx-gold)" : undefined }}>
         {on ? "Told Amish" : label}
@@ -27,10 +28,10 @@ function Circle({ icon, color, label, on, onClick }: { icon: IconName; color: st
 
 // Direction D — the owner's pick (2026-10-04): C's album-art hero and round
 // request buttons, route as a second row of the same circles, Warmer/Cooler
-// without a number (no link to the car's climate), games one tap away on the
-// home screen (most used by passengers), and a highlighted tip band.
+// without a number (no link to the car's climate), a highlighted tip band,
+// and five games straight on the home screen — no submenus, which also keeps
+// it light on the old Galaxy Tab A.
 export default function MockD() {
-  const part = useDaypart();
   const comfort = useToggles();
   const route = useFlash();
   const [climate, setClimate] = useState<"cold" | "warm" | null>(null);
@@ -63,7 +64,7 @@ export default function MockD() {
   return (
     <div className="bx relative flex flex-col overflow-hidden" style={{ height: "100dvh" }} data-lang="en">
       {/* Hero: the music is the picture */}
-      <section className="relative flex-shrink-0" style={{ height: 316 }}>
+      <section className="relative flex-shrink-0" style={{ height: 340 }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={TRACK.art} alt="" className="absolute inset-0 w-full h-full" style={{ objectFit: "cover" }} />
         <div
@@ -101,17 +102,6 @@ export default function MockD() {
       </section>
 
       <main className="flex-1 min-h-0 flex flex-col justify-between px-5 pb-4 pt-3">
-        {/* Host */}
-        <div className="flex items-center gap-3">
-          <span
-            className="flex items-center justify-center flex-shrink-0"
-            style={{ width: 40, height: 40, borderRadius: 9999, border: "1px solid var(--bx-gold)", color: "var(--bx-gold)", fontFamily: "var(--bx-serif)", fontSize: 20 }}
-          >
-            A
-          </span>
-          <div className="lab-row-label" style={{ fontSize: 19 }}>Good {part}. Amish is driving you today.</div>
-        </div>
-
         {/* Tip — highlighted, not hidden at the bottom */}
         <motion.button
           whileTap={{ scale: 0.98, transition: { duration: 0.1 } }}
@@ -154,7 +144,7 @@ export default function MockD() {
           <div className="bx-caption mb-2" style={{ color: "var(--bx-gold)" }}>Play</div>
           <div className="flex justify-between">
             {GAMES.map((g) => (
-              <Circle key={g.key} icon={g.icon} color={g.color} label={g.label} />
+              <Circle key={g.key} icon={g.icon} color={g.color} label={g.label} width={108} />
             ))}
           </div>
         </div>

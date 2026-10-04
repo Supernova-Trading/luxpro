@@ -72,6 +72,9 @@ export type IconName =
   | 'stop'
   | 'sun'
   | 'trash'
+  | 'snake'
+  | 'blocks'
+  | 'mine'
   | 'tweaks'
   | 'upload'
   | 'zap'
@@ -656,6 +659,29 @@ export function Icon({ name, size = 14, strokeWidth = 1.6, ...rest }: Props) {
           <path d="M15 3v18" />
           <path d="M3 9h18" />
           <path d="M3 15h18" />
+        </svg>
+      );
+    case 'snake':
+      return (
+        <svg {...common}>
+          <path d="M4 19h10a3 3 0 0 0 0-6H9a3 3 0 0 1 0-6h7" />
+          <circle cx="18.5" cy="7" r="1.6" />
+        </svg>
+      );
+    case 'blocks':
+      return (
+        <svg {...common}>
+          <rect x="3" y="12" width="6" height="6" rx="0.5" />
+          <rect x="9" y="12" width="6" height="6" rx="0.5" />
+          <rect x="15" y="12" width="6" height="6" rx="0.5" />
+          <rect x="9" y="6" width="6" height="6" rx="0.5" />
+        </svg>
+      );
+    case 'mine':
+      return (
+        <svg {...common}>
+          <circle cx="12" cy="12" r="5" />
+          <path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8" />
         </svg>
       );
     case 'trash':
