@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 const VARIANTS = [
+  { id: "d", name: "D · Your pick (C, refined)", desc: "C's album-art top and round buttons, route as a second row, Warmer/Cooler, games one tap away, tip highlighted." },
   { id: "a", name: "A · Instrument", desc: "Your temperature is the big number. Requests in one clean tray of rows." },
   { id: "b", name: "B · Concierge card", desc: "Like a hotel amenity card: serif type, gold rules, no boxes, hospitality wording." },
   { id: "c", name: "C · Image-led", desc: "The album art fills the top. Amish has a presence. Round buttons and one route switch." },

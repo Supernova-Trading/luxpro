@@ -58,4 +58,4 @@
 
 /* Overview: three phones side by side on a wide screen */
 .lab-compare { display: none; }
-@media (min-width: 1480px) { .lab-compare { display: flex; } }
+@media (min-width: 1480px) { .lab-compare { display: flex; flex-wrap: wrap; } }
