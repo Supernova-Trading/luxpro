@@ -1,0 +1,160 @@
+/* LuxPro v5 — the one token + style file (council round 4, creative director).
+   Scoped to .v5 so the live 4.x app's styles are untouched. OKLCH tokens per
+   CLAUDE.md; depth from surface steps only — no shadows, glows or blur. */
+.v5 {
+  /* Surfaces */
+  --s0: oklch(0.165 0.006 75);
+  --s1: oklch(0.215 0.008 75);
+  --s2: oklch(0.245 0.009 75);
+  --s-press: oklch(0.275 0.009 75);
+  --line: oklch(0.29 0.008 75);
+  --line-strong: oklch(0.36 0.009 75);
+  /* Text */
+  --ink: oklch(0.965 0.006 81);
+  --body: oklch(0.84 0.012 77);
+  --muted: oklch(0.69 0.012 72);
+  --muted-soft: oklch(0.52 0.010 72);
+  /* Gold: play button, tip section and "Told Amish" only */
+  --gold: oklch(0.742 0.118 90);
+  --on-gold: oklch(0.20 0.01 75);
+  --gold-tint: color-mix(in oklch, var(--gold) 16%, var(--s1));
+  --gold-line: color-mix(in oklch, var(--gold) 45%, transparent);
+  --scrim: color-mix(in oklch, var(--s0) 72%, transparent);
+  /* Icon palette: nine hues at matched lightness, so the colours read as one set */
+  --i-red: oklch(0.76 0.13 25);
+  --i-orange: oklch(0.78 0.13 58);
+  --i-lemon: oklch(0.88 0.14 102);
+  --i-green: oklch(0.79 0.14 152);
+  --i-teal: oklch(0.80 0.11 195);
+  --i-sky: oklch(0.78 0.12 232);
+  --i-blue: oklch(0.74 0.12 262);
+  --i-violet: oklch(0.74 0.13 300);
+  --i-pink: oklch(0.76 0.13 350);
+  /* Climate halves — sRGB mix keeps blue blue over the warm surface */
+  --cool-bg: color-mix(in srgb, var(--i-sky) 20%, var(--s1));
+  --cool-bg-on: color-mix(in srgb, var(--i-sky) 38%, var(--s1));
+  --warm-bg: color-mix(in srgb, var(--i-orange) 20%, var(--s1));
+  --warm-bg-on: color-mix(in srgb, var(--i-orange) 38%, var(--s1));
+  /* Type */
+  --serif: var(--font-display), "Newsreader", Georgia, serif;
+  --sans: var(--font-inter), "Inter", system-ui, sans-serif;
+  /* Motion */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 100vh;      /* older Chrome */
+  height: 100dvh;
+  background: var(--s0);
+  color: var(--body);
+  font-family: var(--sans);
+}
+/* :where() keeps this reset at zero specificity so component classes win */
+:where(.v5) button { font-family: inherit; background: none; border: 0; color: inherit; padding: 0; cursor: pointer; }
+.v5 :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+/* ── Type roles (nothing essential below 14px) ─────────────────────────── */
+.v5-wordmark { font-family: var(--serif); font-size: 15px; letter-spacing: 6px; text-transform: uppercase; color: var(--ink); line-height: 1; }
+.v5-micro { font-size: 12px; font-weight: 500; color: var(--muted); font-variant-numeric: tabular-nums; }
+.v5-caption { font-size: 13px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); line-height: 1.4; }
+.v5-sub { font-size: 14px; color: var(--muted); line-height: 1.4; }
+.v5-label { font-size: 16px; font-weight: 500; color: var(--ink); line-height: 1.25; }
+.v5-title { font-family: var(--serif); font-size: 22px; color: var(--ink); line-height: 1.2; }
+.v5-heading { font-family: var(--serif); font-size: 28px; color: var(--ink); line-height: 1.2; }
+.v5-display { font-family: var(--serif); font-size: 34px; color: var(--ink); line-height: 1.15; }
+
+/* ── Header ────────────────────────────────────────────────────────────── */
+.v5-header { position: relative; z-index: 3; flex-shrink: 0; height: 56px; padding-inline: 20px; display: flex; align-items: center; justify-content: space-between; }
+.v5-lang { min-width: 48px; height: 48px; padding-inline: 8px; font-size: 16px; font-weight: 500; color: var(--muted); }
+.v5-lang[aria-pressed="true"] { color: var(--ink); text-decoration: underline; text-underline-offset: 6px; }
+
+.v5-iconbtn { display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 9999px; border: 1px solid var(--line-strong); color: var(--ink); transition: background 150ms ease, transform 100ms ease; }
+.v5-iconbtn:active { background: var(--s-press); transform: scale(0.96); }
+.v5-iconbtn:disabled { color: var(--muted-soft); border-color: var(--line); }
+.v5-iconbtn[data-size="md"] { width: 56px; height: 56px; }
+.v5-play { width: 64px; height: 64px; background: var(--gold); border-color: var(--gold); color: var(--on-gold); }
+.v5-play:disabled { background: transparent; border-color: var(--line); color: var(--muted-soft); }
+
+/* ── Hero ──────────────────────────────────────────────────────────────── */
+/* Flexible: takes what the sections below leave, so the screen never scrolls
+   in any language (engineer seat, round 3). */
+.v5-hero { position: relative; display: flex; flex-direction: column; flex: 1 1 300px; min-height: 210px; max-height: 340px; }
+.v5-hero-glyph { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; }
+.v5-hero-rule { width: 64px; height: 1px; background: var(--line-strong); }
+.v5-hero-foot { flex-shrink: 0; padding: 0 20px 8px; }
+.v5-tabs { display: flex; gap: 20px; }
+.v5-tab { height: 48px; font-size: 16px; font-weight: 500; color: var(--muted); border-bottom: 2px solid transparent; }
+.v5-tab[aria-pressed="true"] { color: var(--ink); border-bottom-color: var(--ink); }
+
+.v5-pill { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding-inline: 18px; border-radius: 9999px; border: 1px solid var(--line-strong); font-size: 15px; font-weight: 500; color: var(--ink); white-space: nowrap; transition: background 150ms ease, transform 100ms ease; }
+.v5-pill:active { background: var(--s-press); transform: scale(0.96); }
+.v5-pill[aria-pressed="true"] { background: var(--gold-tint); border-color: var(--gold); color: var(--gold); }
+
+/* ── Main column ───────────────────────────────────────────────────────── */
+.v5-main { flex: 0 0 auto; display: flex; flex-direction: column; gap: 16px; padding: 12px 20px 16px; }
+
+/* Tip */
+.v5-tip { border-radius: 24px; border: 1px solid var(--gold); background: var(--gold-tint); padding: 10px 10px 12px; }
+.v5-tip-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding-inline: 8px; flex-wrap: wrap; }
+.v5-tip-opts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 8px; }
+.v5-tip-opt { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 68px; padding: 6px; border-radius: 9999px; background: var(--s0); border: 1px solid var(--gold-line); color: var(--ink); transition: background 150ms ease, transform 100ms ease; }
+.v5-tip-opt:active { transform: scale(0.96); }
+.v5-tip-opt[aria-pressed="true"] { background: var(--gold); color: var(--on-gold); }
+.v5-tip-opt small { font-size: 13px; opacity: 0.75; }
+
+/* Round request / game buttons */
+.v5-grid4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.v5-grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); padding-inline: 12.5%; margin-top: 8px; }
+.v5-grid5 { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.v5-circle { display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 0; width: 100%; padding-inline: 2px; }
+.v5-ring { display: flex; align-items: center; justify-content: center; width: 68px; height: 68px; border-radius: 9999px; background: var(--s1); border: 1px solid var(--line); transition: background 150ms ease, border-color 150ms ease, transform 100ms ease; }
+.v5-circle:active .v5-ring { background: var(--s-press); transform: scale(0.96); }
+.v5-circle[aria-pressed="true"] .v5-ring { background: var(--gold-tint); border-color: var(--gold); box-shadow: inset 0 0 0 1px var(--gold); }
+.v5-circle-label { font-size: 16px; font-weight: 500; line-height: 1.25; text-align: center; color: var(--ink); max-width: 100%; transition: color 200ms ease; }
+.v5-circle[aria-pressed="true"] .v5-circle-label { color: var(--gold); }
+.v5-circle[data-error="true"] .v5-circle-label { color: var(--i-red); }
+
+/* Climate */
+.v5-climate { display: grid; grid-template-columns: 1fr 1fr; border-radius: 9999px; overflow: hidden; border: 1px solid var(--line); }
+.v5-climate > button { display: flex; align-items: center; justify-content: center; gap: 10px; height: 64px; transition: background 150ms ease; }
+.v5-climate > button[data-side="cool"] { background: var(--cool-bg); }
+.v5-climate > button[data-side="warm"] { background: var(--warm-bg); }
+.v5-climate > button[data-side="cool"][aria-pressed="true"] { background: var(--cool-bg-on); box-shadow: inset 0 0 0 1.5px var(--gold); }
+.v5-climate > button[data-side="warm"][aria-pressed="true"] { background: var(--warm-bg-on); box-shadow: inset 0 0 0 1.5px var(--gold); }
+.v5-told { display: inline-flex; align-items: center; gap: 4px; font-size: 14px; font-weight: 600; color: var(--gold); }
+
+/* Sheets and overlays — solid surfaces, no blur */
+.v5-overlay { position: absolute; inset: 0; z-index: 20; background: var(--scrim); display: flex; align-items: flex-end; animation: v5-fade 240ms var(--ease-out); }
+.v5-sheet { width: 100%; max-height: 88%; overflow-y: auto; background: var(--s2); border-top: 1px solid var(--line-strong); border-radius: 24px 24px 0 0; padding: 12px 20px 24px; animation: v5-rise 320ms var(--ease-out); }
+.v5-handle { width: 36px; height: 4px; border-radius: 9999px; background: var(--line-strong); margin: 0 auto 12px; }
+.v5-row { display: flex; align-items: center; gap: 16px; width: 100%; min-height: 64px; padding-block: 10px; border-bottom: 1px solid var(--line); text-align: start; }
+.v5-row:last-child { border-bottom: 0; }
+.v5-full { position: absolute; inset: 0; z-index: 30; background: var(--s0); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; padding: 24px; text-align: center; animation: v5-fade 240ms var(--ease-out); }
+.v5-qr { background: oklch(0.985 0.002 90); padding: 16px; border-radius: 4px; line-height: 0; }
+.v5-toast { position: absolute; inset-inline: 20px; bottom: 20px; z-index: 25; padding: 14px 18px; border-radius: 16px; background: var(--s2); border: 1px solid var(--line-strong); color: var(--ink); font-size: 15px; text-align: center; animation: v5-fade 200ms var(--ease-out); }
+
+@keyframes v5-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes v5-rise { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .v5 *, .v5 *::before, .v5 *::after { animation-duration: 1ms !important; transition-duration: 1ms !important; }
+  .v5 :active { transform: none !important; }
+}
+
+/* ── Urdu: Nastaliq for both voices; tracking and forced case break its joins */
+.v5[data-lang="ur"] {
+  --serif: var(--font-nastaliq), "Noto Naskh Arabic", serif;
+  --sans: var(--font-nastaliq), "Noto Naskh Arabic", serif;
+}
+.v5[data-lang="ur"] * { letter-spacing: 0 !important; text-transform: none !important; }
+.v5[data-lang="ur"] .v5-circle-label { font-size: 14px; line-height: 1.7; }
+.v5[data-lang="ur"] .v5-label,
+.v5[data-lang="ur"] .v5-sub,
+.v5[data-lang="ur"] .v5-told,
+.v5[data-lang="ur"] .v5-caption { line-height: 1.9; }
+.v5[data-lang="ur"] .v5-title { font-size: 19px; line-height: 1.9; }
+.v5[data-lang="ur"] .v5-display { font-size: 26px; line-height: 1.8; }
+.v5[data-lang="ur"] .v5-heading { font-size: 22px; line-height: 1.8; }
+.v5[data-lang="ur"] .v5-tip-opt small { line-height: 1.8; }
