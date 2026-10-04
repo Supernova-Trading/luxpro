@@ -1,0 +1,166 @@
+/* LuxPro v2 — hybrid direction from the 2026-10-04 expert council:
+   preview's restraint + production's tactile tiles and colour icons, on a
+   portrait (~640×1000) single column. Scoped to .bx so "/" is untouched. */
+.bx {
+  /* Stepped warm-dark surfaces give depth without blur or shadow
+     (lamborghini/DESIGN.md:196 "darkness gradient"; ferrari/DESIGN.md:489
+     never pure black). Neutrals tinted toward the brand hue
+     (impeccable SKILL.md:75-76). */
+  --bx-canvas:          oklch(0.165 0.006 75);
+  --bx-raised:          oklch(0.215 0.008 75);
+  --bx-raised-press:    oklch(0.255 0.009 75);
+  --bx-hairline:        oklch(0.290 0.008 75);
+  --bx-hairline-strong: oklch(0.360 0.009 75);
+  --bx-ink:             oklch(0.965 0.006 81);
+  --bx-body:            oklch(0.840 0.012 77);
+  --bx-muted:           oklch(0.690 0.012 72);
+  --bx-muted-soft:      oklch(0.520 0.010 72);
+  --bx-gold:            oklch(0.742 0.118 90); /* brand #C8A84B */
+  --bx-on-gold:         oklch(0.200 0.010 75);
+  --bx-gold-tint:       color-mix(in oklch, var(--bx-gold) 16%, var(--bx-raised));
+
+  /* Owner's choice: keep the live UI's colour icons (2026-10-04). Re-declared
+     with the dark-theme values so a saved light theme can't swap them. */
+  --icon-blue:   #60A5FA;
+  --icon-purple: #C084FC;
+  --icon-pink:   #F472B6;
+  --icon-orange: #FB923C;
+  --icon-sky:    #38BDF8;
+  --icon-violet: #A78BFA;
+  --icon-cyan:   #22D3EE;
+  --icon-yellow: #FACC15;
+  --icon-red:    #F87171;
+  --icon-gray:   #94A3B8;
+  --accent-positive: oklch(0.800 0.182 152);
+
+  /* Display serif for statements, plain sans for labels — impeccable's
+     luxury pairing (reference/brand.md:36); product UI may use familiar
+     sans faces (reference/product.md:13). */
+  --bx-serif: var(--font-display), "Newsreader", Georgia, serif;
+  --bx-sans:  var(--font-inter), "Inter", system-ui, sans-serif;
+
+  background: var(--bx-canvas);
+  color: var(--bx-body);
+  font-family: var(--bx-sans);
+  font-weight: 400;
+}
+
+.bx button { font-family: inherit; }
+.bx strong { font-weight: 600; color: var(--bx-ink); }
+
+/* ── Type roles. Labels ≥16px for reading in a moving car (council, in-car
+   UX seat; open-design hyperframes/references/typography.md:20). ───────── */
+.bx-wordmark { font-family: var(--bx-serif); font-size: 15px; letter-spacing: 6px; text-transform: uppercase; color: var(--bx-ink); line-height: 1; }
+.bx-display  { font-family: var(--bx-serif); font-size: 34px; line-height: 1.2; color: var(--bx-ink); }
+.bx-question { font-family: var(--bx-serif); font-size: 32px; line-height: 1.25; color: var(--bx-ink); }
+.bx-display-lg { font-family: var(--bx-serif); font-size: 40px; line-height: 1.1; color: var(--bx-ink); }
+.bx-caption  { font-size: 13px; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; color: var(--bx-muted); line-height: 1.4; }
+.bx-label    { font-size: 16px; font-weight: 500; line-height: 1.3; color: var(--bx-ink); }
+.bx-title    { font-size: 18px; font-weight: 500; line-height: 1.3; color: var(--bx-ink); }
+.bx-sub      { font-size: 13px; line-height: 1.4; color: var(--bx-muted); }
+.bx-status   { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 600; line-height: 1.3; color: var(--bx-gold); }
+
+/* ── Tiles: raised, tactile, visibly change on press and when selected ──── */
+.bx-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  min-height: 96px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: var(--bx-raised);
+  border: 1px solid var(--bx-hairline);
+  text-align: start;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+.bx-tile:active { background: var(--bx-raised-press); }
+.bx-tile[aria-pressed="true"],
+.bx-tile[data-told="true"] { background: var(--bx-gold-tint); border-color: var(--bx-gold); }
+.bx-tile--row { flex-direction: row; align-items: center; justify-content: flex-start; gap: 12px; min-height: 64px; }
+
+.bx-panel { background: var(--bx-raised); border: 1px solid var(--bx-hairline); border-radius: 20px; padding: 16px; }
+
+/* ── Pills: selected state is filled gold, not an outline (council) ─────── */
+.bx-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 20px;
+  border-radius: 9999px;
+  border: 1px solid var(--bx-hairline-strong);
+  background: transparent;
+  color: var(--bx-body);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+}
+.bx-pill:active { background: var(--bx-raised-press); }
+.bx-pill[aria-pressed="true"] { background: var(--bx-gold); border-color: var(--bx-gold); color: var(--bx-on-gold); }
+.bx-pill:disabled { color: var(--bx-muted-soft); border-color: var(--bx-hairline); }
+
+.bx-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 9999px;
+  border: 1px solid var(--bx-hairline-strong);
+  background: transparent;
+  color: var(--bx-ink);
+  flex-shrink: 0;
+  transition: background 120ms ease;
+}
+.bx-icon-btn:active { background: var(--bx-raised-press); }
+.bx-icon-btn[data-size="lg"] { width: 56px; height: 56px; background: var(--bx-ink); border-color: var(--bx-ink); color: var(--bx-canvas); }
+.bx-icon-btn:disabled { color: var(--bx-muted-soft); border-color: var(--bx-hairline); background: transparent; }
+
+.bx-nav { height: 44px; padding: 0 10px; background: transparent; font-size: 14px; font-weight: 500; color: var(--bx-muted); }
+.bx-nav[aria-pressed="true"] { color: var(--bx-gold); }
+
+/* ── Hairline rows (used inside sheets) ─────────────────────────────────── */
+.bx-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  min-height: 64px;
+  padding: 12px 0;
+  background: transparent;
+  border-bottom: 1px solid var(--bx-hairline);
+  text-align: start;
+}
+.bx-row:last-child { border-bottom: none; }
+.bx-row-title { flex: 1; min-width: 0; font-family: var(--bx-serif); font-size: 24px; line-height: 1.25; color: var(--bx-ink); }
+.bx-row-title.is-lg { font-size: 28px; }
+.bx-row-title.is-sm { font-size: 20px; }
+.bx-row-status { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--bx-gold); white-space: nowrap; }
+.bx-chevron { color: var(--bx-muted-soft); flex-shrink: 0; }
+[dir="rtl"] .bx-chevron { transform: scaleX(-1); }
+
+.bx-rule { border: 0; border-top: 1px solid var(--bx-hairline); }
+
+/* ── Urdu: Latin faces have no Arabic glyphs, and tracking/forced case break
+   Nastaliq's joins. Sizes are class-based so these overrides always win. ── */
+.bx[data-lang="ur"] {
+  --bx-serif: var(--font-nastaliq), "Noto Naskh Arabic", serif;
+  --bx-sans:  var(--font-nastaliq), "Noto Naskh Arabic", serif;
+}
+.bx[data-lang="ur"] * { letter-spacing: 0 !important; text-transform: none !important; }
+.bx[data-lang="ur"] .bx-display,
+.bx[data-lang="ur"] .bx-question { font-size: 24px; line-height: 1.9; }
+.bx[data-lang="ur"] .bx-display-lg { font-size: 30px; line-height: 1.9; }
+.bx[data-lang="ur"] .bx-row-title,
+.bx[data-lang="ur"] .bx-row-title.is-lg { font-size: 20px; line-height: 1.9; }
+.bx[data-lang="ur"] .bx-label { font-size: 15px; line-height: 1.8; }
+.bx[data-lang="ur"] .bx-caption,
+.bx[data-lang="ur"] .bx-sub,
+.bx[data-lang="ur"] .bx-status { line-height: 2; }
+.bx[data-lang="ur"] .bx-title { font-size: 16px; line-height: 1.8; }

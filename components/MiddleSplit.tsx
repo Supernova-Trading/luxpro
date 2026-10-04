@@ -31,7 +31,7 @@ type QuizLevel = "easy" | "medium" | "hard" | null;
 // same topic/riddle/question can't repeat back-to-back. Replaces the old
 // shuffle-once-then-walk-through-the-array approach, which felt repetitive
 // on a tablet that stays open for a whole shift without reloading.
-function pickRandom<T>(pool: T[], exclude: T | null): T {
+export function pickRandom<T>(pool: T[], exclude: T | null): T {
   if (pool.length <= 1) return pool[0];
   let choice: T;
   do {

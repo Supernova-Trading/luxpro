@@ -13,7 +13,7 @@ interface Props {
 
 type TempChoice = "warm" | "cold" | null;
 
-function playChime(type: "warm" | "cold") {
+export function playChime(type: "warm" | "cold") {
   try {
     const ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
     const notes = type === "warm" ? [261.6, 329.6, 392.0] : [523.2, 659.3, 783.9];
