@@ -8,6 +8,7 @@ import type { Lang } from "@/lib/translations";
 export type RequestKey = "charger" | "snacks" | "wipes" | "mints" | "fastest" | "motorway" | "changeDest" | "bluetooth";
 export type GameKey = "quiz" | "riddles" | "snake" | "blocks" | "mines";
 export type TipKey = "cash" | "uber" | "revolut";
+export type QuizLevel = "easy" | "medium" | "hard";
 
 export interface V5Strings {
   settings: string;
@@ -53,6 +54,16 @@ export interface V5Strings {
   play: string;
   games: Record<GameKey, string>;
   gameSoon: string;
+  home: string;
+  levels: Record<QuizLevel, string>;
+  questionN: string; // "{n}" is replaced with the number
+  riddleN: string;
+  showAnswer: string;
+  answerLabel: string;
+  nextQuestion: string;
+  nextRiddle: string;
+  playWithAmish: string;
+  playWithAmishSub: string;
   newRide: string;
   newRideSub: string;
   newRideConfirm: string;
@@ -126,6 +137,16 @@ export const STRINGS: Record<Lang, V5Strings> = {
     play: "Play",
     games: { quiz: "Quiz", riddles: "Riddles", snake: "Snake", blocks: "Blocks", mines: "Mines" },
     gameSoon: "Games arrive in a later build.",
+    home: "Home",
+    levels: { easy: "Easy", medium: "Medium", hard: "Hard" },
+    questionN: "Question {n}",
+    riddleN: "Riddle {n}",
+    showAnswer: "Show answer",
+    answerLabel: "Answer",
+    nextQuestion: "Next question",
+    nextRiddle: "Next riddle",
+    playWithAmish: "Play with Amish",
+    playWithAmishSub: "Amish will join in",
     newRide: "New ride",
     newRideSub: "Clears requests, tip and climate for the next passenger.",
     newRideConfirm: "Start a new ride?",
@@ -197,6 +218,16 @@ export const STRINGS: Record<Lang, V5Strings> = {
     play: "Jugar",
     games: { quiz: "Quiz", riddles: "Adivinanzas", snake: "Serpiente", blocks: "Bloques", mines: "Minas" },
     gameSoon: "Los juegos llegan en una próxima versión.",
+    home: "Inicio",
+    levels: { easy: "Fácil", medium: "Media", hard: "Difícil" },
+    questionN: "Pregunta {n}",
+    riddleN: "Adivinanza {n}",
+    showAnswer: "Ver respuesta",
+    answerLabel: "Respuesta",
+    nextQuestion: "Siguiente pregunta",
+    nextRiddle: "Siguiente adivinanza",
+    playWithAmish: "Jugar con Amish",
+    playWithAmishSub: "Amish se unirá",
     newRide: "Nuevo viaje",
     newRideSub: "Borra las peticiones, la propina y el clima para el siguiente pasajero.",
     newRideConfirm: "¿Empezar un nuevo viaje?",
@@ -268,6 +299,16 @@ export const STRINGS: Record<Lang, V5Strings> = {
     play: "کھیلیں",
     games: { quiz: "کوئز", riddles: "پہیلیاں", snake: "سانپ", blocks: "بلاکس", mines: "مائنز" },
     gameSoon: "گیمز بعد کے ورژن میں آئیں گی۔",
+    home: "ہوم",
+    levels: { easy: "آسان", medium: "درمیانہ", hard: "مشکل" },
+    questionN: "سوال {n}",
+    riddleN: "پہیلی {n}",
+    showAnswer: "جواب دیکھیں",
+    answerLabel: "جواب",
+    nextQuestion: "اگلا سوال",
+    nextRiddle: "اگلی پہیلی",
+    playWithAmish: "امیش کے ساتھ کھیلیں",
+    playWithAmishSub: "امیش ساتھ کھیلیں گے",
     newRide: "نیا سفر",
     newRideSub: "اگلے مسافر کے لیے درخواستیں، ٹپ اور درجہ حرارت صاف کریں۔",
     newRideConfirm: "نیا سفر شروع کریں؟",
@@ -284,6 +325,7 @@ export const SPEECH: {
   requests: Record<RequestKey, { on: string; off: string }>;
   climate: { cool: string; warm: string; off: string };
   tip: Record<TipKey, string>;
+  games: Record<"quiz" | "riddles", string>;
 } = {
   requests: {
     charger:    { on: "Amish, could I use the phone charger, please?",       off: "Amish, no need for the charger now, thank you." },
@@ -305,5 +347,9 @@ export const SPEECH: {
     cash: "Amish, I'd like to give you a cash tip at the end of the trip.",
     uber: "Amish, I'll leave you a tip in the Uber app after the trip.",
     revolut: "Amish, I'm sending you a tip with Revolut.",
+  },
+  games: {
+    quiz: "Amish, would you like to play a quiz with me?",
+    riddles: "Amish, would you like to do some riddles with me?",
   },
 };

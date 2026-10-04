@@ -5,17 +5,20 @@ import { Icon, type IconName } from "../Icon";
 import { useLanguage } from "@/hooks/useLanguage";
 import { PLAYLISTS } from "@/lib/playlists";
 import type { Lang } from "@/lib/translations";
-import { STRINGS, SPEECH, type RequestKey, type TipKey, type GameKey, type V5Strings } from "./strings";
+import { STRINGS, SPEECH, type RequestKey, type TipKey, type GameKey, type QuizLevel, type V5Strings } from "./strings";
 import { useSpeech } from "./useSpeech";
 import { useMusic } from "./useMusic";
 import MusicHero from "./MusicHero";
 import { APP_VERSION, BUILD_ID } from "./version";
 import { GENRES, PLAYLIST_META, groupStations } from "./genres";
+import { useDeck } from "./useDeck";
+import WordGame from "./WordGame";
 
 // LuxPro v5 — built from mockup D, only on design/v2-preview.
 // Roadmap: https://claude.ai/artifact/7pmPGqhwDth9LT7PtEnugD
 // v5.3: D's gold tip panel back, music chosen by genre (playlists and radio),
 // Bluetooth actions on the right. Requests show a check badge, never "Told Amish".
+// v5.5: Quiz and Riddles playable; Snake, Blocks and Mines follow.
 
 const LANGS: { id: Lang; label: string }[] = [
   { id: "en", label: "EN" },
@@ -74,10 +77,11 @@ function Circle({ icon, color, label, on, onClick }: {
 }
 
 export default function V5App() {
-  const { lang, setLang, isRTL, radios } = useLanguage();
+  const { lang, setLang, isRTL, radios, content } = useLanguage();
   const s: V5Strings = STRINGS[lang];
   const music = useMusic(radios, lang);
   const speech = useSpeech(music.duck);
+  const deck = useDeck();
 
   const [requests, setRequests] = useState<Partial<Record<RequestKey, boolean>>>({});
   const [climate, setClimate] = useState<"cool" | "warm" | null>(null);
@@ -87,6 +91,9 @@ export default function V5App() {
   const [confirmNew, setConfirmNew] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [isFS, setIsFS] = useState(false);
+  const [game, setGame] = useState<"quiz" | "riddles" | null>(null);
+  const [quizLevel, setQuizLevel] = useState<QuizLevel>("easy");
+  const [asked, setAsked] = useState<Partial<Record<"quiz" | "riddles", boolean>>>({});
 
   const lastTap = useRef<Record<string, number>>({});
   const toastTimer = useRef<ReturnType<typeof setTimeout>>();
@@ -161,10 +168,29 @@ export default function V5App() {
     if (key === "revolut") setQr(true);
   }
 
+  function openGame(key: GameKey) {
+    if (key === "quiz" || key === "riddles") setGame(key);
+    else showToast(s.gameSoon);
+  }
+
+  // "Play with Amish": said once per game per ride; a repeat tap is silent.
+  function askAmishToPlay(key: "quiz" | "riddles") {
+    if (!passBump(`game:${key}`) || asked[key]) return;
+    setAsked((p) => ({ ...p, [key]: true }));
+    speech.say(`game:${key}`, SPEECH.games[key], () => {
+      setAsked((p) => ({ ...p, [key]: false }));
+      showToast(s.didntHear);
+    });
+  }
+
   function newRide() {
     speech.clear();
     music.reset();
+    deck.reset();
     lastTap.current = {};
+    setGame(null);
+    setQuizLevel("easy");
+    setAsked({});
     setRequests({});
     setClimate(null);
     setTip(null);
@@ -276,7 +302,7 @@ export default function V5App() {
           <SectionHead title={s.gamesTitle} hint={s.gamesHint} />
           <div className="v5-grid5">
             {GAMES.map((g) => (
-              <Circle key={g.key} icon={g.icon} color={g.color} label={s.games[g.key]} onClick={() => showToast(s.gameSoon)} />
+              <Circle key={g.key} icon={g.icon} color={g.color} label={s.games[g.key]} onClick={() => openGame(g.key)} />
             ))}
           </div>
         </section>
@@ -401,6 +427,22 @@ export default function V5App() {
             </ol>
           </div>
         </div>
+      )}
+
+      {/* ── Quiz / Riddles ───────────────────────────────────────────── */}
+      {game && (
+        <WordGame
+          kind={game}
+          s={s}
+          lang={lang}
+          content={content}
+          deck={deck}
+          level={quizLevel}
+          onLevel={setQuizLevel}
+          asked={!!asked[game]}
+          onAsk={() => askAmishToPlay(game)}
+          onClose={() => setGame(null)}
+        />
       )}
 
       {/* ── Revolut QR ───────────────────────────────────────────────── */}
