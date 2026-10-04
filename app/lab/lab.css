@@ -48,13 +48,18 @@
   background: var(--bx-raised); border: 1px solid var(--bx-hairline); transition: background 120ms ease, border-color 120ms ease;
 }
 .lab-circle:active > span:first-child { background: var(--bx-raised-press); }
-.lab-circle[aria-pressed="true"] > span:first-child { border-color: var(--bx-gold); background: var(--bx-gold-tint); }
+.lab-circle[aria-pressed="true"] > span:first-child { border-color: var(--bx-gold); background: var(--bx-gold-tint); box-shadow: inset 0 0 0 1px var(--bx-gold); }
 
 .lab-segment { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--bx-hairline-strong); border-radius: 9999px; overflow: hidden; }
 .lab-segment > button { height: 52px; background: transparent; font-size: 15px; font-weight: 500; color: var(--bx-body); border-inline-start: 1px solid var(--bx-hairline); transition: background 120ms ease, color 120ms ease; }
 .lab-segment > button:first-child { border-inline-start: none; }
 .lab-segment > button:active { background: var(--bx-raised-press); }
 .lab-segment > button[data-told="true"] { background: var(--bx-gold); color: var(--bx-on-gold); }
+
+/* D: gold is kept for the play button, the tip and "Told Amish" only
+   (council round 3) — active language and source tab use ink instead. */
+.lab .bx-nav[aria-pressed="true"] { color: var(--bx-ink); text-decoration: underline; text-underline-offset: 6px; }
+.lab .lab-tab[aria-pressed="true"] { border-bottom-color: var(--bx-ink); }
 
 /* Overview: three phones side by side on a wide screen */
 .lab-compare { display: none; }

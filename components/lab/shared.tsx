@@ -6,19 +6,19 @@ import { Icon, type IconName } from "../Icon";
 // Shared content and behaviour for the three /lab direction mockups, so the
 // owner compares composition only — same words, same data, same states.
 
-export type Item = { key: string; icon: IconName; color: string; label: string; hosp: string };
+export type Item = { key: string; icon: IconName; color: string; label: string; hosp: string; msg: string };
 
 export const COMFORT: Item[] = [
-  { key: "charger", icon: "plug",    color: "var(--accent-positive)", label: "Phone charger",    hosp: "A phone charger" },
-  { key: "snacks",  icon: "cookie",  color: "var(--icon-orange)",     label: "Snacks",           hosp: "Something to eat" },
-  { key: "wipes",   icon: "droplet", color: "var(--icon-sky)",        label: "Wet wipes",        hosp: "Refreshing wipes" },
-  { key: "mints",   icon: "candy",   color: "var(--icon-pink)",       label: "Sweets and mints", hosp: "Mints" },
+  { key: "charger", icon: "plug",    color: "var(--accent-positive)", label: "Phone charger",    hosp: "A phone charger",  msg: "Amish, can I use the phone charger please" },
+  { key: "snacks",  icon: "cookie",  color: "var(--icon-orange)",     label: "Snacks",           hosp: "Something to eat", msg: "Amish, can I have some special snacks please" },
+  { key: "wipes",   icon: "droplet", color: "var(--icon-sky)",        label: "Wet wipes",        hosp: "Refreshing wipes", msg: "Amish, can I have some wet wipes please" },
+  { key: "mints",   icon: "candy",   color: "var(--icon-pink)",       label: "Sweets and mints", hosp: "Mints",            msg: "Amish, can I have some sweets and mints please" },
 ];
 
 export const ROUTES: Item[] = [
-  { key: "fast",     icon: "zap",     color: "var(--icon-yellow)", label: "Fastest route",      hosp: "The quickest way" },
-  { key: "motorway", icon: "road",    color: "var(--icon-gray)",   label: "Take the motorway",  hosp: "Via the motorway" },
-  { key: "dest",     icon: "map-pin", color: "var(--icon-red)",    label: "Change destination", hosp: "Somewhere else" },
+  { key: "fast",     icon: "zap",     color: "var(--icon-yellow)", label: "Fastest route",      hosp: "The quickest way", msg: "Amish, please take the fastest route" },
+  { key: "motorway", icon: "road",    color: "var(--icon-blue)",   label: "Motorway",           hosp: "Via the motorway", msg: "Amish, please take the motorway." },
+  { key: "dest",     icon: "map-pin", color: "var(--icon-red)",    label: "Change destination", hosp: "Somewhere else",   msg: "Amish, the passenger would like to change the destination." },
 ];
 
 // A real track from the app's Electronic playlist (NCS), as the passenger would see it.
@@ -41,9 +41,33 @@ export function useDaypart() {
   return part;
 }
 
+// A jolt on a bumpy road can land the same tap twice; ignoring a repeat on
+// the same key within 400ms stops it silently undoing a request.
 export function useToggles() {
   const [on, setOn] = useState<Record<string, boolean>>({});
-  return { on, toggle: (k: string) => setOn((p) => ({ ...p, [k]: !p[k] })) };
+  const last = useRef<Record<string, number>>({});
+  return {
+    on,
+    // Returns the new state, or null when the tap was ignored as a bump repeat.
+    toggle: (k: string): boolean | null => {
+      const now = Date.now();
+      if (now - (last.current[k] ?? 0) < 400) return null;
+      last.current[k] = now;
+      const next = !on[k];
+      setOn((p) => ({ ...p, [k]: next }));
+      return next;
+    },
+  };
+}
+
+// Mockup voice: the real app routes this through useVoice (driver/passenger
+// language). Here it's enough to hear what Amish would hear.
+export function say(text: string) {
+  if (typeof window === "undefined" || !window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "en-GB";
+  window.speechSynthesis.speak(u);
 }
 
 // Route requests: one-shot confirmation that clears after 2.5s (owner's rule).

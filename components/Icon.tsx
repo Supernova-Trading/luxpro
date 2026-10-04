@@ -678,10 +678,12 @@ export function Icon({ name, size = 14, strokeWidth = 1.6, ...rest }: Props) {
         </svg>
       );
     case 'mine':
+      // Minesweeper's flag: reads as the game, unlike a spiked circle (looked like a sun)
       return (
         <svg {...common}>
-          <circle cx="12" cy="12" r="5" />
-          <path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8" />
+          <path d="M6 21V4" />
+          <path d="M6 4h11l-3 4 3 4H6" />
+          <path d="M3 21h6" />
         </svg>
       );
     case 'trash':
