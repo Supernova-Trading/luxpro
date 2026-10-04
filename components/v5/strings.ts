@@ -86,6 +86,14 @@ export interface V5Strings {
   lines: string;
   level: string;
   blocksStart: string;
+  voiceTo: string;
+  voiceEnglish: string;
+  voiceWhy: string;
+  voiceVolume: string;
+  musicVolume: string;
+  testVoice: string;
+  contactAmish: string;
+  contactSub: string;
   newRide: string;
   newRideSub: string;
   newRideConfirm: string;
@@ -191,6 +199,14 @@ export const STRINGS: Record<Lang, V5Strings> = {
     lines: "Lines",
     level: "Level",
     blocksStart: "Tap any button to start",
+    voiceTo: "Voice to Amish",
+    voiceEnglish: "English",
+    voiceWhy: "So Amish understands every request",
+    voiceVolume: "Voice volume",
+    musicVolume: "Music volume",
+    testVoice: "Test",
+    contactAmish: "Contact Amish",
+    contactSub: "Lost property, or to book Amish again",
     newRide: "New ride",
     newRideSub: "Clears requests, tip and climate for the next passenger.",
     newRideConfirm: "Start a new ride?",
@@ -294,6 +310,14 @@ export const STRINGS: Record<Lang, V5Strings> = {
     lines: "Líneas",
     level: "Nivel",
     blocksStart: "Toque cualquier botón para empezar",
+    voiceTo: "Voz para Amish",
+    voiceEnglish: "Inglés",
+    voiceWhy: "Para que Amish entienda cada petición",
+    voiceVolume: "Volumen de la voz",
+    musicVolume: "Volumen de la música",
+    testVoice: "Probar",
+    contactAmish: "Contactar con Amish",
+    contactSub: "Objetos perdidos, o para reservar otra vez con Amish",
     newRide: "Nuevo viaje",
     newRideSub: "Borra las peticiones, la propina y el clima para el siguiente pasajero.",
     newRideConfirm: "¿Empezar un nuevo viaje?",
@@ -397,6 +421,14 @@ export const STRINGS: Record<Lang, V5Strings> = {
     lines: "لائنیں",
     level: "لیول",
     blocksStart: "شروع کرنے کے لیے کوئی بھی بٹن دبائیں",
+    voiceTo: "امیش کے لیے آواز",
+    voiceEnglish: "انگریزی",
+    voiceWhy: "تاکہ امیش ہر درخواست سمجھ سکیں",
+    voiceVolume: "آواز کا والیوم",
+    musicVolume: "موسیقی کا والیوم",
+    testVoice: "سنیں",
+    contactAmish: "امیش سے رابطہ",
+    contactSub: "گمشدہ سامان، یا امیش کے ساتھ دوبارہ سفر کے لیے",
     newRide: "نیا سفر",
     newRideSub: "اگلے مسافر کے لیے درخواستیں، ٹپ اور درجہ حرارت صاف کریں۔",
     newRideConfirm: "نیا سفر شروع کریں؟",
@@ -414,6 +446,7 @@ export const SPEECH: {
   climate: { cool: string; warm: string; off: string };
   tip: Record<TipKey, string>;
   games: Record<"quiz" | "riddles", string>;
+  test: string;
 } = {
   requests: {
     charger:    { on: "Amish, could I use the phone charger, please?",       off: "Amish, no need for the charger now, thank you." },
@@ -440,4 +473,6 @@ export const SPEECH: {
     quiz: "Amish, would you like to play a quiz with me?",
     riddles: "Amish, would you like to do some riddles with me?",
   },
+  // Settings → Voice volume → Test
+  test: "Amish, this is only a volume test.",
 };

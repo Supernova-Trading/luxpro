@@ -58,6 +58,24 @@ const TIPS: { key: TipKey; icon: IconName; color: string }[] = [
 ];
 
 const BUMP_MS = 400; // a jolt landing the same tap twice is ignored
+const QR_CLOSE_MS = 120_000; // the Revolut QR closes itself after 2 minutes
+const SETTINGS_KEY = "luxpro.v5.settings"; // settings survive a reload; ride state doesn't
+const VOICE_MIN = 20; // the voice can be quieter, never silent: a muted request would look sent
+const AMISH_PHONE = { tel: "07438537561", shown: "07438 537 561" }; // as in the live app (Modals.tsx)
+
+// − / + in 10% steps, never a slider: precise sliding fails on bumps.
+function Volume({ label, value, min = 0, onChange }: { label: string; value: number; min?: number; onChange: (v: number) => void }) {
+  return (
+    <div className="v5-vol" dir="ltr">
+      <button className="v5-iconbtn" data-size="md" aria-label={`${label} −`} disabled={value <= min} onClick={() => onChange(value - 10)}><Icon name="minus" size={18} /></button>
+      <span className="v5-vol-bar" aria-hidden>
+        {Array.from({ length: 10 }, (_, i) => <i key={i} data-on={i < Math.round(value / 10)} />)}
+      </span>
+      <button className="v5-iconbtn" data-size="md" aria-label={`${label} +`} disabled={value >= 100} onClick={() => onChange(value + 10)}><Icon name="plus" size={18} /></button>
+      <span className="v5-micro" style={{ minWidth: 40, textAlign: "end" }}>{value}%</span>
+    </div>
+  );
+}
 
 function SectionHead({ title, hint }: { title: string; hint?: string }) {
   return (
@@ -87,7 +105,8 @@ export default function V5App() {
   const { lang, setLang, isRTL, radios, content } = useLanguage();
   const s: V5Strings = STRINGS[lang];
   const music = useMusic(radios, lang);
-  const speech = useSpeech(music.duck);
+  const [voiceVol, setVoiceVol] = useState(100);
+  const speech = useSpeech(music.duck, voiceVol / 100);
   const deck = useDeck();
 
   const [requests, setRequests] = useState<Partial<Record<RequestKey, boolean>>>({});
@@ -119,6 +138,26 @@ export default function V5App() {
     setToast(msg);
     toastTimer.current = setTimeout(() => setToast(null), 3200);
   }, []);
+
+  // Settings (not ride state) come back after a reload.
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}");
+      if (typeof saved.voiceVolume === "number") setVoiceVol(Math.max(VOICE_MIN, Math.min(100, saved.voiceVolume)));
+    } catch { /* storage blocked: defaults */ }
+  }, []);
+
+  function changeVoiceVol(v: number) {
+    const next = Math.max(VOICE_MIN, Math.min(100, Math.round(v / 10) * 10));
+    setVoiceVol(next);
+    try { localStorage.setItem(SETTINGS_KEY, JSON.stringify({ voiceVolume: next })); } catch { /* fine */ }
+  }
+
+  useEffect(() => {
+    if (!qr) return;
+    const t = setTimeout(() => setQr(false), QR_CLOSE_MS);
+    return () => clearTimeout(t);
+  }, [qr]);
 
   useEffect(() => {
     const onFS = () => setIsFS(!!document.fullscreenElement);
@@ -326,15 +365,7 @@ export default function V5App() {
               <span className="v5-heading">{music.source === "radio" ? s.chooseStation : s.chooseMusic}</span>
               <button className="v5-pill" onClick={() => setSheet(null)}>{s.close}</button>
             </div>
-            {/* Volume: − / + steps, no slider — precise sliding fails on bumps */}
-            <div className="v5-vol" dir="ltr">
-              <span className="v5-caption" style={{ minWidth: 72 }}>{s.volume}</span>
-              <button className="v5-iconbtn" data-size="md" aria-label={`${s.volume} −`} onClick={() => music.setVolume(music.volume - 10)}><Icon name="minus" size={18} /></button>
-              <span className="v5-vol-bar" aria-hidden>
-                {Array.from({ length: 10 }, (_, i) => <i key={i} data-on={i < Math.round(music.volume / 10)} />)}
-              </span>
-              <button className="v5-iconbtn" data-size="md" aria-label={`${s.volume} +`} onClick={() => music.setVolume(music.volume + 10)}><Icon name="plus" size={18} /></button>
-            </div>
+            <Volume label={s.volume} value={music.volume} onChange={music.setVolume} />
             {music.source === "radio" ? (
               // Stations grouped by genre for this language's list
               groupStations(radios).map(({ genre, items }) => (
@@ -393,6 +424,40 @@ export default function V5App() {
               <span className="v5-heading">{s.settings}</span>
               <button className="v5-pill" onClick={() => setSheet(null)}>{s.close}</button>
             </div>
+            {/* Voice to Amish: always English (owner decision), so it's shown, not chosen */}
+            <div className="v5-row">
+              <Icon name="comment" size={20} style={{ color: "var(--i-teal)" }} />
+              <span className="v5-set-text">
+                <span className="v5-label">{s.voiceTo}</span>
+                <span className="v5-sub">{s.voiceWhy}</span>
+              </span>
+              <span className="v5-set-value">{s.voiceEnglish}</span>
+            </div>
+            <div className="v5-row v5-row-stack">
+              <span className="v5-set-line">
+                <Icon name="mic" size={20} style={{ color: "var(--ink)" }} />
+                <span className="v5-label" style={{ flex: 1 }}>{s.voiceVolume}</span>
+                <button className="v5-pill" onClick={() => { if (passBump("test")) speech.say("test", SPEECH.test); }}>
+                  <Icon name="play" size={16} />{s.testVoice}
+                </button>
+              </span>
+              <Volume label={s.voiceVolume} value={voiceVol} min={VOICE_MIN} onChange={changeVoiceVol} />
+            </div>
+            <div className="v5-row v5-row-stack">
+              <span className="v5-set-line">
+                <Icon name="headphones" size={20} style={{ color: "var(--ink)" }} />
+                <span className="v5-label">{s.musicVolume}</span>
+              </span>
+              <Volume label={s.musicVolume} value={music.volume} onChange={music.setVolume} />
+            </div>
+            <a className="v5-row" href={`tel:${AMISH_PHONE.tel}`}>
+              <Icon name="phone" size={20} style={{ color: "var(--i-green)" }} />
+              <span className="v5-set-text">
+                <span className="v5-label">{s.contactAmish}</span>
+                <span className="v5-sub">{s.contactSub}</span>
+              </span>
+              <span className="v5-set-phone" dir="ltr">{AMISH_PHONE.shown}</span>
+            </a>
             <button className="v5-row" onClick={toggleFullscreen}>
               <Icon name={isFS ? "close" : "present"} size={20} style={{ color: "var(--ink)" }} />
               <span className="v5-label">{isFS ? s.exitFullScreen : s.fullScreen}</span>

@@ -177,6 +177,14 @@ button.v5-bt-tile:active { background: var(--s-press); transform: scale(0.97); }
 .v5-handle { width: 36px; height: 4px; border-radius: 9999px; background: var(--line-strong); margin: 0 auto 12px; }
 .v5-row { display: flex; align-items: center; gap: 16px; width: 100%; min-height: 64px; padding-block: 10px; border-bottom: 1px solid var(--line); text-align: start; }
 .v5-row:last-child { border-bottom: 0; }
+/* Settings rows (v5.10) */
+a.v5-row { color: inherit; text-decoration: none; }
+.v5-set-text { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.v5-set-value { font-size: 15px; color: var(--muted); }
+.v5-set-phone { font-family: var(--serif); font-size: 22px; color: var(--gold); white-space: nowrap; }
+.v5-row-stack { flex-direction: column; align-items: stretch; gap: 4px; }
+.v5-row-stack .v5-vol { padding-block: 4px 0; }
+.v5-set-line { display: flex; align-items: center; gap: 16px; }
 .v5-full { position: absolute; inset: 0; z-index: 30; background: var(--s0); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; padding: 24px; text-align: center; animation: v5-fade 240ms var(--ease-out); }
 .v5-qr { background: oklch(0.985 0.002 90); padding: 16px; border-radius: 4px; line-height: 0; }
 .v5-toast { position: absolute; inset-inline: 20px; bottom: 20px; z-index: 25; padding: 14px 18px; border-radius: 16px; background: var(--s2); border: 1px solid var(--line-strong); color: var(--ink); font-size: 15px; text-align: center; animation: v5-fade 200ms var(--ease-out); }
