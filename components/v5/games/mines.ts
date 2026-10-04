@@ -1,5 +1,5 @@
 // Mines — pure game rules, no React, so they can be tested on their own
-// (node --test components/v5/games). Every move returns a new board.
+// (node --test "components/v5/games/*.test.mjs"). Every move returns a new board.
 // The first dig is always safe: mines are laid only after it, away from
 // that square and its neighbours, so a passenger never loses on tap one.
 

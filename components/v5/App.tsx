@@ -19,12 +19,13 @@ import type { MinesSave } from "./games/MinesGame";
 // Action games load only when opened (roadmap P5: keep the home screen light).
 const MinesGame = dynamic(() => import("./games/MinesGame"), { ssr: false });
 const SnakeGame = dynamic(() => import("./games/SnakeGame"), { ssr: false });
+const BlocksGame = dynamic(() => import("./games/BlocksGame"), { ssr: false });
 
 // LuxPro v5 — built from mockup D, only on design/v2-preview.
 // Roadmap: https://claude.ai/artifact/7pmPGqhwDth9LT7PtEnugD
 // v5.3: D's gold tip panel back, music chosen by genre (playlists and radio),
 // Bluetooth actions on the right. Requests show a check badge, never "Told Amish".
-// v5.5: Quiz and Riddles playable. v5.7: Mines. v5.8: Snake. Blocks follows.
+// v5.5: Quiz and Riddles playable. v5.7: Mines. v5.8: Snake. v5.9: Blocks — all five games.
 
 const LANGS: { id: Lang; label: string }[] = [
   { id: "en", label: "EN" },
@@ -177,8 +178,7 @@ export default function V5App() {
   }
 
   function openGame(key: GameKey) {
-    if (key !== "blocks") setGame(key);
-    else showToast(s.gameSoon);
+    setGame(key);
   }
 
   // "Play with Amish": said once per game per ride; a repeat tap is silent.
@@ -454,6 +454,7 @@ export default function V5App() {
         />
       )}
       {game === "snake" && <SnakeGame s={s} onClose={() => setGame(null)} />}
+      {game === "blocks" && <BlocksGame s={s} onClose={() => setGame(null)} />}
       {game === "mines" && (
         <MinesGame s={s} saved={minesSave.current} onSave={saveMines} onClose={() => setGame(null)} />
       )}

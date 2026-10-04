@@ -53,7 +53,6 @@ export interface V5Strings {
   warmer: string;
   play: string;
   games: Record<GameKey, string>;
-  gameSoon: string;
   home: string;
   levels: Record<QuizLevel, string>;
   questionN: string; // "{n}" is replaced with the number
@@ -80,6 +79,13 @@ export interface V5Strings {
   snakeStart: string;
   gameOver: string;
   playAgain: string;
+  rotate: string;
+  down: string;
+  drop: string;
+  nextPiece: string;
+  lines: string;
+  level: string;
+  blocksStart: string;
   newRide: string;
   newRideSub: string;
   newRideConfirm: string;
@@ -152,7 +158,6 @@ export const STRINGS: Record<Lang, V5Strings> = {
     warmer: "Warmer",
     play: "Play",
     games: { quiz: "Quiz", riddles: "Riddles", snake: "Snake", blocks: "Blocks", mines: "Mines" },
-    gameSoon: "Games arrive in a later build.",
     home: "Home",
     levels: { easy: "Easy", medium: "Medium", hard: "Hard" },
     questionN: "Question {n}",
@@ -179,6 +184,13 @@ export const STRINGS: Record<Lang, V5Strings> = {
     snakeStart: "Tap an arrow to start",
     gameOver: "Game over",
     playAgain: "Play again",
+    rotate: "Rotate",
+    down: "Down",
+    drop: "Drop",
+    nextPiece: "Next",
+    lines: "Lines",
+    level: "Level",
+    blocksStart: "Tap any button to start",
     newRide: "New ride",
     newRideSub: "Clears requests, tip and climate for the next passenger.",
     newRideConfirm: "Start a new ride?",
@@ -249,7 +261,6 @@ export const STRINGS: Record<Lang, V5Strings> = {
     warmer: "Más calor",
     play: "Jugar",
     games: { quiz: "Quiz", riddles: "Adivinanzas", snake: "Serpiente", blocks: "Bloques", mines: "Minas" },
-    gameSoon: "Los juegos llegan en una próxima versión.",
     home: "Inicio",
     levels: { easy: "Fácil", medium: "Media", hard: "Difícil" },
     questionN: "Pregunta {n}",
@@ -276,6 +287,13 @@ export const STRINGS: Record<Lang, V5Strings> = {
     snakeStart: "Toque una flecha para empezar",
     gameOver: "Fin de la partida",
     playAgain: "Jugar otra vez",
+    rotate: "Girar",
+    down: "Bajar",
+    drop: "Soltar",
+    nextPiece: "Siguiente",
+    lines: "Líneas",
+    level: "Nivel",
+    blocksStart: "Toque cualquier botón para empezar",
     newRide: "Nuevo viaje",
     newRideSub: "Borra las peticiones, la propina y el clima para el siguiente pasajero.",
     newRideConfirm: "¿Empezar un nuevo viaje?",
@@ -346,7 +364,6 @@ export const STRINGS: Record<Lang, V5Strings> = {
     warmer: "گرم",
     play: "کھیلیں",
     games: { quiz: "کوئز", riddles: "پہیلیاں", snake: "سانپ", blocks: "بلاکس", mines: "مائنز" },
-    gameSoon: "گیمز بعد کے ورژن میں آئیں گی۔",
     home: "ہوم",
     levels: { easy: "آسان", medium: "درمیانہ", hard: "مشکل" },
     questionN: "سوال {n}",
@@ -373,6 +390,13 @@ export const STRINGS: Record<Lang, V5Strings> = {
     snakeStart: "شروع کرنے کے لیے کوئی تیر دبائیں",
     gameOver: "گیم ختم",
     playAgain: "دوبارہ کھیلیں",
+    rotate: "گھمائیں",
+    down: "نیچے",
+    drop: "گرائیں",
+    nextPiece: "اگلا",
+    lines: "لائنیں",
+    level: "لیول",
+    blocksStart: "شروع کرنے کے لیے کوئی بھی بٹن دبائیں",
     newRide: "نیا سفر",
     newRideSub: "اگلے مسافر کے لیے درخواستیں، ٹپ اور درجہ حرارت صاف کریں۔",
     newRideConfirm: "نیا سفر شروع کریں؟",

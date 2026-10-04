@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Icon } from "../../Icon";
 import type { V5Strings } from "../strings";
 import { newSnake, turn, step, type Dir, type Snake } from "./snake";
+import { resolveColor, rounded, readBest, saveBest, prepare } from "./canvas";
 
 // Snake for a moving car: big arrow buttons (no swipes), "Relaxed" speed by
 // default, edges wrap round, pauses itself if the screen goes away.
@@ -15,36 +16,6 @@ type Speed = "relaxed" | "normal" | "fast";
 const SPEEDS: Speed[] = ["relaxed", "normal", "fast"];
 const STEP_MS: Record<Speed, number> = { relaxed: 280, normal: 190, fast: 130 };
 const BEST_KEY = "luxpro.v5.snakeBest";
-
-// Canvas can't read CSS variables, and an old Chrome can't parse oklch():
-// resolve each token through the browser and fall back to plain hex.
-function resolveColor(host: HTMLElement, token: string, fallback: string): string {
-  const probe = document.createElement("span");
-  probe.style.color = `var(${token})`;
-  host.appendChild(probe);
-  const css = getComputedStyle(probe).color;
-  probe.remove();
-  const ctx = document.createElement("canvas").getContext("2d");
-  if (!ctx) return fallback;
-  ctx.fillStyle = "#010203";
-  ctx.fillStyle = css;
-  return ctx.fillStyle === "#010203" ? fallback : (ctx.fillStyle as string);
-}
-
-function rounded(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
-  ctx.beginPath();
-  ctx.moveTo(x + r, y);
-  ctx.arcTo(x + w, y, x + w, y + h, r);
-  ctx.arcTo(x + w, y + h, x, y + h, r);
-  ctx.arcTo(x, y + h, x, y, r);
-  ctx.arcTo(x, y, x + w, y, r);
-  ctx.closePath();
-  ctx.fill();
-}
-
-function readBest(): number {
-  try { return Number(localStorage.getItem(BEST_KEY)) || 0; } catch { return 0; }
-}
 
 export default function SnakeGame({ s, onClose }: { s: V5Strings; onClose: () => void }) {
   const [speed, setSpeed] = useState<Speed>("relaxed");
@@ -62,7 +33,7 @@ export default function SnakeGame({ s, onClose }: { s: V5Strings; onClose: () =>
   const canvas = useRef<HTMLCanvasElement>(null);
   const colors = useRef<Record<string, string>>({});
 
-  useEffect(() => { setBest(readBest()); }, []);
+  useEffect(() => { setBest(readBest(BEST_KEY)); }, []);
   useEffect(() => { stepMs.current = STEP_MS[speed]; }, [speed]);
   useEffect(() => { pausedRef.current = paused; }, [paused]);
 
@@ -89,13 +60,9 @@ export default function SnakeGame({ s, onClose }: { s: V5Strings; onClose: () =>
 
   const draw = useCallback(() => {
     const cv = canvas.current;
-    const ctx = cv?.getContext("2d");
-    if (!cv || !ctx || !size) return;
-    const dpr = window.devicePixelRatio || 1;
-    const w = COLS * size, h = ROWS * size;
-    if (cv.width !== Math.round(w * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.clearRect(0, 0, w, h);
+    if (!cv || !size) return;
+    const ctx = prepare(cv, COLS * size, ROWS * size);
+    if (!ctx) return;
     const c = colors.current;
     const g = game.current;
     const pad = Math.max(1.5, size * 0.06);
@@ -154,10 +121,7 @@ export default function SnakeGame({ s, onClose }: { s: V5Strings; onClose: () =>
         setScore(now.score);
         setStatus(now.status);
         if (now.status === "over" || now.status === "won") {
-          if (now.score > readBest()) {
-            try { localStorage.setItem(BEST_KEY, String(now.score)); } catch { /* fine */ }
-            setBest(now.score);
-          }
+          if (saveBest(BEST_KEY, now.score)) setBest(now.score);
         }
       }
       raf = requestAnimationFrame(frame);

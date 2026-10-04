@@ -1,5 +1,5 @@
 // Snake — pure game rules, no React or canvas, so they can be tested on their
-// own (node --test components/v5/games). Every move returns a new state.
+// own (node --test "components/v5/games/*.test.mjs"). Every move returns a new state.
 // Car-friendly choices: the edges wrap round instead of ending the game, and
 // up to two turns are queued so a quick double tap isn't lost between steps.
 

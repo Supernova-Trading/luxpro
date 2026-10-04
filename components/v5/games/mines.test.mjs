@@ -1,4 +1,4 @@
-// Run: node --test components/v5/games   (Node 23.6+ reads the .ts directly)
+// Run: node --test "components/v5/games/*.test.mjs"   (Node 23.6+ reads the .ts directly)
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { newBoard, withMines, neighbours, dig, toggleFlag, flagsLeft } from "./mines.ts";
