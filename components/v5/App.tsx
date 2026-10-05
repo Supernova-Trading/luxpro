@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import dynamic from "next/dynamic";
 import { Icon, type IconName } from "../Icon";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -12,6 +12,7 @@ import { useMusic } from "./useMusic";
 import MusicHero from "./MusicHero";
 import { APP_VERSION, BUILD_ID } from "./version";
 import { GENRES, PLAYLIST_META, groupStations } from "./genres";
+import { stationsFor } from "./stations";
 import { useDeck } from "./useDeck";
 import { nightFor, type NightMode } from "./night";
 import WordGame from "./WordGame";
@@ -106,7 +107,9 @@ function Circle({ icon, color, label, on, badge = "check", onClick }: {
 }
 
 export default function V5App() {
-  const { lang, setLang, isRTL, radios } = useLanguage();
+  const { lang, setLang, isRTL, radios: liveRadios } = useLanguage();
+  // The live station list plus v5's extra stations (stations.ts)
+  const radios = useMemo(() => stationsFor(lang, liveRadios), [lang, liveRadios]);
   const s: V5Strings = STRINGS[lang];
   const music = useMusic(radios, lang);
   const [voiceVol, setVoiceVol] = useState(100);

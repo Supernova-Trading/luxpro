@@ -8,7 +8,8 @@ import type { Lang } from "@/lib/translations";
 
 export type GenreKey =
   | "hits" | "decades" | "dance" | "chill" | "urban" | "latin"
-  | "classical" | "news" | "sport" | "spiritual" | "world" | "more";
+  | "classical" | "news" | "sport" | "spiritual" | "world" | "more"
+  | "rock" | "jazz" | "flamenco" | "bollywood" | "punjabi";
 
 export const GENRES: Record<GenreKey, { icon: IconName; color: string; label: Record<Lang, string> }> = {
   hits:      { icon: "sparkles",   color: "var(--i-lemon)",  label: { en: "Pop & hits",         es: "Éxitos y pop",       ur: "پاپ اور ہٹس" } },
@@ -23,6 +24,12 @@ export const GENRES: Record<GenreKey, { icon: IconName; color: string; label: Re
   spiritual: { icon: "sun",        color: "var(--i-teal)",   label: { en: "Spiritual",          es: "Espiritual",         ur: "روحانی" } },
   world:     { icon: "languages",  color: "var(--i-sky)",    label: { en: "World",              es: "Del mundo",          ur: "دنیا بھر سے" } },
   more:      { icon: "radio",      color: "var(--i-violet)", label: { en: "More stations",      es: "Más emisoras",       ur: "مزید اسٹیشن" } },
+  // v5.16: genres for the extra stations (stations.ts)
+  rock:      { icon: "zap",        color: "var(--i-red)",    label: { en: "Rock",               es: "Rock",               ur: "راک" } },
+  jazz:      { icon: "music-note", color: "var(--i-orange)", label: { en: "Jazz & soul",        es: "Jazz y soul",        ur: "جاز اور سول" } },
+  flamenco:  { icon: "flame",      color: "var(--i-orange)", label: { en: "Flamenco & Spanish", es: "Flamenco y copla",   ur: "فلامینکو اور ہسپانوی" } },
+  bollywood: { icon: "sparkles",   color: "var(--i-pink)",   label: { en: "Bollywood",          es: "Bollywood",          ur: "بالی وڈ" } },
+  punjabi:   { icon: "headphones", color: "var(--i-lemon)",  label: { en: "Punjabi",            es: "Punyabí",            ur: "پنجابی" } },
 };
 
 // Playlists: five styles, then five "from around the world".
@@ -60,6 +67,20 @@ const STATION_GENRE: Record<string, GenreKey> = {
   "Hum FM 106.2": "hits", "Samaa FM 107.4": "hits", "All4Masti": "hits", "Radio Madhoshi": "hits", "BIG 92.7 FM": "hits",
   "Radio Pakistan Lahore": "news", "Radio Pakistan News": "news",
   "Sout-ul-Quran FM 93.4": "spiritual",
+  // v5.16 extra stations (stations.ts)
+  "Radio X": "rock", "Radio X Classic Rock": "rock", "Rock FM": "rock",
+  "Capital XTRA": "urban",
+  "Capital Dance": "dance", "LOS40 Dance": "dance",
+  "KISS": "hits", "Cadena Dial": "hits", "City FM 89": "hits", "FM 101 Islamabad": "hits",
+  "Heart 00s": "decades", "M80 Radio": "decades",
+  "Smooth Radio": "chill",
+  "Jazz London Radio": "jazz",
+  "Radiolé": "flamenco", "Flamenco FM": "flamenco",
+  "Radio Clásica": "classical",
+  "LBC": "news", "LBC News": "news", "Cadena SER": "news", "Radio Nacional": "news", "Onda Cero": "news", "Radio Pakistan Islamabad": "news",
+  "Bollywood Now": "bollywood", "Nostalgic Bollywood 90s": "bollywood", "Radio Udaan": "bollywood", "Sunrise Radio": "bollywood",
+  "RED FM Punjabi": "punjabi", "Sher-E-Punjab": "punjabi",
+  "Radio Central 24": "spiritual",
 };
 
 export function stationGenre(name: string): GenreKey {
