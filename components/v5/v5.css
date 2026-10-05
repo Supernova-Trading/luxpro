@@ -198,9 +198,9 @@ a.v5-row { color: inherit; text-decoration: none; }
 .v5-row-stack .v5-vol { padding-block: 4px 0; }
 .v5-set-line { display: flex; align-items: center; gap: 16px; }
 .v5-sheet .v5-seg > button { height: 44px; }
-.v5-full { position: absolute; inset: 0; z-index: 30; background: var(--s0); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; padding: 24px; text-align: center; animation: v5-fade 240ms var(--ease-out); }
+.v5-full { position: absolute; inset: 0; z-index: 50; background: var(--s0); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; padding: 24px; text-align: center; animation: v5-fade 240ms var(--ease-out); }
 .v5-qr { background: oklch(0.985 0.002 90); padding: 16px; border-radius: 4px; line-height: 0; }
-.v5-toast { position: absolute; inset-inline: 20px; bottom: 20px; z-index: 25; padding: 14px 18px; border-radius: 16px; background: var(--s2); border: 1px solid var(--line-strong); color: var(--ink); font-size: 15px; text-align: center; animation: v5-fade 200ms var(--ease-out); }
+.v5-toast { position: absolute; inset-inline: 20px; bottom: 20px; z-index: 60; padding: 14px 18px; border-radius: 16px; background: var(--s2); border: 1px solid var(--line-strong); color: var(--ink); font-size: 15px; text-align: center; animation: v5-fade 200ms var(--ease-out); }
 
 /* ── Games: Quiz / Riddles full screen (v5.5) ──────────────────────────── */
 .v5-game { position: absolute; inset: 0; z-index: 30; background: var(--s0); display: flex; flex-direction: column; gap: 16px; padding: 16px 20px 20px; animation: v5-fade 240ms var(--ease-out); }
@@ -221,6 +221,42 @@ a.v5-row { color: inherit; text-decoration: none; }
 .v5-next { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 76px; padding-inline: 20px; border-radius: 9999px; background: var(--gold); color: var(--on-gold); font-size: 18px; font-weight: 600; transition: transform 100ms ease, filter 150ms ease; }
 .v5-next:active { transform: scale(0.97); filter: brightness(0.92); }
 [dir="rtl"] .v5-flip { transform: scaleX(-1); }
+
+/* Ride screens and Driver panel (P8, v5.18) */
+.v5 { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+.v5-hold { touch-action: none; cursor: default; }
+.v5-ride { position: absolute; inset: 0; z-index: 40; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px; padding: 32px 24px; text-align: center; background: var(--s0); animation: v5-fade 320ms var(--ease-out); }
+.v5-ride-head { display: grid; gap: 10px; justify-items: center; }
+.v5-ride-title { font-family: var(--serif); font-size: 44px; line-height: 1.1; color: var(--ink); max-width: 16ch; text-wrap: balance; }
+.v5-ride-sub { font-size: 18px; color: var(--body); line-height: 1.4; }
+.v5-ride-langs { display: grid; gap: 12px; width: 100%; max-width: 440px; }
+.v5-ride-lang { display: grid; gap: 2px; justify-items: center; min-height: 84px; padding: 12px 20px; border-radius: 24px; background: var(--s1); border: 1px solid var(--gold-line); transition: background 150ms ease, transform 100ms ease; }
+.v5-ride-lang:active { background: var(--gold-tint); transform: scale(0.98); }
+.v5-ride-lang-name { font-family: var(--serif); font-size: 28px; line-height: 1.2; color: var(--gold); }
+.v5-ride-lang-hint { font-size: 14px; color: var(--muted); }
+.v5-ride-lang[data-lang="ur"] .v5-ride-lang-name,
+.v5-ride-lang[data-lang="ur"] .v5-ride-lang-hint { font-family: var(--font-nastaliq), "Noto Naskh Arabic", serif; line-height: 1.8; }
+.v5-ride-lang[data-lang="ur"] .v5-ride-lang-name { font-size: 24px; }
+.v5-ride-foot { display: grid; gap: 6px; justify-items: center; }
+.v5-farewell .v5-tip { text-align: start; }
+.v5[data-lang="ur"] .v5-ride-title { font-size: 34px; line-height: 1.7; }
+.v5[data-lang="ur"] .v5-ride-sub { line-height: 1.9; }
+.v5-nearly { position: absolute; top: 12px; inset-inline: 16px; z-index: 26; display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 20px; background: var(--s2); border: 1px solid var(--gold); color: var(--ink); animation: v5-rise 320ms var(--ease-out); }
+.v5-drv { position: absolute; inset: 0; z-index: 70; display: flex; align-items: center; justify-content: center; padding: 20px; background: var(--scrim); font-family: var(--font-inter), "Inter", system-ui, sans-serif; animation: v5-fade 200ms var(--ease-out); }
+.v5-drv * { letter-spacing: normal; }
+.v5-drv-card { width: 100%; max-width: 460px; max-height: 100%; overflow-y: auto; display: grid; gap: 14px; padding: 20px; border-radius: 24px; background: var(--s2); border: 1px solid var(--line-strong); }
+.v5-drv-dots { display: flex; justify-content: center; gap: 16px; padding-top: 8px; }
+.v5-drv-dots > i { width: 16px; height: 16px; border-radius: 9999px; box-shadow: inset 0 0 0 2px var(--line-strong); }
+.v5-drv-dots > i[data-on="true"] { background: var(--gold); box-shadow: none; }
+.v5-drv-pad { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.v5-drv-pad > button { height: 64px; border-radius: 16px; background: var(--s1); border: 1px solid var(--line); font-size: 24px; font-weight: 500; color: var(--ink); display: flex; align-items: center; justify-content: center; }
+.v5-drv-pad > button:active { background: var(--s-press); }
+.v5-drv-actions { display: grid; gap: 8px; }
+.v5-drv-btn { display: flex; align-items: center; gap: 14px; min-height: 64px; padding: 10px 16px; border-radius: 16px; background: var(--s1); border: 1px solid var(--line); color: var(--ink); text-align: start; }
+.v5-drv-btn:active { background: var(--s-press); }
+.v5-drv-btn[data-gold="true"] { background: var(--gold); border-color: var(--gold); color: var(--on-gold); }
+.v5-drv-btn[data-gold="true"] .v5-sub { color: var(--on-gold); }
+.v5-drv-btn[aria-pressed="true"] { border-color: var(--gold-line); }
 
 /* Quiz & Riddles prize game (v5.14) */
 .v5-lives { display: flex; align-items: center; gap: 6px; justify-self: end; padding-inline-end: 4px; }

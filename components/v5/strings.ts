@@ -110,6 +110,16 @@ export interface V5Strings {
   contactAmish: string;
   contactSub: string;
   nightMode: string;
+  welcomeTitle: string;
+  welcomeDriver: string;
+  chooseLanguage: string;
+  welcomeNote: string;
+  farewellTitle: string;
+  farewellBelongings: string;
+  farewellTipped: string;
+  farewellBye: string;
+  nearlyThere: string;
+  nearlySub: string;
   nightSub: string;
   nightModes: Record<"auto" | "on" | "off", string>;
   qrFailed: string;
@@ -243,6 +253,16 @@ export const STRINGS: Record<Lang, V5Strings> = {
     contactAmish: "Contact Amish",
     contactSub: "Lost property, or to book Amish again",
     nightMode: "Night mode",
+    welcomeTitle: "Welcome aboard",
+    welcomeDriver: "Your chauffeur today is Amish",
+    chooseLanguage: "Choose your language to begin",
+    welcomeNote: "Music, games and requests for Amish are on the next screen.",
+    farewellTitle: "Thank you for riding with Amish",
+    farewellBelongings: "Please check you have all your belongings.",
+    farewellTipped: "Amish knows about your tip. Thank you!",
+    farewellBye: "Have a wonderful day",
+    nearlyThere: "Nearly there",
+    nearlySub: "About 5 minutes to go. Please gather your belongings.",
     nightSub: "Dimmer screen after sunset",
     nightModes: { auto: "Auto", on: "On", off: "Off" },
     qrFailed: "The QR code didn't load. Cash or Uber still work.",
@@ -374,6 +394,16 @@ export const STRINGS: Record<Lang, V5Strings> = {
     contactAmish: "Contactar con Amish",
     contactSub: "Objetos perdidos, o para reservar otra vez con Amish",
     nightMode: "Modo noche",
+    welcomeTitle: "Bienvenido a bordo",
+    welcomeDriver: "Su chófer hoy es Amish",
+    chooseLanguage: "Elija su idioma para empezar",
+    welcomeNote: "La música, los juegos y las peticiones a Amish están en la siguiente pantalla.",
+    farewellTitle: "Gracias por viajar con Amish",
+    farewellBelongings: "Por favor, compruebe que lleva todas sus pertenencias.",
+    farewellTipped: "Amish ya sabe lo de su propina. ¡Gracias!",
+    farewellBye: "Que tenga un buen día",
+    nearlyThere: "Casi hemos llegado",
+    nearlySub: "Faltan unos 5 minutos. Vaya recogiendo sus cosas.",
     nightSub: "Pantalla más tenue al anochecer",
     nightModes: { auto: "Auto", on: "Sí", off: "No" },
     qrFailed: "El código QR no se cargó. El efectivo o Uber siguen funcionando.",
@@ -505,6 +535,16 @@ export const STRINGS: Record<Lang, V5Strings> = {
     contactAmish: "امیش سے رابطہ",
     contactSub: "گمشدہ سامان، یا امیش کے ساتھ دوبارہ سفر کے لیے",
     nightMode: "نائٹ موڈ",
+    welcomeTitle: "خوش آمدید",
+    welcomeDriver: "آج آپ کے ڈرائیور امیش ہیں",
+    chooseLanguage: "شروع کرنے کے لیے اپنی زبان منتخب کریں",
+    welcomeNote: "موسیقی، گیمز اور امیش سے درخواستیں اگلی اسکرین پر ہیں۔",
+    farewellTitle: "امیش کے ساتھ سفر کرنے کا شکریہ",
+    farewellBelongings: "براہ کرم اپنا تمام سامان ساتھ لے جانا یقینی بنائیں۔",
+    farewellTipped: "امیش کو آپ کی ٹپ کا علم ہے۔ شکریہ!",
+    farewellBye: "آپ کا دن اچھا گزرے",
+    nearlyThere: "ہم تقریباً پہنچ گئے",
+    nearlySub: "تقریباً 5 منٹ باقی ہیں۔ براہ کرم اپنا سامان سمیٹ لیں۔",
     nightSub: "غروبِ آفتاب کے بعد اسکرین مدھم",
     nightModes: { auto: "خودکار", on: "آن", off: "آف" },
     qrFailed: "کیو آر کوڈ لوڈ نہیں ہوا۔ نقد یا اوبر اب بھی کام کرتے ہیں۔",

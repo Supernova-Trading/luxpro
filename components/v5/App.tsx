@@ -13,6 +13,9 @@ import MusicHero from "./MusicHero";
 import { APP_VERSION, BUILD_ID } from "./version";
 import { GENRES, PLAYLIST_META, groupStations } from "./genres";
 import { stationsFor } from "./stations";
+import Driver, { type RideStage } from "./Driver";
+import { Welcome, Farewell, NearlyBanner } from "./RideScreens";
+import { useKiosk } from "./useKiosk";
 import { useDeck } from "./useDeck";
 import { nightFor, type NightMode } from "./night";
 import WordGame from "./WordGame";
@@ -65,6 +68,9 @@ const TIPS: { key: TipKey; icon: IconName; color: string }[] = [
 const BUMP_MS = 400; // a jolt landing the same tap twice is ignored
 const QR_CLOSE_MS = 120_000; // the Revolut QR closes itself after 2 minutes
 const SETTINGS_KEY = "luxpro.v5.settings"; // settings survive a reload; ride state doesn't
+const FAREWELL_RESET_MS = 180_000; // after drop-off, the tablet resets itself for the next passenger
+const NEARLY_MS = 20_000;          // how long the "Nearly there" banner stays
+const HOLD_FOR_DRIVER_MS = 1500;   // hold the wordmark this long to open the Driver panel
 const VOICE_MIN = 20; // the voice can be quieter, never silent: a muted request would look sent
 const AMISH_PHONE = { tel: "07438537561", shown: "07438 537 561" }; // as in the live app (Modals.tsx)
 
@@ -124,7 +130,12 @@ export default function V5App() {
   const [tip, setTip] = useState<TipKey | null>(null);
   const [qr, setQr] = useState(false);
   const [sheet, setSheet] = useState<"settings" | "bt" | "picker" | null>(null);
-  const [confirmNew, setConfirmNew] = useState(false);
+  // Ride stages (P8): welcome at pickup, the app during the ride, farewell at drop-off.
+  const [stage, setStage] = useState<RideStage>("welcome");
+  const [nearly, setNearly] = useState(false);
+  const [driverOpen, setDriverOpen] = useState(false);
+  const [kiosk, setKiosk] = useState(true);
+  const holdTimer = useRef<ReturnType<typeof setTimeout>>();
   const [toast, setToast] = useState<string | null>(null);
   const [isFS, setIsFS] = useState(false);
   const [game, setGame] = useState<GameKey | null>(null);
@@ -173,12 +184,13 @@ export default function V5App() {
       const saved = JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}");
       if (typeof saved.voiceVolume === "number") setVoiceVol(Math.max(VOICE_MIN, Math.min(100, saved.voiceVolume)));
       if (saved.night === "auto" || saved.night === "on" || saved.night === "off") setNightMode(saved.night);
+      if (typeof saved.kiosk === "boolean") setKiosk(saved.kiosk);
     } catch { /* storage blocked: defaults */ }
   }, []);
 
-  function saveSettings(next: { voiceVolume?: number; night?: NightMode }) {
+  function saveSettings(next: { voiceVolume?: number; night?: NightMode; kiosk?: boolean }) {
     try {
-      localStorage.setItem(SETTINGS_KEY, JSON.stringify({ voiceVolume: voiceVol, night: nightMode, ...next }));
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify({ voiceVolume: voiceVol, night: nightMode, kiosk, ...next }));
     } catch { /* fine */ }
   }
 
@@ -192,6 +204,31 @@ export default function V5App() {
     setNightMode(m);
     saveSettings({ night: m });
   }
+
+  function changeKiosk(on: boolean) {
+    setKiosk(on);
+    saveSettings({ kiosk: on });
+  }
+
+  useKiosk(kiosk);
+
+  // Drop-off: the farewell stays a few minutes, then the tablet resets itself.
+  useEffect(() => {
+    if (stage !== "farewell") return;
+    const t = setTimeout(newPassenger, FAREWELL_RESET_MS);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stage]);
+
+  useEffect(() => {
+    if (!nearly) return;
+    const t = setTimeout(() => setNearly(false), NEARLY_MS);
+    return () => clearTimeout(t);
+  }, [nearly]);
+
+  // Hold the wordmark to open Amish's Driver panel (a tap does nothing).
+  const holdStart = () => { clearTimeout(holdTimer.current); holdTimer.current = setTimeout(() => setDriverOpen(true), HOLD_FOR_DRIVER_MS); };
+  const holdEnd = () => clearTimeout(holdTimer.current);
 
   // Night: re-checked every minute so the screen dims at sunset on its own.
   useEffect(() => {
@@ -305,8 +342,28 @@ export default function V5App() {
     setTip(null);
     setQr(false);
     setSheet(null);
-    setConfirmNew(false);
+    setNearly(false);
     setLang("en");
+  }
+
+  function newPassenger() {
+    newRide();
+    setStage("welcome");
+  }
+
+  function beginRide(l: Lang) {
+    setLang(l);
+    setStage("ride");
+    // The language tap is a real touch, so full screen is allowed here.
+    if (kiosk && !document.fullscreenElement) document.documentElement.requestFullscreen?.().catch(() => {});
+  }
+
+  function endRide() {
+    setGame(null);
+    setSheet(null);
+    setQr(false);
+    setNearly(false);
+    setStage("farewell");
   }
 
   function toggleFullscreen() {
@@ -314,19 +371,37 @@ export default function V5App() {
     else document.exitFullscreen?.().catch(() => {});
   }
 
+  // Cash / Uber / Revolut — in the tip section and again on the farewell screen.
+  const tipOpts = (
+    <div className="v5-tip-opts">
+      {TIPS.map((t) => {
+        const on = tip === t.key;
+        return (
+          <button key={t.key} className="v5-tip-opt" aria-pressed={on} onClick={() => tapTip(t.key)}>
+            <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <Icon name={on ? "check" : t.icon} size={20} style={{ color: on ? "currentColor" : t.color }} />
+              <span className="v5-label" style={{ color: "inherit", fontSize: 17 }}>{s.tip[t.key].label}</span>
+            </span>
+            <small>{s.tip[t.key].sub}</small>
+          </button>
+        );
+      })}
+    </div>
+  );
+
   const closeOnScrim = (e: React.MouseEvent) => { if (e.target === e.currentTarget) setSheet(null); };
 
   const header = (
     <header className="v5-header">
       <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
-        <span className="v5-wordmark">LuxPro</span>
+        <span className="v5-wordmark v5-hold" onPointerDown={holdStart} onPointerUp={holdEnd} onPointerLeave={holdEnd} onPointerCancel={holdEnd}>LuxPro</span>
         <span className="v5-micro" dir="ltr">v{APP_VERSION} · {BUILD_ID}</span>
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
         {LANGS.map((l) => (
           <button key={l.id} className="v5-lang" aria-pressed={lang === l.id} onClick={() => setLang(l.id)}>{l.label}</button>
         ))}
-        <button className="v5-iconbtn" style={{ marginInlineStart: 8 }} aria-label={s.settings} onClick={() => { setConfirmNew(false); setSheet("settings"); }}>
+        <button className="v5-iconbtn" style={{ marginInlineStart: 8 }} aria-label={s.settings} onClick={() => setSheet("settings")}>
           <Icon name="settings" size={18} />
         </button>
       </div>
@@ -353,20 +428,7 @@ export default function V5App() {
             <span className="v5-title">{s.tipTitle}</span>
             <span className="v5-sub" style={{ color: "var(--gold)" }}>{s.tipHint}</span>
           </div>
-          <div className="v5-tip-opts">
-            {TIPS.map((t) => {
-              const on = tip === t.key;
-              return (
-                <button key={t.key} className="v5-tip-opt" aria-pressed={on} onClick={() => tapTip(t.key)}>
-                  <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <Icon name={on ? "check" : t.icon} size={20} style={{ color: on ? "currentColor" : t.color }} />
-                    <span className="v5-label" style={{ color: "inherit", fontSize: 17 }}>{s.tip[t.key].label}</span>
-                  </span>
-                  <small>{s.tip[t.key].sub}</small>
-                </button>
-              );
-            })}
-          </div>
+          {tipOpts}
         </section>
 
         {/* ── Ask Amish: on/off; "on" shows as a gold ring + check badge ── */}
@@ -535,26 +597,7 @@ export default function V5App() {
               </span>
               <span className="v5-set-phone" dir="ltr">{AMISH_PHONE.shown}</span>
             </a>
-            <button className="v5-row" onClick={toggleFullscreen}>
-              <Icon name={isFS ? "close" : "present"} size={20} style={{ color: "var(--ink)" }} />
-              <span className="v5-label">{isFS ? s.exitFullScreen : s.fullScreen}</span>
-            </button>
-            {/* Stand-in until Amish's phone remote (P8) resets the tablet */}
-            {!confirmNew ? (
-              <button className="v5-row" onClick={() => setConfirmNew(true)}>
-                <Icon name="history" size={20} style={{ color: "var(--ink)" }} />
-                <span style={{ display: "grid", gap: 2 }}>
-                  <span className="v5-label">{s.newRide}</span>
-                  <span className="v5-sub">{s.newRideSub}</span>
-                </span>
-              </button>
-            ) : (
-              <div className="v5-row" style={{ flexWrap: "wrap" }}>
-                <span className="v5-label" style={{ flex: "1 1 auto" }}>{s.newRideConfirm}</span>
-                <button className="v5-pill" onClick={() => setConfirmNew(false)}>{s.cancel}</button>
-                <button className="v5-pill" aria-pressed onClick={newRide}>{s.confirmClear}</button>
-              </div>
-            )}
+            {/* Full screen and New ride are Amish's now: Driver panel (hold the LuxPro name) */}
           </div>
         </div>
       )}
@@ -622,6 +665,23 @@ export default function V5App() {
           {!qrFailed && <span className="v5-label" style={{ fontWeight: 400, color: "var(--body)", maxWidth: 420 }}>{s.qrSub}</span>}
           <button className="v5-pill" style={{ minWidth: 160, height: 56 }} onClick={() => setQr(false)}>{s.done}</button>
         </div>
+      )}
+
+      {nearly && stage === "ride" && <NearlyBanner s={s} onClose={() => setNearly(false)} />}
+      {stage === "welcome" && <Welcome onBegin={beginRide} />}
+      {stage === "farewell" && <Farewell s={s} tipped={!!tip} tipButtons={tipOpts} phone={AMISH_PHONE.shown} />}
+      {driverOpen && (
+        <Driver
+          stage={stage}
+          isFS={isFS}
+          kiosk={kiosk}
+          onClose={() => setDriverOpen(false)}
+          onNewPassenger={newPassenger}
+          onNearly={() => setNearly(true)}
+          onEndRide={endRide}
+          onFullscreen={toggleFullscreen}
+          onKiosk={changeKiosk}
+        />
       )}
 
       {toast && <div className="v5-toast" role="status">{toast}</div>}
