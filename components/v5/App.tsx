@@ -429,44 +429,43 @@ export default function V5App() {
             </div>
             <Volume label={s.volume} value={music.volume} onChange={music.setVolume} />
             {music.source === "radio" ? (
-              // Stations grouped by genre for this language's list
-              groupStations(radios).map(({ genre, items }) => (
-                <div key={genre}>
-                  <div className="v5-genre-head">
-                    <Icon name={GENRES[genre].icon} size={18} style={{ color: GENRES[genre].color }} />
-                    <span className="v5-caption">{GENRES[genre].label[lang]}</span>
+              // Compact (owner, v5.17): one line per genre — its name, then its
+              // stations three across — so 20 stations need little scrolling.
+              <div className="v5-genre-list">
+                {groupStations(radios).map(({ genre, items }) => (
+                  <div key={genre} className="v5-genre-row">
+                    <span className="v5-genre-name">
+                      <Icon name={GENRES[genre].icon} size={16} style={{ color: GENRES[genre].color, flexShrink: 0 }} />
+                      <span>{GENRES[genre].label[lang]}</span>
+                    </span>
+                    <div className="v5-pick" data-compact>
+                      {items.map(({ st, idx }) => {
+                        const offline = music.radio.brokenStations.has(idx) && music.radio.currentIdx !== idx;
+                        return (
+                          <button key={st.n + idx} className="v5-chip" aria-pressed={music.radio.currentIdx === idx} data-offline={offline}
+                            aria-label={offline ? `${st.n} · ${s.offline}` : st.n}
+                            onClick={() => { music.chooseStation(idx); setSheet(null); }}>
+                            <span className="v5-chip-text">{st.n}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
-                  <div className="v5-pick">
-                    {items.map(({ st, idx }) => {
-                      const offline = music.radio.brokenStations.has(idx) && music.radio.currentIdx !== idx;
-                      return (
-                        <button key={st.n + idx} aria-pressed={music.radio.currentIdx === idx} data-offline={offline}
-                          onClick={() => { music.chooseStation(idx); setSheet(null); }}>
-                          <span style={{ display: "grid", minWidth: 0 }}>
-                            <span className="v5-label" style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{st.n}</span>
-                            {offline && <span className="v5-sub">{s.offline}</span>}
-                          </span>
-                          {music.radio.currentIdx === idx && <Icon name="check" size={18} style={{ color: "var(--gold)", flexShrink: 0 }} />}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))
+                ))}
+              </div>
             ) : (
-              // Playlists as genres: styles first, then music from around the world
+              // Playlists as genres, three across: styles first, then around the world
               (["style", "world"] as const).map((group) => (
                 <div key={group}>
                   <div className="v5-genre-head"><span className="v5-caption">{group === "style" ? s.byStyle : s.aroundWorld}</span></div>
-                  <div className="v5-pick">
+                  <div className="v5-pick" data-compact>
                     {PLAYLISTS.map((pl, i) => ({ pl, i, meta: PLAYLIST_META[pl.n] }))
                       .filter(({ meta }) => (meta?.group ?? "style") === group)
                       .map(({ pl, i, meta }) => (
                         <button key={pl.n} className="v5-gtile" aria-pressed={music.plIdx === i}
                           onClick={() => { music.choosePlaylist(i); setSheet(null); }}>
-                          <span className="v5-gtile-icon"><Icon name={meta?.icon ?? "music-note"} size={20} style={{ color: meta?.color ?? "var(--ink)" }} /></span>
-                          <span className="v5-label" style={{ flex: 1, minWidth: 0 }}>{meta?.label[lang] ?? pl.n}</span>
-                          {music.plIdx === i && <Icon name="check" size={18} style={{ color: "var(--gold)", flexShrink: 0 }} />}
+                          <span className="v5-gtile-icon"><Icon name={meta?.icon ?? "music-note"} size={16} style={{ color: meta?.color ?? "var(--ink)" }} /></span>
+                          <span className="v5-chip-text">{meta?.label[lang] ?? pl.n}</span>
                         </button>
                       ))}
                   </div>
