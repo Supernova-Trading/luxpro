@@ -660,6 +660,7 @@ export default function V5App() {
           asked={!!asked[game]}
           onAsk={() => askAmishToPlay(game)}
           onClose={() => setGame(null)}
+          top={halfTop}
         />
       )}
       {game === "snake" && <SnakeGame s={s} saved={snakeSave} onSave={setSnakeSave} onClose={() => setGame(null)} top={halfTop} hold={!!sheet || qr} />}

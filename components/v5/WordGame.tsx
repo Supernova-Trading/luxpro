@@ -35,7 +35,7 @@ function shuffled(item: Mcq): string[] {
   return out;
 }
 
-export default function WordGame({ kind, s, lang, deck, prize, onAnswer, onTake, onKeep, onRestart, asked, onAsk, onClose }: {
+export default function WordGame({ kind, s, lang, deck, prize, onAnswer, onTake, onKeep, onRestart, asked, onAsk, onClose, top }: {
   kind: "quiz" | "riddles";
   s: V5Strings;
   lang: Lang;
@@ -48,6 +48,7 @@ export default function WordGame({ kind, s, lang, deck, prize, onAnswer, onTake,
   asked: boolean;
   onAsk: () => void;
   onClose: () => void;
+  top: number; // v5.22 (owner): the half-screen panel under the tip box, like the other games
 }) {
   const [bank, setBank] = useState<Bank | null>(null);
   const [failed, setFailed] = useState(false);
@@ -141,21 +142,13 @@ export default function WordGame({ kind, s, lang, deck, prize, onAnswer, onTake,
     + (kind === "quiz" ? ` · ${s.levels[level]}` : "");
 
   return (
-    <div className="v5-game" role="dialog" aria-label={s.games[kind]}>
-      <div className="v5-game-bar">
+    <div className="v5-game v5-word" data-half role="dialog" aria-label={s.games[kind]} style={{ top }}>
+      {/* One row: Close, the prize ladder (5 · 10 · 15 · 20 · 25 correct), lives */}
+      <div className="v5-half-bar">
         <button className="v5-pill" onClick={onClose}>
-          <Icon name="chevron-left" size={18} className="v5-flip" />
-          {s.home}
+          <Icon name="chevron-down" size={18} />
+          {s.close}
         </button>
-        <span className="v5-heading">{s.games[kind]}</span>
-        {counting ? (
-          <span className="v5-lives" role="img" aria-label={`${s.lives}: ${prize.lives}`}>
-            {[0, 1, 2].map((i) => <i key={i} data-lost={i >= prize.lives} />)}
-          </span>
-        ) : <span aria-hidden />}
-      </div>
-
-      {/* The prize ladder: 5 · 10 · 15 · 20 · 25 correct answers */}
       <div className="v5-ladder" dir="ltr">
         {TIERS.map((t, i) => {
           const state = prize.status === "claimed" && prize.tier === i ? "won"
@@ -168,6 +161,12 @@ export default function WordGame({ kind, s, lang, deck, prize, onAnswer, onTake,
             </span>
           );
         })}
+      </div>
+        {counting && (
+          <span className="v5-lives" role="img" aria-label={`${s.lives}: ${prize.lives}`}>
+            {[0, 1, 2].map((i) => <i key={i} data-lost={i >= prize.lives} />)}
+          </span>
+        )}
       </div>
       <div className="v5-ladder-cap">
         {counting ? (
