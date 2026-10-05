@@ -1,6 +1,6 @@
 // Generated from lib/content.ts questions plus hand-written wrong
-// answers (v5 prize game, 2026-10-05). Edit the source lists, not this file
-// by hand, so the right answer and its three wrong ones stay together.
+// answers (v5 prize game, 2026-10-05). This file is now the source: edit
+// entries here, keeping each right answer ("a") with its three wrong ones ("w").
 // Wrong answers chosen so none could also be right (e.g. no Amazon for 'longest river').
 import type { Bank } from "./types";
 
