@@ -44,6 +44,14 @@ export const PLAYLIST_META: Record<string, { genre: GenreKey; icon: IconName; co
   "Arabic":     { genre: "world", group: "world", icon: "languages",  color: "var(--i-green)",  label: { en: "Arabic",             es: "Árabe",               ur: "عربی" } },
   "Russian":    { genre: "world", group: "world", icon: "languages",  color: "var(--i-sky)",    label: { en: "Russian",            es: "Rusa",                ur: "روسی" } },
   "Chinese":    { genre: "world", group: "world", icon: "languages",  color: "var(--i-orange)", label: { en: "Chinese",            es: "China",               ur: "چینی" } },
+  // v5.16 extra playlists (playlists.ts)
+  "Jazz Café":         { genre: "jazz",      group: "style", icon: "music-note", color: "var(--i-orange)", label: { en: "Jazz café",          es: "Jazz café",           ur: "جاز کیفے" } },
+  "Piano & Classical": { genre: "classical", group: "style", icon: "music-note", color: "var(--i-sky)",    label: { en: "Piano & classical",  es: "Piano y clásica",     ur: "پیانو اور کلاسیکی" } },
+  "Retro Hits":        { genre: "decades",   group: "style", icon: "history",    color: "var(--i-lemon)",  label: { en: "Retro hits 70s–90s", es: "Éxitos retro 70–90",  ur: "پرانے ہٹس 70 تا 90" } },
+  "Amapiano":          { genre: "dance",     group: "style", icon: "headphones", color: "var(--i-green)",  label: { en: "Amapiano & Afro",    es: "Amapiano y afro",     ur: "اماپیانو اور افریقی" } },
+  "Bollywood":         { genre: "bollywood", group: "world", icon: "sparkles",   color: "var(--i-pink)",   label: { en: "Bollywood",          es: "Bollywood",           ur: "بالی وڈ" } },
+  "Pakistani Hits":    { genre: "world",     group: "world", icon: "languages",  color: "var(--i-green)",  label: { en: "Pakistani hits",     es: "Éxitos de Pakistán",  ur: "پاکستانی ہٹس" } },
+  "Coke Studio":       { genre: "world",     group: "world", icon: "mic",        color: "var(--i-teal)",   label: { en: "Coke Studio Pakistan", es: "Coke Studio Pakistán", ur: "کوک اسٹوڈیو پاکستان" } },
 };
 
 // Radio stations by name, per language list in lib/radios.ts.

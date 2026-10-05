@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import dynamic from "next/dynamic";
 import { Icon, type IconName } from "../Icon";
 import { useLanguage } from "@/hooks/useLanguage";
-import { PLAYLISTS } from "@/lib/playlists";
+import { PLAYLISTS } from "./playlists";
 import type { Lang } from "@/lib/translations";
 import { STRINGS, SPEECH, type RequestKey, type TipKey, type GameKey, type V5Strings } from "./strings";
 import { useSpeech } from "./useSpeech";

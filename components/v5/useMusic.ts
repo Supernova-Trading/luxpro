@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useRadio } from "@/hooks/useRadio";
-import { PLAYLISTS } from "@/lib/playlists";
+import { PLAYLISTS } from "./playlists";
 import type { RadioStation } from "@/lib/radios";
 import type { Lang } from "@/lib/translations";
 import { useSoundCloud } from "./useSoundCloud";

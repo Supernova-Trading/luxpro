@@ -1,7 +1,7 @@
 "use client";
 
 import { Icon } from "../Icon";
-import { PLAYLISTS } from "@/lib/playlists";
+import { PLAYLISTS } from "./playlists";
 import type { Lang } from "@/lib/translations";
 import type { V5Strings } from "./strings";
 import type { Music, Source } from "./useMusic";
