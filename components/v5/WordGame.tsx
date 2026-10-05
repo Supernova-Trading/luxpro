@@ -1,59 +1,110 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Icon } from "../Icon";
 import type { Lang } from "@/lib/translations";
-import type { LangContent } from "@/lib/content-by-lang";
-import type { QuizLevel, V5Strings } from "./strings";
+import type { V5Strings } from "./strings";
 import type { Deck } from "./useDeck";
+import { loadBank, type Bank, type Mcq } from "./bank";
+import { TIERS, TIER_KEYS, isTopTier, levelFor, nextTier, type Prize } from "./games/prize";
+import { useEndGuard } from "./games/useEndGuard";
 
-// Quiz and Riddles: one full screen, big targets for a moving car.
-// Question → "Show answer" → "Next". Random order; nothing repeats until the
-// whole list has been played, across rides too (useDeck).
-// The answer stays hidden until asked for, so Amish can play along.
-const LEVELS: QuizLevel[] = ["easy", "medium", "hard"];
+// Quiz and Riddles as one prize game (owner, 2026-10-05): four options, one
+// try, no "Show answer" — passengers were reading the answer and claiming a
+// win. Correct answers from both games climb one ladder (5 · 10 · 15 · 20 ·
+// 25); the rules live in games/prize.ts. Quiz questions get harder as the
+// passenger climbs. Random order, no repeats until a list is used up (useDeck).
+const PICK_GUARD_MS = 400; // a jolt as the next question appears isn't an answer
 
-export default function WordGame({ kind, s, lang, content, deck, level, onLevel, asked, onAsk, onClose }: {
+function shuffled(item: Mcq): string[] {
+  const out = [item.a, ...item.w];
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
+
+export default function WordGame({ kind, s, lang, deck, prize, onAnswer, onTake, onKeep, onRestart, asked, onAsk, onClose }: {
   kind: "quiz" | "riddles";
   s: V5Strings;
   lang: Lang;
-  content: LangContent;
   deck: Deck;
-  level: QuizLevel;
-  onLevel: (l: QuizLevel) => void;
+  prize: Prize;
+  onAnswer: (ok: boolean) => void;
+  onTake: () => void;
+  onKeep: () => void;
+  onRestart: () => void;
   asked: boolean;
   onAsk: () => void;
   onClose: () => void;
 }) {
-  const pool = kind === "riddles"
-    ? content.riddles
-    : level === "easy" ? content.quizEasy : level === "medium" ? content.quizMedium : content.quizHard;
-  const poolKey = kind === "riddles" ? `${lang}:riddles` : `${lang}:quiz:${level}`;
-
+  const [bank, setBank] = useState<Bank | null>(null);
+  const [failed, setFailed] = useState(false);
+  const [level, setLevel] = useState(levelFor(prize.correct));
   const [idx, setIdx] = useState(-1);
-  const [revealed, setRevealed] = useState(false);
+  const [picked, setPicked] = useState<string | null>(null);
   const [count, setCount] = useState(0);
+  const [justClaimed, setJustClaimed] = useState(false);
+  const shownAt = useRef(0);
   const lastNext = useRef(0);
+  const correctRef = useRef(prize.correct);
+  correctRef.current = prize.correct;
 
-  // New pool (first open, level or language change, or translated content
-  // arriving): deal a fresh card from that pool.
+  const poolOf = (b: Bank, lv: typeof level) => (kind === "riddles" ? b.riddles : b[lv]);
+  const keyOf = (lv: typeof level) => (kind === "riddles" ? `${lang}:mc:riddles` : `${lang}:mc:${lv}`);
+
+  // This language's questions (their own chunk).
   useEffect(() => {
-    setIdx(deck.draw(poolKey, pool.length));
-    setRevealed(false);
-    setCount(1);
-  }, [poolKey, pool, deck]);
+    let off = false;
+    setFailed(false);
+    loadBank(lang).then((b) => { if (!off) setBank(b); }).catch(() => { if (!off) setFailed(true); });
+    return () => { off = true; };
+  }, [lang]);
 
-  function next() {
+  // First question for this bank.
+  useEffect(() => {
+    if (!bank) return;
+    const lv = levelFor(correctRef.current);
+    setLevel(lv);
+    setIdx(deck.draw(keyOf(lv), poolOf(bank, lv).length));
+    setPicked(null);
+    setCount(1);
+    shownAt.current = Date.now();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bank, deck]);
+
+  // The level only moves on "Next", never under an answer being read.
+  function next(freshLadder = false) {
+    if (!bank) return;
     const now = Date.now();
-    if (now - lastNext.current < 400) return; // bump guard
+    if (now - lastNext.current < 400) return;
     lastNext.current = now;
-    setIdx((cur) => deck.draw(poolKey, pool.length, cur));
-    setRevealed(false);
+    const lv = levelFor(freshLadder ? 0 : prize.correct);
+    const pool = poolOf(bank, lv);
+    setIdx((cur) => deck.draw(keyOf(lv), pool.length, lv === level ? cur : -1));
+    setLevel(lv);
+    setPicked(null);
     setCount((c) => c + 1);
+    shownAt.current = now;
   }
 
-  const item = pool[idx] ?? pool[0];
-  const caption = (kind === "quiz" ? s.questionN : s.riddleN).replace("{n}", String(count));
+  const item = bank ? poolOf(bank, level)[idx] : undefined;
+  const options = useMemo(() => (item ? shuffled(item) : []), [item]);
+
+  function pick(opt: string) {
+    if (!item || picked !== null || Date.now() - shownAt.current < PICK_GUARD_MS) return;
+    setPicked(opt);
+    onAnswer(opt === item.a);
+  }
+
+  const offerReady = useEndGuard(prize.status === "offer");
+  const bustReady = useEndGuard(prize.status === "bust");
+  const tierName = (t: number) => (t >= 0 ? s.tiers[TIER_KEYS[t]] : "");
+  const up = nextTier(prize.correct);
+  const counting = prize.status !== "claimed";
+  const caption = (kind === "quiz" ? s.questionN : s.riddleN).replace("{n}", String(count))
+    + (kind === "quiz" ? ` · ${s.levels[level]}` : "");
 
   return (
     <div className="v5-game" role="dialog" aria-label={s.games[kind]}>
@@ -63,42 +114,66 @@ export default function WordGame({ kind, s, lang, content, deck, level, onLevel,
           {s.home}
         </button>
         <span className="v5-heading">{s.games[kind]}</span>
-        <span aria-hidden />
+        {counting ? (
+          <span className="v5-lives" role="img" aria-label={`${s.lives}: ${prize.lives}`}>
+            {[0, 1, 2].map((i) => <i key={i} data-lost={i >= prize.lives} />)}
+          </span>
+        ) : <span aria-hidden />}
       </div>
 
-      {kind === "quiz" && (
-        <div className="v5-seg" role="radiogroup" aria-label={s.games.quiz}>
-          {LEVELS.map((l) => (
-            <button key={l} role="radio" aria-checked={level === l} aria-pressed={level === l} onClick={() => onLevel(l)}>
-              {s.levels[l]}
-            </button>
-          ))}
-        </div>
-      )}
+      {/* The prize ladder: 5 · 10 · 15 · 20 · 25 correct answers */}
+      <div className="v5-ladder" dir="ltr">
+        {TIERS.map((t, i) => {
+          const state = prize.status === "claimed" && prize.tier === i ? "won"
+            : prize.correct >= t ? "passed"
+            : counting && up === i ? "next" : "";
+          return (
+            <span key={t} data-state={state}>
+              <b>{t}</b>
+              <small>{tierName(i)}</small>
+            </span>
+          );
+        })}
+      </div>
+      <div className="v5-ladder-cap">
+        {counting ? (
+          <>
+            <span>{s.correctCount.replace("{n}", String(prize.correct))}</span>
+            {up >= 0 && <span>{s.nextPrize.replace("{n}", String(TIERS[up] - prize.correct)).replace("{tier}", tierName(up))}</span>}
+          </>
+        ) : (
+          <span style={{ color: "var(--gold)" }}>{s.claimedBanner.replace("{tier}", tierName(prize.tier))}</span>
+        )}
+      </div>
 
       <section className="v5-qcard" aria-live="polite">
         <span className="v5-caption" dir="auto">
-          {caption}{kind === "quiz" ? ` · ${s.levels[level]}` : ""}
+          {picked === null ? caption : picked === item?.a ? s.correctWord : s.wrongWord}
         </span>
-        {!item ? (
+        {failed || (bank && !item) ? (
           <p className="v5-label" style={{ fontWeight: 400, color: "var(--body)" }}>{s.questionsFailed}</p>
         ) : (
-        <>
-        <p className="v5-question">{item.q}</p>
-        {revealed ? (
-          <div className="v5-answer">
-            <span className="v5-caption" style={{ color: "var(--gold)" }}>{s.answerLabel}</span>
-            <span className="v5-answer-text">{item.a}</span>
-          </div>
-        ) : (
-          <button className="v5-reveal" onClick={() => setRevealed(true)}>
-            <Icon name="eye" size={22} />
-            {s.showAnswer}
-          </button>
-        )}
-        </>
+          <p className="v5-question">{item?.q ?? ""}</p>
         )}
       </section>
+
+      <div className="v5-opts">
+        {options.map((opt, i) => {
+          const result = picked === null ? undefined : opt === item?.a ? "right" : opt === picked ? "wrong" : undefined;
+          return (
+            <button key={opt} className="v5-opt" data-result={result} data-dim={picked !== null && !result}
+              disabled={picked !== null || prize.status === "offer" || prize.status === "bust"}
+              onClick={() => pick(opt)}>
+              <span className="v5-opt-letter" dir="ltr">
+                {result === "right" ? <Icon name="check" size={16} strokeWidth={2.4} />
+                  : result === "wrong" ? <Icon name="close" size={16} strokeWidth={2.4} />
+                  : "ABCD"[i]}
+              </span>
+              <span>{opt}</span>
+            </button>
+          );
+        })}
+      </div>
 
       <div className="v5-game-foot">
         <button className="v5-gtile v5-amish" aria-pressed={asked} onClick={onAsk}>
@@ -109,11 +184,58 @@ export default function WordGame({ kind, s, lang, content, deck, level, onLevel,
           </span>
           {asked && <span className="v5-badge" aria-hidden style={{ top: 8, insetInlineEnd: 8 }}><Icon name="check" size={13} strokeWidth={2.4} /></span>}
         </button>
-        <button className="v5-next" onClick={next}>
+        <button className="v5-next" disabled={picked === null && !failed} onClick={() => next()}>
           {kind === "quiz" ? s.nextQuestion : s.nextRiddle}
           <Icon name="chevron-right" size={22} className="v5-flip" />
         </button>
       </div>
+
+      {/* Milestone: take the prize now, or keep playing for the next one */}
+      {prize.status === "offer" && (
+        <div className="v5-prize-overlay" role="alertdialog" aria-label={s.wonPrize.replace("{tier}", tierName(prize.tier))}>
+          <span className="v5-caption">{s.correctCount.replace("{n}", String(prize.correct))}</span>
+          <span className="v5-prize-tier">{tierName(prize.tier)}</span>
+          <span className="v5-heading">{s.wonPrize.replace("{tier}", tierName(prize.tier))}</span>
+          <div className="v5-prize-actions">
+            <button className="v5-next" disabled={!offerReady} onClick={() => { setJustClaimed(true); onTake(); }}>
+              <Icon name="check" size={20} />{s.takePrize}
+            </button>
+            {isTopTier(prize.tier) ? (
+              <span className="v5-sub">{s.topPrize}</span>
+            ) : (
+              <>
+                <button className="v5-newgame" disabled={!offerReady} onClick={onKeep}>
+                  {s.keepPlayingFor.replace("{tier}", tierName(prize.tier + 1))}
+                </button>
+                <span className="v5-sub">{s.riskNote.replace("{tier}", tierName(prize.tier + 1))}</span>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      {prize.status === "claimed" && justClaimed && (
+        <div className="v5-prize-overlay" role="alertdialog" aria-label={s.claimedTitle.replace("{tier}", tierName(prize.tier))}>
+          <span className="v5-prize-tier">{tierName(prize.tier)}</span>
+          <span className="v5-heading">{s.claimedTitle.replace("{tier}", tierName(prize.tier))}</span>
+          <div className="v5-prize-actions">
+            <button className="v5-next" onClick={() => setJustClaimed(false)}>{s.done}</button>
+          </div>
+        </div>
+      )}
+
+      {prize.status === "bust" && (
+        <div className="v5-prize-overlay" role="alertdialog" aria-label={s.bustTitle}>
+          <span className="v5-heading">{s.bustTitle}</span>
+          {prize.atRisk >= 0 && <span className="v5-label" style={{ color: "var(--i-red)" }}>{s.bustLost.replace("{tier}", tierName(prize.atRisk))}</span>}
+          <span className="v5-sub">{s.bustSub}</span>
+          <div className="v5-prize-actions">
+            <button className="v5-next" disabled={!bustReady} onClick={() => { onRestart(); next(true); }}>
+              <Icon name="refresh" size={20} />{s.startAgain}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

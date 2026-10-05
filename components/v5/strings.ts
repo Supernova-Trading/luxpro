@@ -9,6 +9,7 @@ export type RequestKey = "charger" | "snacks" | "wipes" | "mints" | "fastest" | 
 export type GameKey = "quiz" | "riddles" | "snake" | "blocks" | "mines";
 export type TipKey = "cash" | "uber" | "revolut";
 export type QuizLevel = "easy" | "medium" | "hard";
+export type TierKey = "bronze" | "silver" | "gold" | "platinum" | "diamond";
 
 export interface V5Strings {
   settings: string;
@@ -57,8 +58,6 @@ export interface V5Strings {
   levels: Record<QuizLevel, string>;
   questionN: string; // "{n}" is replaced with the number
   riddleN: string;
-  showAnswer: string;
-  answerLabel: string;
   nextQuestion: string;
   nextRiddle: string;
   playWithAmish: string;
@@ -79,6 +78,23 @@ export interface V5Strings {
   wellPlayed: string;
   notThisTime: string;
   undoBump: string;
+  tiers: Record<TierKey, string>;
+  wonPrize: string;       // "{tier}"
+  correctCount: string;   // "{n}"
+  takePrize: string;
+  keepPlayingFor: string; // "{tier}"
+  riskNote: string;       // "{tier}"
+  topPrize: string;
+  claimedTitle: string;   // "{tier}"
+  claimedBanner: string;  // "{tier}"
+  bustTitle: string;
+  bustLost: string;       // "{tier}"
+  bustSub: string;
+  startAgain: string;
+  correctWord: string;
+  wrongWord: string;
+  lives: string;
+  nextPrize: string;      // "{n}", "{tier}"
   rotate: string;
   down: string;
   nextPiece: string;
@@ -175,8 +191,6 @@ export const STRINGS: Record<Lang, V5Strings> = {
     levels: { easy: "Easy", medium: "Medium", hard: "Hard" },
     questionN: "Question {n}",
     riddleN: "Riddle {n}",
-    showAnswer: "Show answer",
-    answerLabel: "Answer",
     nextQuestion: "Next question",
     nextRiddle: "Next riddle",
     playWithAmish: "Play with Amish",
@@ -197,6 +211,23 @@ export const STRINGS: Record<Lang, V5Strings> = {
     wellPlayed: "Well played",
     notThisTime: "Not this time",
     undoBump: "Undo, was that a bump?",
+    tiers: { bronze: "Bronze", silver: "Silver", gold: "Gold", platinum: "Platinum", diamond: "Diamond" },
+    wonPrize: "You've won the {tier} prize!",
+    correctCount: "{n} correct",
+    takePrize: "Take my prize",
+    keepPlayingFor: "Keep playing for {tier}",
+    riskNote: "If you lose all 3 lives before {tier}, you leave with nothing.",
+    topPrize: "That's the top prize!",
+    claimedTitle: "Amish will bring your {tier} prize",
+    claimedBanner: "Prize won: {tier} · keep playing for fun",
+    bustTitle: "Out of lives",
+    bustLost: "You lost the {tier} prize.",
+    bustSub: "Start again to play for a prize.",
+    startAgain: "Start again",
+    correctWord: "Correct!",
+    wrongWord: "Not quite",
+    lives: "Lives",
+    nextPrize: "{n} to {tier}",
     rotate: "Rotate",
     down: "Down",
     nextPiece: "Next",
@@ -291,8 +322,6 @@ export const STRINGS: Record<Lang, V5Strings> = {
     levels: { easy: "Fácil", medium: "Media", hard: "Difícil" },
     questionN: "Pregunta {n}",
     riddleN: "Adivinanza {n}",
-    showAnswer: "Ver respuesta",
-    answerLabel: "Respuesta",
     nextQuestion: "Siguiente pregunta",
     nextRiddle: "Siguiente adivinanza",
     playWithAmish: "Jugar con Amish",
@@ -313,6 +342,23 @@ export const STRINGS: Record<Lang, V5Strings> = {
     wellPlayed: "Bien jugado",
     notThisTime: "Esta vez no",
     undoBump: "Deshacer: ¿fue un bache?",
+    tiers: { bronze: "Bronce", silver: "Plata", gold: "Oro", platinum: "Platino", diamond: "Diamante" },
+    wonPrize: "¡Ha ganado el premio {tier}!",
+    correctCount: "{n} aciertos",
+    takePrize: "Quiero mi premio",
+    keepPlayingFor: "Seguir jugando por el {tier}",
+    riskNote: "Si pierde las 3 vidas antes del {tier}, se queda sin nada.",
+    topPrize: "¡Es el premio máximo!",
+    claimedTitle: "Amish le dará su premio {tier}",
+    claimedBanner: "Premio ganado: {tier} · siga jugando por diversión",
+    bustTitle: "Sin vidas",
+    bustLost: "Ha perdido el premio {tier}.",
+    bustSub: "Empiece de nuevo para jugar por un premio.",
+    startAgain: "Empezar de nuevo",
+    correctWord: "¡Correcto!",
+    wrongWord: "Casi",
+    lives: "Vidas",
+    nextPrize: "{n} para el {tier}",
     rotate: "Girar",
     down: "Bajar",
     nextPiece: "Siguiente",
@@ -407,8 +453,6 @@ export const STRINGS: Record<Lang, V5Strings> = {
     levels: { easy: "آسان", medium: "درمیانہ", hard: "مشکل" },
     questionN: "سوال {n}",
     riddleN: "پہیلی {n}",
-    showAnswer: "جواب دیکھیں",
-    answerLabel: "جواب",
     nextQuestion: "اگلا سوال",
     nextRiddle: "اگلی پہیلی",
     playWithAmish: "امیش کے ساتھ کھیلیں",
@@ -429,6 +473,23 @@ export const STRINGS: Record<Lang, V5Strings> = {
     wellPlayed: "بہت خوب",
     notThisTime: "اس بار نہیں",
     undoBump: "واپس کریں، کیا یہ جھٹکا تھا؟",
+    tiers: { bronze: "کانسی", silver: "چاندی", gold: "سونا", platinum: "پلاٹینم", diamond: "ہیرا" },
+    wonPrize: "آپ نے {tier} انعام جیت لیا!",
+    correctCount: "{n} درست",
+    takePrize: "میرا انعام",
+    keepPlayingFor: "{tier} کے لیے کھیلتے رہیں",
+    riskNote: "اگر {tier} سے پہلے تینوں جانیں ختم ہو گئیں تو آپ کو کچھ نہیں ملے گا۔",
+    topPrize: "یہ سب سے بڑا انعام ہے!",
+    claimedTitle: "امیش آپ کو {tier} انعام دیں گے",
+    claimedBanner: "انعام جیت لیا: {tier} · مزے کے لیے کھیلتے رہیں",
+    bustTitle: "جانیں ختم",
+    bustLost: "آپ {tier} انعام کھو بیٹھے۔",
+    bustSub: "انعام کے لیے دوبارہ شروع کریں۔",
+    startAgain: "دوبارہ شروع کریں",
+    correctWord: "درست!",
+    wrongWord: "غلط",
+    lives: "جانیں",
+    nextPrize: "{tier} تک {n}",
     rotate: "گھمائیں",
     down: "نیچے",
     nextPiece: "اگلا",
@@ -467,6 +528,7 @@ export const SPEECH: {
   tip: Record<TipKey, string>;
   games: Record<"quiz" | "riddles", string>;
   test: string;
+  prize: (tier: string, n: number) => string;
 } = {
   requests: {
     charger:    { on: "Amish, could I use the phone charger, please?",       off: "Amish, no need for the charger now, thank you." },
@@ -495,4 +557,6 @@ export const SPEECH: {
   },
   // Settings → Voice volume → Test
   test: "Amish, this is only a volume test.",
+  // Said when the passenger takes a prize, so it can't be faked with a screenshot
+  prize: (tier, n) => `Amish, the passenger has won the ${tier} prize, with ${n} correct answers.`,
 };

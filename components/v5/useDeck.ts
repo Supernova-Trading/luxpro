@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef } from "react";
+import { useCallback, useMemo, useRef } from "react";
 
 // A shuffled deck per pool ("en:quiz:easy", "es:riddles"…). Every card is
 // picked at random, and nothing repeats until the whole pool has been played.
@@ -44,7 +44,9 @@ export function useDeck() {
     return pick;
   }, []);
 
-  return { draw };
+  // Same object every render: games watch the deck, and a new one each time
+  // would deal a fresh question the moment an answer re-renders the app.
+  return useMemo(() => ({ draw }), [draw]);
 }
 
 export type Deck = ReturnType<typeof useDeck>;

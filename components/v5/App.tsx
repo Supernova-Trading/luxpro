@@ -6,7 +6,7 @@ import { Icon, type IconName } from "../Icon";
 import { useLanguage } from "@/hooks/useLanguage";
 import { PLAYLISTS } from "@/lib/playlists";
 import type { Lang } from "@/lib/translations";
-import { STRINGS, SPEECH, type RequestKey, type TipKey, type GameKey, type QuizLevel, type V5Strings } from "./strings";
+import { STRINGS, SPEECH, type RequestKey, type TipKey, type GameKey, type V5Strings } from "./strings";
 import { useSpeech } from "./useSpeech";
 import { useMusic } from "./useMusic";
 import MusicHero from "./MusicHero";
@@ -15,6 +15,7 @@ import { GENRES, PLAYLIST_META, groupStations } from "./genres";
 import { useDeck } from "./useDeck";
 import { nightFor, type NightMode } from "./night";
 import WordGame from "./WordGame";
+import { newPrize, answer as prizeAnswer, take as prizeTake, keepPlaying, restart as prizeRestart, TIER_KEYS } from "./games/prize";
 import type { MinesSave } from "./games/MinesGame";
 import type { SnakeSave } from "./games/SnakeGame";
 import type { BlocksSave } from "./games/BlocksGame";
@@ -105,7 +106,7 @@ function Circle({ icon, color, label, on, badge = "check", onClick }: {
 }
 
 export default function V5App() {
-  const { lang, setLang, isRTL, radios, content } = useLanguage();
+  const { lang, setLang, isRTL, radios } = useLanguage();
   const s: V5Strings = STRINGS[lang];
   const music = useMusic(radios, lang);
   const [voiceVol, setVoiceVol] = useState(100);
@@ -133,7 +134,8 @@ export default function V5App() {
     snake: snakeSave?.game.status === "playing",
     blocks: blocksSave?.game.status === "playing",
   };
-  const [quizLevel, setQuizLevel] = useState<QuizLevel>("easy");
+  // One prize ladder per ride, shared by Quiz and Riddles (games/prize.ts).
+  const [prize, setPrize] = useState(newPrize);
   const [asked, setAsked] = useState<Partial<Record<"quiz" | "riddles", boolean>>>({});
 
   const lastTap = useRef<Record<string, number>>({});
@@ -273,6 +275,16 @@ export default function V5App() {
     });
   }
 
+  // Taking a prize is said to Amish (always in English) — he hears it himself,
+  // so a prize can't be claimed with a screenshot or a story.
+  function takePrize() {
+    const won = prizeTake(prize);
+    if (won === prize) return;
+    setPrize(won);
+    const tier = STRINGS.en.tiers[TIER_KEYS[won.tier]];
+    speech.say("prize", SPEECH.prize(tier, won.correct), () => showToast(s.didntHear));
+  }
+
   function newRide() {
     speech.clear();
     music.reset();
@@ -282,7 +294,7 @@ export default function V5App() {
     setMinesSave(null);
     setSnakeSave(null);
     setBlocksSave(null);
-    setQuizLevel("easy");
+    setPrize(newPrize());
     setAsked({});
     setRequests({});
     setClimate(null);
@@ -571,10 +583,12 @@ export default function V5App() {
           kind={game}
           s={s}
           lang={lang}
-          content={content}
           deck={deck}
-          level={quizLevel}
-          onLevel={setQuizLevel}
+          prize={prize}
+          onAnswer={(ok) => setPrize((p) => prizeAnswer(p, ok))}
+          onTake={takePrize}
+          onKeep={() => setPrize((p) => keepPlaying(p))}
+          onRestart={() => setPrize((p) => prizeRestart(p))}
           asked={!!asked[game]}
           onAsk={() => askAmishToPlay(game)}
           onClose={() => setGame(null)}
