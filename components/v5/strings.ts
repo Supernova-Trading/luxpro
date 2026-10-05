@@ -95,6 +95,10 @@ export interface V5Strings {
   wrongWord: string;
   lives: string;
   nextPrize: string;      // "{n}", "{tier}"
+  thinkTime: string;
+  showOptions: string;
+  hint: string;
+  hintText: string;       // "{x}"
   rotate: string;
   down: string;
   nextPiece: string;
@@ -238,6 +242,10 @@ export const STRINGS: Record<Lang, V5Strings> = {
     wrongWord: "Not quite",
     lives: "Lives",
     nextPrize: "{n} to {tier}",
+    thinkTime: "Think it over…",
+    showOptions: "Show the options",
+    hint: "Hint",
+    hintText: "Starts with “{x}”",
     rotate: "Rotate",
     down: "Down",
     nextPiece: "Next",
@@ -379,6 +387,10 @@ export const STRINGS: Record<Lang, V5Strings> = {
     wrongWord: "Casi",
     lives: "Vidas",
     nextPrize: "{n} para el {tier}",
+    thinkTime: "Piénselo…",
+    showOptions: "Ver las opciones",
+    hint: "Pista",
+    hintText: "Empieza por «{x}»",
     rotate: "Girar",
     down: "Bajar",
     nextPiece: "Siguiente",
@@ -520,6 +532,10 @@ export const STRINGS: Record<Lang, V5Strings> = {
     wrongWord: "غلط",
     lives: "جانیں",
     nextPrize: "{tier} تک {n}",
+    thinkTime: "سوچیے…",
+    showOptions: "جوابات دکھائیں",
+    hint: "اشارہ",
+    hintText: "پہلا حرف: {x}",
     rotate: "گھمائیں",
     down: "نیچے",
     nextPiece: "اگلا",

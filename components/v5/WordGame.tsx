@@ -15,6 +15,16 @@ import { useEndGuard } from "./games/useEndGuard";
 // 25); the rules live in games/prize.ts. Quiz questions get harder as the
 // passenger climbs. Random order, no repeats until a list is used up (useDeck).
 const PICK_GUARD_MS = 400; // a jolt as the next question appears isn't an answer
+// Riddles (owner, v5.21): 20 seconds to think before the options appear (can
+// be skipped), and one hint per riddle — the answer's first letter. That
+// makes them a puzzle, not a second quiz. Prizes count the same.
+const THINK_S = 20;
+
+/** First letter of an answer, after "a / the / un / la…". */
+function firstLetter(answer: string): string {
+  const core = answer.replace(/^(a|an|the|un|una|unos|unas|el|la|los|las)\s+/i, "").trim();
+  return (core[0] ?? "").toUpperCase();
+}
 
 function shuffled(item: Mcq): string[] {
   const out = [item.a, ...item.w];
@@ -46,6 +56,8 @@ export default function WordGame({ kind, s, lang, deck, prize, onAnswer, onTake,
   const [picked, setPicked] = useState<string | null>(null);
   const [count, setCount] = useState(0);
   const [justClaimed, setJustClaimed] = useState(false);
+  const [thinkLeft, setThinkLeft] = useState(0);
+  const [hinted, setHinted] = useState(false);
   const shownAt = useRef(0);
   const lastNext = useRef(0);
   const correctRef = useRef(prize.correct);
@@ -70,6 +82,7 @@ export default function WordGame({ kind, s, lang, deck, prize, onAnswer, onTake,
     setIdx(deck.draw(keyOf(lv), poolOf(bank, lv).length));
     setPicked(null);
     setCount(1);
+    startThinking();
     shownAt.current = Date.now();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bank, deck]);
@@ -86,8 +99,29 @@ export default function WordGame({ kind, s, lang, deck, prize, onAnswer, onTake,
     setLevel(lv);
     setPicked(null);
     setCount((c) => c + 1);
+    startThinking();
     shownAt.current = now;
   }
+
+  function startThinking() {
+    setHinted(false);
+    setThinkLeft(kind === "riddles" ? THINK_S : 0);
+  }
+
+  function showOptionsNow() {
+    setThinkLeft(0);
+    shownAt.current = Date.now(); // the pick guard starts when the options appear
+  }
+
+  // Think-time countdown (riddles)
+  useEffect(() => {
+    if (thinkLeft <= 0) return;
+    const t = setTimeout(() => {
+      if (thinkLeft === 1) shownAt.current = Date.now();
+      setThinkLeft(thinkLeft - 1);
+    }, 1000);
+    return () => clearTimeout(t);
+  }, [thinkLeft]);
 
   const item = bank ? poolOf(bank, level)[idx] : undefined;
   const options = useMemo(() => (item ? shuffled(item) : []), [item]);
@@ -155,8 +189,24 @@ export default function WordGame({ kind, s, lang, deck, prize, onAnswer, onTake,
         ) : (
           <p className="v5-question">{item?.q ?? ""}</p>
         )}
+        {kind === "riddles" && item && picked === null && (
+          hinted ? (
+            <span className="v5-hint" dir="auto">{s.hintText.replace("{x}", firstLetter(item.a))}</span>
+          ) : (
+            <button className="v5-pill" onClick={() => setHinted(true)}>
+              <Icon name="lightbulb" size={18} style={{ color: "var(--i-lemon)" }} />{s.hint}
+            </button>
+          )
+        )}
       </section>
 
+      {thinkLeft > 0 && item ? (
+        <div className="v5-think" role="timer" aria-label={`${s.thinkTime} ${thinkLeft}`}>
+          <span className="v5-think-n" dir="ltr">{thinkLeft}</span>
+          <span className="v5-label" style={{ color: "var(--body)" }}>{s.thinkTime}</span>
+          <button className="v5-newgame" onClick={showOptionsNow}>{s.showOptions}</button>
+        </div>
+      ) : (
       <div className="v5-opts">
         {options.map((opt, i) => {
           const result = picked === null ? undefined : opt === item?.a ? "right" : opt === picked ? "wrong" : undefined;
@@ -174,6 +224,7 @@ export default function WordGame({ kind, s, lang, deck, prize, onAnswer, onTake,
           );
         })}
       </div>
+      )}
 
       <div className="v5-game-foot">
         <button className="v5-gtile v5-amish" aria-pressed={asked} onClick={onAsk}>
