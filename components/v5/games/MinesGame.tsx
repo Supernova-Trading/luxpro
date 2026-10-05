@@ -6,13 +6,16 @@ import type { QuizLevel, V5Strings } from "../strings";
 import { newBoard, dig, toggleFlag, flagsLeft, type Board } from "./mines";
 import { useEndGuard } from "./useEndGuard";
 
-// Mines for a moving car: one board size with big squares (8 × 10), the level
-// only changes how many mines. No timer, no long-press — a Dig / Flag switch
+// Mines for a moving car: one board size with big squares, the level only
+// changes how many mines. No timer, no long-press — a Dig / Flag switch
 // instead, because a held finger in a car turns into an accidental dig.
 // One "Undo, was that a bump?" per game takes back the dig that hit a mine.
-const ROWS = 10;
+// v5.13 mockup (Amish's idea): the game opens in the lower half of the screen,
+// under the tip box, so music and tips stay in view — a shorter 8 × 6 board
+// keeps the squares as big as before. Same mine density as the 8 × 10 board.
+const ROWS = 6;
 const COLS = 8;
-const MINES: Record<QuizLevel, number> = { easy: 10, medium: 14, hard: 18 };
+const MINES: Record<QuizLevel, number> = { easy: 6, medium: 8, hard: 11 };
 const LEVELS: QuizLevel[] = ["easy", "medium", "hard"];
 const GAP = 4;
 const TAP_GUARD_MS = 300; // a jolt can land a second tap
@@ -21,14 +24,16 @@ const NUM_COLOR = ["", "var(--i-sky)", "var(--i-green)", "var(--i-orange)", "var
 
 export interface MinesSave { board: Board; level: QuizLevel; before: Board | null; undoUsed: boolean }
 
-export default function MinesGame({ s, saved, onSave, onClose }: {
+export default function MinesGame({ s, saved, onSave, onClose, top }: {
   s: V5Strings;
   saved: MinesSave | null;
   onSave: (m: MinesSave) => void;
   onClose: () => void;
+  top: number; // where the half-screen panel starts (just under the tip box)
 }) {
+  const fresh = !saved || saved.board.rows !== ROWS || saved.board.cols !== COLS;
   const [level, setLevel] = useState<QuizLevel>(saved?.level ?? "easy");
-  const [board, setBoard] = useState<Board>(saved?.board ?? newBoard(ROWS, COLS, MINES.easy));
+  const [board, setBoard] = useState<Board>(!fresh && saved ? saved.board : newBoard(ROWS, COLS, MINES[saved?.level ?? "easy"]));
   const [mode, setMode] = useState<"dig" | "flag">("dig");
   const [before, setBefore] = useState<Board | null>(saved?.before ?? null); // the board before the last dig
   const [undoUsed, setUndoUsed] = useState(saved?.undoUsed ?? false);
@@ -90,22 +95,21 @@ export default function MinesGame({ s, saved, onSave, onClose }: {
     : null;
 
   return (
-    <div className="v5-game" role="dialog" aria-label={s.games.mines}>
-      <div className="v5-game-bar">
+    <div className="v5-game" data-half role="dialog" aria-label={s.games.mines} style={{ top }}>
+      {/* One row: Home, then the level — the half panel has no room for a title */}
+      <div className="v5-half-bar">
+        {/* The home screen is still in view, so this closes the panel rather than going "Home" */}
         <button className="v5-pill" onClick={onClose}>
-          <Icon name="chevron-left" size={18} className="v5-flip" />
-          {s.home}
+          <Icon name="chevron-down" size={18} />
+          {s.close}
         </button>
-        <span className="v5-heading">{s.games.mines}</span>
-        <span aria-hidden />
-      </div>
-
-      <div className="v5-seg" role="radiogroup" aria-label={s.games.mines}>
-        {LEVELS.map((l) => (
-          <button key={l} role="radio" aria-checked={level === l} aria-pressed={level === l} onClick={() => restart(l)}>
-            {s.levels[l]}
-          </button>
-        ))}
+        <div className="v5-seg" role="radiogroup" aria-label={s.games.mines}>
+          {LEVELS.map((l) => (
+            <button key={l} role="radio" aria-checked={level === l} aria-pressed={level === l} onClick={() => restart(l)}>
+              {s.levels[l]}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="v5-mines-status" data-state={board.state}>

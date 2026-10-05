@@ -137,6 +137,15 @@ export default function V5App() {
   const [asked, setAsked] = useState<Partial<Record<"quiz" | "riddles", boolean>>>({});
 
   const lastTap = useRef<Record<string, number>>({});
+  // Half-screen games start just under the tip box (Amish's idea, v5.13).
+  const tipRef = useRef<HTMLElement>(null);
+  const [halfTop, setHalfTop] = useState(0);
+  useEffect(() => {
+    const measure = () => setHalfTop(Math.round((tipRef.current?.getBoundingClientRect().bottom ?? 0) + 8));
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [game, lang]);
   const toastTimer = useRef<ReturnType<typeof setTimeout>>();
 
   const passBump = (key: string) => {
@@ -323,7 +332,7 @@ export default function V5App() {
 
       <main className="v5-main">
         {/* ── Tip: headline + three options; gold only once one is chosen ── */}
-        <section className="v5-tip" aria-label={s.tipTitle}>
+        <section className="v5-tip" aria-label={s.tipTitle} ref={tipRef}>
           <div className="v5-tip-head">
             <span className="v5-title">{s.tipTitle}</span>
             <span className="v5-sub" style={{ color: "var(--gold)" }}>{s.tipHint}</span>
@@ -574,7 +583,7 @@ export default function V5App() {
       {game === "snake" && <SnakeGame s={s} saved={snakeSave} onSave={setSnakeSave} onClose={() => setGame(null)} />}
       {game === "blocks" && <BlocksGame s={s} saved={blocksSave} onSave={setBlocksSave} onClose={() => setGame(null)} />}
       {game === "mines" && (
-        <MinesGame s={s} saved={minesSave} onSave={setMinesSave} onClose={() => setGame(null)} />
+        <MinesGame s={s} saved={minesSave} onSave={setMinesSave} onClose={() => setGame(null)} top={halfTop} />
       )}
 
       {/* ── Revolut QR ───────────────────────────────────────────────── */}

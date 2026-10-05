@@ -210,6 +210,13 @@ a.v5-row { color: inherit; text-decoration: none; }
 .v5-next:active { transform: scale(0.97); filter: brightness(0.92); }
 [dir="rtl"] .v5-flip { transform: scaleX(-1); }
 
+/* Half-screen game panel (v5.13 mockup): sits under the tip box, below the
+   sheets, so music, tips and the picker stay usable while playing. */
+.v5-game[data-half] { inset: auto 0 0 0; z-index: 15; gap: 12px; padding: 12px 20px 16px; background: var(--s1); border-top: 1px solid var(--line-strong); border-radius: 24px 24px 0 0; animation: v5-rise 320ms var(--ease-out); }
+.v5-half-bar { display: flex; align-items: center; gap: 12px; }
+.v5-half-bar > .v5-seg { flex: 1; }
+.v5-half-bar > .v5-seg > button { height: 44px; }
+
 /* Mines (v5.7) */
 .v5-mines-status { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 28px; }
 .v5-mines-count { display: inline-flex; align-items: center; gap: 8px; font-size: 15px; color: var(--muted); }
