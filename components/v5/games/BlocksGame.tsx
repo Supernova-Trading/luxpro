@@ -15,7 +15,9 @@ import { useEndGuard } from "./useEndGuard";
 // while held; a resting piece waits half a second before it locks.
 // "Relaxed" speed by default. Home keeps the game, paused. Canvas + one rAF loop.
 const COLS = 10;
-const ROWS = 20;
+// v5.15 (Amish): opens in the lower half, under the tip box, like Mines —
+// 12 rows instead of 20 so the squares stay big enough to follow in a car.
+const ROWS = 12;
 type Speed = "relaxed" | "normal" | "fast";
 const SPEEDS: Speed[] = ["relaxed", "normal", "fast"];
 const FALL: Record<Speed, [number, number]> = { relaxed: [1000, 400], normal: [750, 200], fast: [500, 120] };
@@ -32,12 +34,16 @@ type Action = "left" | "right" | "rotate" | "down";
 
 export interface BlocksSave { game: Blocks; speed: Speed }
 
-export default function BlocksGame({ s, saved, onSave, onClose }: {
+export default function BlocksGame({ s, saved: savedIn, onSave, onClose, top, hold }: {
   s: V5Strings;
   saved: BlocksSave | null;
   onSave: (g: BlocksSave) => void;
   onClose: () => void;
+  top: number;   // where the half-screen panel starts (just under the tip box)
+  hold: boolean; // something is open on top of the panel
 }) {
+  // A game saved on the old full-screen board doesn't fit this one.
+  const saved = savedIn && savedIn.game.rows === ROWS && savedIn.game.cols === COLS ? savedIn : null;
   const g0 = saved?.game ?? null;
   const resumed = g0?.status === "playing";
   const [speed, setSpeed] = useState<Speed>(saved?.speed ?? "relaxed");
@@ -62,6 +68,10 @@ export default function BlocksGame({ s, saved, onSave, onClose }: {
   useEffect(() => { setBest(readBest(BEST_KEY)); }, []);
   useEffect(() => { speedRef.current = speed; }, [speed]);
   useEffect(() => { pausedRef.current = paused; }, [paused]);
+  // A sheet or the tip QR opened over the panel: pause, the passenger is busy.
+  useEffect(() => {
+    if (hold && game.current.status === "playing") setPaused(true);
+  }, [hold]);
   // Leaving for Home hands the game back to the app, to resume later.
   useEffect(() => () => onSave({ game: game.current, speed: speedRef.current }), [onSave]);
 
@@ -69,7 +79,7 @@ export default function BlocksGame({ s, saved, onSave, onClose }: {
     const el = wrap.current;
     if (!el) return;
     const c: Record<string, string> = {
-      cell: resolveColor(el, "--s1", "#1c1a17"),
+      cell: resolveColor(el, "--s0", "#100e0b"), // wells on the half panel (--s1)
       line: resolveColor(el, "--line-strong", "#3a3631"),
     };
     (Object.keys(PIECE_TOKENS) as Key[]).forEach((k) => { c[k] = resolveColor(el, PIECE_TOKENS[k][0], PIECE_TOKENS[k][1]); });
@@ -227,26 +237,24 @@ export default function BlocksGame({ s, saved, onSave, onClose }: {
   );
 
   return (
-    <div className="v5-game" role="dialog" aria-label={s.games.blocks}>
-      <div className="v5-game-bar">
+    <div className="v5-game" data-half role="dialog" aria-label={s.games.blocks} style={{ top }}>
+      {/* One row: Close, speed, Pause — the half panel has no room for a title */}
+      <div className="v5-half-bar">
         <button className="v5-pill" onClick={onClose}>
-          <Icon name="chevron-left" size={18} className="v5-flip" />
-          {s.home}
+          <Icon name="chevron-down" size={18} />
+          {s.close}
         </button>
-        <span className="v5-heading">{s.games.blocks}</span>
-        <button className="v5-pill" style={{ justifySelf: "end" }} disabled={!playing} aria-pressed={paused}
+        <div className="v5-seg" role="radiogroup" aria-label={s.games.blocks}>
+          {SPEEDS.map((sp) => (
+            <button key={sp} role="radio" aria-checked={speed === sp} aria-pressed={speed === sp} onClick={() => setSpeed(sp)}>
+              {s.speeds[sp]}
+            </button>
+          ))}
+        </div>
+        <button className="v5-iconbtn" disabled={!playing} aria-pressed={paused} aria-label={paused ? s.resume : s.pause}
           onClick={() => { stopRepeat(); setPaused((p) => !p); }}>
           <Icon name={paused ? "play" : "pause"} size={18} />
-          {paused ? s.resume : s.pause}
         </button>
-      </div>
-
-      <div className="v5-seg" role="radiogroup" aria-label={s.games.blocks}>
-        {SPEEDS.map((sp) => (
-          <button key={sp} role="radio" aria-checked={speed === sp} aria-pressed={speed === sp} onClick={() => setSpeed(sp)}>
-            {s.speeds[sp]}
-          </button>
-        ))}
       </div>
 
       <div className="v5-blocks-main">

@@ -139,7 +139,8 @@ export default function V5App() {
   const [asked, setAsked] = useState<Partial<Record<"quiz" | "riddles", boolean>>>({});
 
   const lastTap = useRef<Record<string, number>>({});
-  // Half-screen games start just under the tip box (Amish's idea, v5.13).
+  // Half-screen games (Mines v5.13, Snake and Blocks v5.15) start just under
+  // the tip box (Amish's idea), so music and tips stay in view while playing.
   const tipRef = useRef<HTMLElement>(null);
   const [halfTop, setHalfTop] = useState(0);
   useEffect(() => {
@@ -594,8 +595,8 @@ export default function V5App() {
           onClose={() => setGame(null)}
         />
       )}
-      {game === "snake" && <SnakeGame s={s} saved={snakeSave} onSave={setSnakeSave} onClose={() => setGame(null)} />}
-      {game === "blocks" && <BlocksGame s={s} saved={blocksSave} onSave={setBlocksSave} onClose={() => setGame(null)} />}
+      {game === "snake" && <SnakeGame s={s} saved={snakeSave} onSave={setSnakeSave} onClose={() => setGame(null)} top={halfTop} hold={!!sheet || qr} />}
+      {game === "blocks" && <BlocksGame s={s} saved={blocksSave} onSave={setBlocksSave} onClose={() => setGame(null)} top={halfTop} hold={!!sheet || qr} />}
       {game === "mines" && (
         <MinesGame s={s} saved={minesSave} onSave={setMinesSave} onClose={() => setGame(null)} top={halfTop} />
       )}

@@ -246,6 +246,17 @@ a.v5-row { color: inherit; text-decoration: none; }
 .v5-half-bar { display: flex; align-items: center; gap: 12px; }
 .v5-half-bar > .v5-seg { flex: 1; }
 .v5-half-bar > .v5-seg > button { height: 44px; }
+.v5-half-bar > .v5-iconbtn { flex-shrink: 0; }
+/* Snake: the four arrows in one row of big buttons */
+.v5-dpad.v5-dpad-row { grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: 68px; }
+.v5-dpad.v5-dpad-row > .v5-arrow { grid-column: auto; grid-row: auto; }
+/* Blocks in the half panel: shorter buttons, compact side column */
+.v5-game[data-half] .v5-dpad-blocks { grid-template-rows: 68px; }
+.v5-game[data-half] .v5-blocks-side { gap: 6px; }
+.v5-game[data-half] .v5-blocks-next { padding: 8px; gap: 4px; }
+.v5-game[data-half] .v5-blocks-stat { flex-direction: row; align-items: baseline; justify-content: space-between; gap: 6px; padding: 6px 10px; }
+.v5-game[data-half] .v5-blocks-stat b { font-size: 18px; }
+.v5-game[data-half] .v5-snake-note { gap: 10px; padding: 12px; }
 
 /* Mines (v5.7) */
 .v5-mines-status { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 28px; }

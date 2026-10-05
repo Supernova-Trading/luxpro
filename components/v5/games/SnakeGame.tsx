@@ -12,8 +12,10 @@ import { useEndGuard } from "./useEndGuard";
 // Home keeps the game, paused, until the passenger comes back (roadmap P5).
 // Drawn on one canvas with requestAnimationFrame — the old Tab A stutters if
 // every square is a DOM element re-rendering by React.
-const COLS = 12;
-const ROWS = 13;
+// v5.15 (Amish): opens in the lower half, under the tip box, like Mines — a
+// wide 16 × 8 board keeps the squares big, and the four arrows sit in one row.
+const COLS = 16;
+const ROWS = 8;
 type Speed = "relaxed" | "normal" | "fast";
 const SPEEDS: Speed[] = ["relaxed", "normal", "fast"];
 const STEP_MS: Record<Speed, number> = { relaxed: 280, normal: 190, fast: 130 };
@@ -21,12 +23,16 @@ const BEST_KEY = "luxpro.v5.snakeBest";
 
 export interface SnakeSave { game: Snake; speed: Speed }
 
-export default function SnakeGame({ s, saved, onSave, onClose }: {
+export default function SnakeGame({ s, saved: savedIn, onSave, onClose, top, hold }: {
   s: V5Strings;
   saved: SnakeSave | null;
   onSave: (g: SnakeSave) => void;
   onClose: () => void;
+  top: number;   // where the half-screen panel starts (just under the tip box)
+  hold: boolean; // something is open on top of the panel
 }) {
+  // A game saved on the old full-screen board doesn't fit this one.
+  const saved = savedIn && savedIn.game.cols === COLS && savedIn.game.rows === ROWS ? savedIn : null;
   const resumed = saved?.game.status === "playing";
   const [speed, setSpeed] = useState<Speed>(saved?.speed ?? "relaxed");
   const [status, setStatus] = useState<Snake["status"]>(saved?.game.status ?? "ready");
@@ -49,13 +55,17 @@ export default function SnakeGame({ s, saved, onSave, onClose }: {
   // Leaving for Home hands the game back to the app, to resume later.
   useEffect(() => () => onSave({ game: game.current, speed: speedRef.current }), [onSave]);
   useEffect(() => { pausedRef.current = paused; }, [paused]);
+  // A sheet or the tip QR opened over the panel: pause, the passenger is busy.
+  useEffect(() => {
+    if (hold && game.current.status === "playing") setPaused(true);
+  }, [hold]);
 
   // Biggest square size that fits the space between the header and controls.
   useEffect(() => {
     const el = wrap.current;
     if (!el) return;
     colors.current = {
-      cell: resolveColor(el, "--s1", "#1c1a17"),
+      cell: resolveColor(el, "--s0", "#100e0b"), // wells on the half panel (--s1)
       snake: resolveColor(el, "--i-green", "#5fbf7a"),
       head: resolveColor(el, "--i-teal", "#4cc3b4"),
       food: resolveColor(el, "--i-red", "#e4675d"),
@@ -184,26 +194,24 @@ export default function SnakeGame({ s, saved, onSave, onClose }: {
   );
 
   return (
-    <div className="v5-game" role="dialog" aria-label={s.games.snake}>
-      <div className="v5-game-bar">
+    <div className="v5-game" data-half role="dialog" aria-label={s.games.snake} style={{ top }}>
+      {/* One row: Close, speed, Pause — the half panel has no room for a title */}
+      <div className="v5-half-bar">
         <button className="v5-pill" onClick={onClose}>
-          <Icon name="chevron-left" size={18} className="v5-flip" />
-          {s.home}
+          <Icon name="chevron-down" size={18} />
+          {s.close}
         </button>
-        <span className="v5-heading">{s.games.snake}</span>
-        <button className="v5-pill" style={{ justifySelf: "end" }} disabled={!playing} aria-pressed={paused}
+        <div className="v5-seg" role="radiogroup" aria-label={s.games.snake}>
+          {SPEEDS.map((sp) => (
+            <button key={sp} role="radio" aria-checked={speed === sp} aria-pressed={speed === sp} onClick={() => setSpeed(sp)}>
+              {s.speeds[sp]}
+            </button>
+          ))}
+        </div>
+        <button className="v5-iconbtn" disabled={!playing} aria-pressed={paused} aria-label={paused ? s.resume : s.pause}
           onClick={() => setPaused((p) => !p)}>
           <Icon name={paused ? "play" : "pause"} size={18} />
-          {paused ? s.resume : s.pause}
         </button>
-      </div>
-
-      <div className="v5-seg" role="radiogroup" aria-label={s.games.snake}>
-        {SPEEDS.map((sp) => (
-          <button key={sp} role="radio" aria-checked={speed === sp} aria-pressed={speed === sp} onClick={() => setSpeed(sp)}>
-            {s.speeds[sp]}
-          </button>
-        ))}
       </div>
 
       <div className="v5-mines-status">
@@ -238,7 +246,7 @@ export default function SnakeGame({ s, saved, onSave, onClose }: {
       </div>
 
       {/* Physical directions: never mirrored for right-to-left */}
-      <div className="v5-dpad" dir="ltr">
+      <div className="v5-dpad v5-dpad-row" dir="ltr">
         {arrow("left", -90, "v5-arrow-left")}
         {arrow("up", 0, "v5-arrow-up")}
         {arrow("down", 180, "v5-arrow-down")}
