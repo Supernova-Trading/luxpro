@@ -16,6 +16,8 @@ import { stationsFor } from "./stations";
 import Driver, { type RideStage } from "./Driver";
 import { Welcome, Farewell, NearlyBanner } from "./RideScreens";
 import { useKiosk } from "./useKiosk";
+import { useRemote } from "./remote/useRemote";
+import type { RemoteCmd, TabletState } from "./remote/api";
 import { useDeck } from "./useDeck";
 import { nightFor, type NightMode } from "./night";
 import WordGame from "./WordGame";
@@ -225,6 +227,26 @@ export default function V5App() {
     const t = setTimeout(() => setNearly(false), NEARLY_MS);
     return () => clearTimeout(t);
   }, [nearly]);
+
+  // Amish's phone remote: what the tablet reports, and his commands.
+  const rideReport: TabletState = {
+    stage,
+    lang,
+    requests: (Object.keys(requests) as RequestKey[]).filter((k) => requests[k]),
+    climate,
+    tip,
+    prize: { correct: prize.correct, status: prize.status, tier: prize.tier },
+    music: {
+      source: music.source,
+      title: music.source === "radio" ? music.radio.currentStation?.n ?? "" : music.source === "playlists" ? music.sc.track?.title ?? "" : "",
+      playing: music.source === "radio" ? music.radio.playing : music.sc.playing,
+    },
+  };
+  const phone = useRemote(rideReport, (cmd: RemoteCmd) => {
+    if (cmd === "new_passenger") newPassenger();
+    else if (cmd === "nearly") { if (stage === "ride") setNearly(true); }
+    else if (cmd === "end_ride") endRide();
+  });
 
   // Hold the wordmark to open Amish's Driver panel (a tap does nothing).
   const holdStart = () => { clearTimeout(holdTimer.current); holdTimer.current = setTimeout(() => setDriverOpen(true), HOLD_FOR_DRIVER_MS); };
@@ -675,6 +697,7 @@ export default function V5App() {
           stage={stage}
           isFS={isFS}
           kiosk={kiosk}
+          phone={phone}
           onClose={() => setDriverOpen(false)}
           onNewPassenger={newPassenger}
           onNearly={() => setNearly(true)}

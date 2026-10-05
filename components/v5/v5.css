@@ -257,6 +257,24 @@ a.v5-row { color: inherit; text-decoration: none; }
 .v5-drv-btn[data-gold="true"] { background: var(--gold); border-color: var(--gold); color: var(--on-gold); }
 .v5-drv-btn[data-gold="true"] .v5-sub { color: var(--on-gold); }
 .v5-drv-btn[aria-pressed="true"] { border-color: var(--gold-line); }
+.v5-drv-pair { display: grid; gap: 6px; justify-items: center; padding: 14px; border-radius: 16px; background: var(--s0); border: 1px dashed var(--gold-line); text-align: center; }
+.v5-drv-pair b { font-size: 15px; color: var(--ink); word-break: break-all; }
+.v5-drv-code { font-size: 34px; font-weight: 600; letter-spacing: 0.12em; color: var(--gold); font-variant-numeric: tabular-nums; }
+/* Amish's phone (/v5/remote) */
+.v5.v5-remote { height: auto; min-height: 100vh; min-height: 100dvh; overflow: visible; gap: 14px; padding: 20px 16px 32px; max-width: 520px; margin: 0 auto; -webkit-user-select: auto; user-select: auto; }
+.v5-remote-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.v5-remote-live { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--muted); }
+.v5-remote-live > i { width: 10px; height: 10px; border-radius: 9999px; background: var(--muted-soft); }
+.v5-remote-live[data-live="true"] { color: var(--i-green); }
+.v5-remote-live[data-live="true"] > i { background: var(--i-green); }
+.v5-remote-card { display: grid; gap: 6px; padding: 14px 16px; border-radius: 16px; background: var(--s1); border: 1px solid var(--line); }
+.v5-remote-two { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.v5-remote-two > div { display: grid; gap: 4px; }
+.v5-remote-list { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+.v5-remote-list > li { display: flex; align-items: center; gap: 10px; font-size: 17px; font-weight: 500; color: var(--ink); }
+.v5-remote-actions { display: grid; gap: 10px; }
+.v5-remote-steps { margin: 0; padding-inline-start: 20px; display: grid; gap: 6px; color: var(--body); font-size: 16px; line-height: 1.4; }
+.v5-remote-code { height: 64px; border-radius: 16px; border: 1px solid var(--line-strong); background: var(--s1); color: var(--ink); font-size: 28px; font-weight: 600; letter-spacing: 0.15em; text-align: center; text-transform: uppercase; }
 
 /* Quiz & Riddles prize game (v5.14) */
 .v5-lives { display: flex; align-items: center; gap: 6px; justify-self: end; padding-inline-end: 4px; }

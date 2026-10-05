@@ -31,8 +31,16 @@ function readPin(): string | null {
 
 export type RideStage = "welcome" | "ride" | "farewell";
 
-export default function Driver({ stage, isFS, kiosk, onClose, onNewPassenger, onNearly, onEndRide, onFullscreen, onKiosk }: {
+export interface PhoneLink {
+  paired: boolean;
+  online: boolean;
+  pairCode: () => Promise<string | null>;
+  unpair: () => Promise<void>;
+}
+
+export default function Driver({ stage, isFS, kiosk, phone, onClose, onNewPassenger, onNearly, onEndRide, onFullscreen, onKiosk }: {
   stage: RideStage;
+  phone: PhoneLink;
   isFS: boolean;
   kiosk: boolean;
   onClose: () => void;
@@ -47,6 +55,8 @@ export default function Driver({ stage, isFS, kiosk, onClose, onNewPassenger, on
   const [first, setFirst] = useState("");
   const [msg, setMsg] = useState("");
   const [armed, setArmed] = useState(false); // "New passenger" needs a second tap
+  const [pairing, setPairing] = useState<string | null>(null); // code on screen
+  const [pairMsg, setPairMsg] = useState("");
   const tries = useRef(0);
   const lockedUntil = useRef(0);
 
@@ -132,6 +142,28 @@ export default function Driver({ stage, isFS, kiosk, onClose, onNewPassenger, on
             {action(isFS ? "close" : "present", isFS ? "Exit full screen" : "Full screen", "", onFullscreen)}
             {action("tweaks", kiosk ? "Kiosk lock: on" : "Kiosk lock: off",
               "Keeps the app full screen, blocks Back and long-press menus", () => onKiosk(!kiosk), { on: kiosk })}
+            {phone.paired ? (
+              action("phone", "Amish's phone: connected", phone.online ? "Tap to disconnect it" : "Tablet offline right now · tap to disconnect",
+                () => { void phone.unpair(); setPairing(null); }, { on: true })
+            ) : (
+              action("phone", "Connect phone", "Control rides from Amish's phone",
+                async () => {
+                  setPairMsg("Getting a code…");
+                  try {
+                    const c = await phone.pairCode();
+                    setPairing(c); setPairMsg(c ? "" : "Couldn't get a code. Check the tablet's internet.");
+                  } catch { setPairMsg("No internet connection."); }
+                })
+            )}
+            {pairing && !phone.paired && (
+              <div className="v5-drv-pair">
+                <span className="v5-sub">On Amish's phone open</span>
+                <b dir="ltr">{typeof window !== "undefined" ? `${window.location.origin}/v5/remote` : "/v5/remote"}</b>
+                <span className="v5-sub">and type this code (valid 10 minutes):</span>
+                <span className="v5-drv-code" dir="ltr">{pairing.slice(0, 4)}-{pairing.slice(4)}</span>
+              </div>
+            )}
+            {pairMsg && <span className="v5-sub" role="status">{pairMsg}</span>}
             {action("settings", "Change PIN", "", () => { setMode("set"); setMsg(""); })}
           </div>
         )}
