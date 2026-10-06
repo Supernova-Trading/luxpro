@@ -5,6 +5,9 @@ import { Icon } from "../../Icon";
 import type { V5Strings } from "../strings";
 import { newSnake, turn, step, type Dir, type Snake } from "./snake";
 import { resolveColor, rounded, readBest, saveBest, prepare } from "./canvas";
+import GamePrize from "./GamePrize";
+import PrizeLadder from "./PrizeLadder";
+import { SNAKE_POINTS, pointsTier, type Best } from "./prize";
 import { useEndGuard } from "./useEndGuard";
 
 // Snake for a moving car: big arrow buttons (no swipes), "Relaxed" speed by
@@ -18,18 +21,21 @@ const COLS = 16;
 const ROWS = 8;
 type Speed = "relaxed" | "normal" | "fast";
 const SPEEDS: Speed[] = ["relaxed", "normal", "fast"];
-const STEP_MS: Record<Speed, number> = { relaxed: 280, normal: 190, fast: 130 };
+// v5.43 (owner: the three felt the same): spread further apart
+const STEP_MS: Record<Speed, number> = { relaxed: 330, normal: 200, fast: 115 };
 const BEST_KEY = "luxpro.v5.snakeBest";
 
 export interface SnakeSave { game: Snake; speed: Speed }
 
-export default function SnakeGame({ s, saved: savedIn, onSave, onClose, top, hold }: {
+export default function SnakeGame({ s, saved: savedIn, onSave, onClose, top, hold, ridePrize, onPrize }: {
   s: V5Strings;
   saved: SnakeSave | null;
   onSave: (g: SnakeSave) => void;
   onClose: () => void;
   top: number;   // where the half-screen panel starts (just under the tip box)
   hold: boolean; // something is open on top of the panel
+  ridePrize: Best | null; // the ride's best prize so far (v5.41)
+  onPrize: (tier: number, score: number) => void;
 }) {
   // A game saved on the old full-screen board doesn't fit this one.
   const saved = savedIn && savedIn.game.cols === COLS && savedIn.game.rows === ROWS ? savedIn : null;
@@ -214,12 +220,8 @@ export default function SnakeGame({ s, saved: savedIn, onSave, onClose, top, hol
         </button>
       </div>
 
-      <div className="v5-mines-status">
-        <span className="v5-mines-count">
-          <span>{s.score}</span><b dir="ltr">{score}</b>
-          <span style={{ marginInlineStart: 12 }}>{s.best}</span><b dir="ltr">{Math.max(best, score)}</b>
-        </span>
-      </div>
+      {/* The prize ladder, the same format as the Quiz (owner, v5.43) */}
+      <PrizeLadder s={s} points={SNAKE_POINTS} score={score} />
 
       <div className="v5-board-wrap" ref={wrap}>
         <div className="v5-snake-board" style={{ width: COLS * size, height: ROWS * size }}>
@@ -233,15 +235,6 @@ export default function SnakeGame({ s, saved: savedIn, onSave, onClose, top, hol
               </button>
             </div>
           )}
-          {over && (
-            <div className="v5-snake-note" data-solid>
-              <span className="v5-heading">{score > 0 ? s.wellPlayed : s.notThisTime}</span>
-              <span className="v5-label" style={{ color: "var(--muted)" }}>{s.score} <b dir="ltr" style={{ color: "var(--ink)" }}>{score}</b></span>
-              <button className="v5-next" style={{ minWidth: 200 }} disabled={!againReady} onClick={restart}>
-                <Icon name="refresh" size={20} />{s.playAgain}
-              </button>
-            </div>
-          )}
         </div>
       </div>
 
@@ -252,6 +245,12 @@ export default function SnakeGame({ s, saved: savedIn, onSave, onClose, top, hol
         {arrow("down", 180, "v5-arrow-down")}
         {arrow("right", 90, "v5-arrow-right")}
       </div>
+      {over && (
+        <GamePrize s={s} caption={s.pointsWord.replace("{n}", String(score))} tier={pointsTier(score, SNAKE_POINTS)} best={ridePrize}
+          ladder={SNAKE_POINTS} ready={againReady} onAgain={restart}
+          hint={s.pointsToWin.replace("{n}", String(SNAKE_POINTS[0])).replace("{tier}", s.tiers.bronze)}
+          onTake={() => onPrize(pointsTier(score, SNAKE_POINTS), score)} />
+      )}
     </div>
   );
 }

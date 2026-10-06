@@ -409,7 +409,7 @@ export default function V5App() {
   }
 
   // Blocks and Mines prizes (Amish, v5.39) feed the same best-of-ride prize.
-  function takeGamePrize(tier: number, from: "Blocks" | "Mines", detail: string) {
+  function takeGamePrize(tier: number, from: "Snake" | "Blocks" | "Mines", detail: string) {
     awardBest(tier, from, detail);
   }
 
@@ -503,7 +503,8 @@ export default function V5App() {
     setNearly(false);
     setEndAt(null);
     setStage("farewell");
-    speech.announce("announce", AN.arrived, lang);
+    // The spoken goodbye follows the time of day, like the screen (v5.43)
+    speech.announce("announce", new Date().getHours() >= 17 ? AN.arrivedEvening : AN.arrived, lang);
   }
 
   function toggleFullscreen() {
@@ -782,7 +783,8 @@ export default function V5App() {
           top={halfTop}
         />
       )}
-      {game === "snake" && <SnakeGame s={s} saved={snakeSave} onSave={setSnakeSave} onClose={() => setGame(null)} top={halfTop} hold={!!sheet || qr} />}
+      {game === "snake" && <SnakeGame s={s} saved={snakeSave} onSave={setSnakeSave} onClose={() => setGame(null)} top={halfTop} hold={!!sheet || qr}
+        ridePrize={best} onPrize={(tier, score) => takeGamePrize(tier, "Snake", `with ${score} points`)} />}
       {game === "blocks" && <BlocksGame s={s} saved={blocksSave} onSave={setBlocksSave} onClose={() => setGame(null)} top={halfTop} hold={!!sheet || qr}
         ridePrize={best} onPrize={(tier, score) => takeGamePrize(tier, "Blocks", `with ${score} points`)} />}
       {game === "mines" && (

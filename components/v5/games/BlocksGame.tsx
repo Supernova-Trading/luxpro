@@ -9,6 +9,7 @@ import {
 } from "./blocks";
 import { resolveColor, rounded, readBest, saveBest, prepare } from "./canvas";
 import GamePrize from "./GamePrize";
+import PrizeLadder from "./PrizeLadder";
 import { BLOCKS_POINTS, blocksTier, type Best } from "./prize";
 import { useEndGuard } from "./useEndGuard";
 
@@ -56,6 +57,20 @@ export default function BlocksGame({ s, saved: savedIn, onSave, onClose, top, ho
     score: g0?.score ?? 0, lines: g0?.lines ?? 0, level: g0?.level ?? 1, next: g0?.next ?? ("T" as Key),
   });
   const [best, setBest] = useState(0);
+  // "+300" next to the score when lines clear, so passengers see what a line is worth (owner, v5.43)
+  const [gain, setGain] = useState(0);
+  const [gainKey, setGainKey] = useState(0);
+  const lastLines = useRef({ lines: 0, score: 0 });
+  useEffect(() => {
+    const was = lastLines.current;
+    if (view.lines > was.lines && view.score > was.score) { setGain(view.score - was.score); setGainKey((k) => k + 1); }
+    lastLines.current = { lines: view.lines, score: view.score };
+  }, [view.lines, view.score]);
+  useEffect(() => {
+    if (!gain) return;
+    const t = setTimeout(() => setGain(0), 1600);
+    return () => clearTimeout(t);
+  }, [gain, gainKey]);
   const [paused, setPaused] = useState(resumed);
   const [size, setSize] = useState(0);
 
@@ -261,6 +276,9 @@ export default function BlocksGame({ s, saved: savedIn, onSave, onClose, top, ho
         </button>
       </div>
 
+      {/* The prize ladder, the same format as the Quiz (owner, v5.43) */}
+      <PrizeLadder s={s} points={BLOCKS_POINTS} score={view.score} />
+
       <div className="v5-blocks-main">
         <div className="v5-board-wrap" ref={wrap}>
           <div className="v5-snake-board" style={{ width: COLS * size, height: ROWS * size }}>
@@ -282,10 +300,12 @@ export default function BlocksGame({ s, saved: savedIn, onSave, onClose, top, ho
             <span className="v5-caption">{s.nextPiece}</span>
             <canvas ref={nextCanvas} style={{ width: Math.round(size * 0.8) * 4, height: Math.round(size * 0.8) * 4, display: "block" }} aria-hidden />
           </div>
-          {([[s.score, view.score], [s.best, Math.max(best, view.score)], [s.lines, view.lines], [s.level, view.level]] as [string, number][]).map(([label, n]) => (
+          {/* Score and lines only: the prize ladder above now carries the targets (v5.43) */}
+          {([[s.score, view.score], [s.lines, view.lines]] as [string, number][]).map(([label, n]) => (
             <div key={label} className="v5-blocks-stat">
               <span className="v5-caption">{label}</span>
               <b dir="ltr">{n}</b>
+              {label === s.score && gain > 0 && <span className="v5-gain" key={gainKey} dir="ltr">+{gain}</span>}
             </div>
           ))}
         </aside>

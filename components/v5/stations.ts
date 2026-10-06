@@ -46,7 +46,19 @@ export const EXTRA_STATIONS: Record<Lang, RadioStation[]> = {
   ],
 };
 
-/** The live list first (unchanged order), then v5's extra stations. */
+// v5.43 (owner: "Spanish stations sound English"): many Spanish pop stations
+// play international hits in English (checked 2026-10-06: LOS 40 was playing
+// Alex Warren). Stations that play mostly Spanish-language music go first, and
+// "80 Éxitos" is left out — it is a German-run stream with German adverts.
+const SKIP: Partial<Record<Lang, string[]>> = { es: ["80 Éxitos"] };
+const FIRST: Partial<Record<Lang, string[]>> = {
+  es: ["Cadena Dial", "Los 40 Urban", "LOS40 Classic", "Radiolé", "Flamenco FM", "Cadena 100", "M80 Radio", "Rock FM"],
+};
+
+/** The live list, then v5's extra stations; Spanish-language stations first. */
 export function stationsFor(lang: Lang, live: RadioStation[]): RadioStation[] {
-  return [...live, ...EXTRA_STATIONS[lang]];
+  const all = [...live, ...EXTRA_STATIONS[lang]].filter((st) => !(SKIP[lang] ?? []).includes(st.n));
+  const first = FIRST[lang] ?? [];
+  const rank = (n: string) => (first.includes(n) ? first.indexOf(n) : first.length);
+  return all.map((st, i) => ({ st, i })).sort((a, b) => rank(a.st.n) - rank(b.st.n) || a.i - b.i).map((x) => x.st);
 }

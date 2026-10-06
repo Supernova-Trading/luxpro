@@ -117,7 +117,7 @@ export default function MinesGame({ s, saved, onSave, onClose, top, best, onPriz
         <div className="v5-seg" role="radiogroup" aria-label={s.games.mines}>
           {LEVELS.map((l) => (
             <button key={l} role="radio" aria-checked={level === l} aria-pressed={level === l} onClick={() => restart(l)}>
-              {s.levels[l]}
+              {s.levels[l]} <small className="v5-seg-prize">{s.tiers[(["bronze", "silver", "gold"] as const)[MINES_TIER[l]]]}</small>
             </button>
           ))}
         </div>

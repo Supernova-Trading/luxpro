@@ -66,12 +66,17 @@ export function restart(p: Prize): Prize {
   return p.status === "bust" ? newPrize() : p;
 }
 
-/** Blocks (Amish, v5.39): the score at game over wins a prize. */
-export const BLOCKS_POINTS = [100, 250, 500, 1000, 2000] as const;
-export function blocksTier(score: number): number {
+/** Points games (owner, v5.43): the score at game over wins a prize, shown
+ *  as a ladder at the top of the game like the Quiz. */
+export const BLOCKS_POINTS = [500, 1000, 1500, 2000, 2500] as const;
+export const SNAKE_POINTS = [10, 20, 30, 40, 50] as const;
+export function pointsTier(score: number, points: readonly number[]): number {
   let t = -1;
-  BLOCKS_POINTS.forEach((p, i) => { if (score >= p) t = i; });
+  points.forEach((p, i) => { if (score >= p) t = i; });
   return t;
+}
+export function blocksTier(score: number): number {
+  return pointsTier(score, BLOCKS_POINTS);
 }
 
 /** Mines (Amish, v5.39): clearing the board wins Bronze, Silver or Gold. */
@@ -80,7 +85,7 @@ export const MINES_TIER: Record<"easy" | "medium" | "hard", number> = { easy: 0,
 /** The ride's prize (owner, v5.41): every game can be won, but the ride keeps
  *  only its BEST prize — Bronze in Quiz then Silver in Blocks means Silver.
  *  The driver hands over one treat, and his phone shows just that one. */
-export type PrizeGame = "Quiz" | "Riddles" | "Blocks" | "Mines";
+export type PrizeGame = "Quiz" | "Riddles" | "Snake" | "Blocks" | "Mines";
 export interface Best { tier: number; game: PrizeGame }
 
 /** True when this prize would be better than the one the ride already has. */

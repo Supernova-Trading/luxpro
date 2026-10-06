@@ -462,6 +462,20 @@ a.v5-row { color: inherit; text-decoration: none; }
 .v5-prize-tier { font-family: var(--serif); font-size: var(--t-4xl); line-height: 1.1; color: var(--gold); }
 .v5-prize-actions { display: grid; gap: 12px; width: 100%; max-width: 440px; margin-top: 8px; }
 .v5-prize-actions > button { width: 100%; }
+/* The prize ladder at the top of Snake and Blocks (v5.43), sized like the Quiz's */
+.v5-game[data-half] .v5-game-ladder { gap: 4px; }
+.v5-game[data-half] .v5-game-ladder > span { min-height: 44px; border-radius: 8px; }
+.v5-game[data-half] .v5-game-ladder b { font-size: var(--t-md); }
+.v5-game[data-half] .v5-game-ladder small { font-size: var(--t-sm); }
+.v5-game[data-half] .v5-game-ladder + .v5-ladder-cap { margin-top: -4px; font-size: var(--t-sm); }
+.v5[data-lang="ur"] .v5-game-ladder small { line-height: 1.8; }
+/* "+300" next to the Blocks score when lines clear */
+.v5-blocks-stat { position: relative; }
+.v5-gain { position: absolute; inset-inline-end: 10px; top: 6px; font-size: var(--t-md); font-weight: 600; color: var(--gold); animation: v5-gain 1600ms var(--ease-out) both; }
+@keyframes v5-gain { 0% { opacity: 0; transform: translateY(6px); } 15% { opacity: 1; transform: none; } 80% { opacity: 1; } 100% { opacity: 0; transform: translateY(-8px); } }
+/* Mines: each level shows the prize it wins */
+.v5-seg-prize { font-size: var(--t-sm); font-weight: 500; color: var(--muted); }
+.v5-seg > button[aria-pressed="true"] .v5-seg-prize { color: var(--gold); }
 /* Blocks scoreboard in the end-of-game pop-up (v5.39): the points for each prize */
 .v5-prize-ladder { width: 100%; max-width: 560px; }
 

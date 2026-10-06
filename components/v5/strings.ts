@@ -700,7 +700,7 @@ export const SPEECH: {
 // tablet has that voice, otherwise English (v5.24, owner).
 // "nearly" names no number of minutes (v5.37): the driver can press Nearly
 // there at any time, so it must stay true whenever it is said.
-export const ANNOUNCE: Record<"nearly" | "arrived" | "welcome", Record<Lang, string>> = {
+export const ANNOUNCE: Record<"nearly" | "arrived" | "arrivedEvening" | "welcome", Record<Lang, string>> = {
   nearly: {
     en: "We're nearly there. Please start gathering your belongings.",
     es: "Casi hemos llegado. Vaya recogiendo sus pertenencias, por favor.",
@@ -710,6 +710,12 @@ export const ANNOUNCE: Record<"nearly" | "arrived" | "welcome", Record<Lang, str
     en: "We've arrived. Thank you for riding with {driver}. Please check you have all your belongings. Have a wonderful day.",
     es: "Hemos llegado. Gracias por viajar con {driver}. Compruebe que lleva todas sus pertenencias. Que tenga un buen día.",
     ur: "ہم پہنچ گئے ہیں۔ {driver} کے ساتھ سفر کرنے کا شکریہ۔ براہ کرم اپنا سامان چیک کر لیں۔ آپ کا دن اچھا گزرے۔",
+  },
+  // After 5 pm, matching the screen's "Enjoy the rest of your evening" (owner, v5.43)
+  arrivedEvening: {
+    en: "We've arrived. Thank you for riding with {driver}. Please check you have all your belongings. Have a lovely evening.",
+    es: "Hemos llegado. Gracias por viajar con {driver}. Compruebe que lleva todas sus pertenencias. Que pase una buena noche.",
+    ur: "ہم پہنچ گئے ہیں۔ {driver} کے ساتھ سفر کرنے کا شکریہ۔ براہ کرم اپنا سامان چیک کر لیں۔ آپ کی شام خوشگوار گزرے۔",
   },
   welcome: {
     en: "Welcome aboard. Your driver today is {driver}. Please choose your language on the screen.",

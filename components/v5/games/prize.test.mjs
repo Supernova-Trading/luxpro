@@ -115,10 +115,10 @@ test("the ride ending offers a passed-up prize once more", async () => {
 
 test("Blocks and Mines prizes; the ride keeps only its best prize", async () => {
   const { blocksTier, beats, upgrade, MINES_TIER } = await import("./prize.ts");
-  assert.equal(blocksTier(99), -1);
-  assert.equal(blocksTier(100), 0);
-  assert.equal(blocksTier(320), 1);
-  assert.equal(blocksTier(5000), 4);
+  assert.equal(blocksTier(499), -1);   // v5.43: 500 / 1000 / 1500 / 2000 / 2500
+  assert.equal(blocksTier(500), 0);
+  assert.equal(blocksTier(1200), 1);
+  assert.equal(blocksTier(9000), 4);
   assert.equal(MINES_TIER.medium, 1);
   let best = upgrade(null, 0, "Quiz");                 // Bronze in Quiz
   assert.deepEqual(best, { tier: 0, game: "Quiz" });
