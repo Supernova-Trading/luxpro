@@ -140,8 +140,8 @@ export default function WordGame({ kind, s, lang, deck, prize, onAnswer, onTake,
   const tierName = (t: number) => (t >= 0 ? s.tiers[TIER_KEYS[t]] : "");
   const up = nextTier(prize.correct);
   const counting = prize.status !== "claimed";
-  const caption = (kind === "quiz" ? s.questionN : s.riddleN).replace("{n}", String(count))
-    + (kind === "quiz" ? ` · ${s.levels[level]}` : "");
+  // No "· Easy" label: every question is easy now (v5.42)
+  const caption = (kind === "quiz" ? s.questionN : s.riddleN).replace("{n}", String(count));
 
   return (
     <div className="v5-game v5-word" data-half role="dialog" aria-label={s.games[kind]} style={{ top }}>

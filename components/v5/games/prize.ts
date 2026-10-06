@@ -99,8 +99,11 @@ export function decline(p: Prize): Prize {
 }
 
 /** Questions get harder as the passenger climbs: easy, then medium, then hard. */
+// v5.42 (owner): kids play, so the questions stay easy the whole way up the
+// ladder — no getting harder at 10 and 20 correct.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function levelFor(correct: number): "easy" | "medium" | "hard" {
-  return correct < 10 ? "easy" : correct < 20 ? "medium" : "hard";
+  return "easy";
 }
 
 /** Next prize up from a number of correct answers, or -1 past the top. */

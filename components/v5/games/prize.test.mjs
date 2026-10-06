@@ -74,8 +74,8 @@ test("the top prize can only be taken", () => {
 test("questions get harder as the count climbs", () => {
   assert.equal(levelFor(0), "easy");
   assert.equal(levelFor(9), "easy");
-  assert.equal(levelFor(10), "medium");
-  assert.equal(levelFor(20), "hard");
+  assert.equal(levelFor(10), "easy"); // v5.42: always easy (owner: kids play)
+  assert.equal(levelFor(20), "easy");
 });
 
 test("next prize up", () => {
