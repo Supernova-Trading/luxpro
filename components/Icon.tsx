@@ -72,8 +72,12 @@ export type IconName =
   | 'stop'
   | 'sun'
   | 'trash'
+  | 'snake'
+  | 'blocks'
+  | 'mine'
   | 'tweaks'
   | 'upload'
+  | 'volume'
   | 'zap'
   | 'zoom-in'
   | 'zoom-out';
@@ -278,6 +282,14 @@ export function Icon({ name, size = 14, strokeWidth = 1.6, ...rest }: Props) {
           <rect x="9" y="2" width="6" height="11" rx="3" />
           <path d="M19 10v1a7 7 0 0 1-14 0v-1" />
           <path d="M12 18v3" />
+        </svg>
+      );
+    case 'volume':
+      return (
+        <svg {...common}>
+          <path d="M11 5 6 9H2v6h4l5 4V5Z" />
+          <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+          <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
         </svg>
       );
     case 'minus':
@@ -656,6 +668,31 @@ export function Icon({ name, size = 14, strokeWidth = 1.6, ...rest }: Props) {
           <path d="M15 3v18" />
           <path d="M3 9h18" />
           <path d="M3 15h18" />
+        </svg>
+      );
+    case 'snake':
+      return (
+        <svg {...common}>
+          <path d="M4 19h10a3 3 0 0 0 0-6H9a3 3 0 0 1 0-6h7" />
+          <circle cx="18.5" cy="7" r="1.6" />
+        </svg>
+      );
+    case 'blocks':
+      return (
+        <svg {...common}>
+          <rect x="3" y="12" width="6" height="6" rx="0.5" />
+          <rect x="9" y="12" width="6" height="6" rx="0.5" />
+          <rect x="15" y="12" width="6" height="6" rx="0.5" />
+          <rect x="9" y="6" width="6" height="6" rx="0.5" />
+        </svg>
+      );
+    case 'mine':
+      // Minesweeper's flag: reads as the game, unlike a spiked circle (looked like a sun)
+      return (
+        <svg {...common}>
+          <path d="M6 21V4" />
+          <path d="M6 4h11l-3 4 3 4H6" />
+          <path d="M3 21h6" />
         </svg>
       );
     case 'trash':

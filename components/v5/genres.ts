@@ -1,0 +1,108 @@
+import type { IconName } from "../Icon";
+import type { Lang } from "@/lib/translations";
+
+// Genre grouping for the music picker (owner, v5.3: "choose the type of
+// playlist according to the genre — and the same for radio"). Kept inside v5
+// so the live station and playlist lists (lib/radios.ts, lib/playlists.ts)
+// stay untouched; entries are matched by name.
+
+export type GenreKey =
+  | "hits" | "decades" | "dance" | "chill" | "urban" | "latin"
+  | "classical" | "news" | "sport" | "spiritual" | "world" | "more"
+  | "rock" | "jazz" | "flamenco" | "bollywood" | "punjabi";
+
+export const GENRES: Record<GenreKey, { icon: IconName; color: string; label: Record<Lang, string> }> = {
+  hits:      { icon: "sparkles",   color: "var(--i-lemon)",  label: { en: "Pop & hits",         es: "Éxitos y pop",       ur: "پاپ اور ہٹس" } },
+  decades:   { icon: "history",    color: "var(--i-orange)", label: { en: "70s, 80s & 90s",     es: "Años 70, 80 y 90",   ur: "70، 80 اور 90 کی دہائی" } },
+  dance:     { icon: "headphones", color: "var(--i-violet)", label: { en: "Dance & electronic", es: "Dance y electrónica", ur: "ڈانس اور الیکٹرانک" } },
+  chill:     { icon: "moon",       color: "var(--i-teal)",   label: { en: "Chill",              es: "Relax",              ur: "پرسکون" } },
+  urban:     { icon: "mic",        color: "var(--i-pink)",   label: { en: "Hip-hop & urban",    es: "Hip-hop y urbano",   ur: "ہپ ہاپ اور اربن" } },
+  latin:     { icon: "flame",      color: "var(--i-red)",    label: { en: "Latin",              es: "Latina",             ur: "لاطینی" } },
+  classical: { icon: "music-note", color: "var(--i-sky)",    label: { en: "Classical",          es: "Clásica",            ur: "کلاسیکی" } },
+  news:      { icon: "comment",    color: "var(--i-blue)",   label: { en: "News & talk",        es: "Noticias y debate",  ur: "خبریں اور گفتگو" } },
+  sport:     { icon: "zap",        color: "var(--i-green)",  label: { en: "Sport",              es: "Deportes",           ur: "کھیل" } },
+  spiritual: { icon: "sun",        color: "var(--i-teal)",   label: { en: "Spiritual",          es: "Espiritual",         ur: "روحانی" } },
+  world:     { icon: "languages",  color: "var(--i-sky)",    label: { en: "World",              es: "Del mundo",          ur: "دنیا بھر سے" } },
+  more:      { icon: "radio",      color: "var(--i-violet)", label: { en: "More stations",      es: "Más emisoras",       ur: "مزید اسٹیشن" } },
+  // v5.16: genres for the extra stations (stations.ts)
+  rock:      { icon: "zap",        color: "var(--i-red)",    label: { en: "Rock",               es: "Rock",               ur: "راک" } },
+  jazz:      { icon: "music-note", color: "var(--i-orange)", label: { en: "Jazz & soul",        es: "Jazz y soul",        ur: "جاز اور سول" } },
+  flamenco:  { icon: "flame",      color: "var(--i-orange)", label: { en: "Flamenco & Spanish", es: "Flamenco y copla",   ur: "فلامینکو اور ہسپانوی" } },
+  bollywood: { icon: "sparkles",   color: "var(--i-pink)",   label: { en: "Bollywood",          es: "Bollywood",          ur: "بالی وڈ" } },
+  punjabi:   { icon: "headphones", color: "var(--i-lemon)",  label: { en: "Punjabi",            es: "Punyabí",            ur: "پنجابی" } },
+};
+
+// Playlists: five styles, then five "from around the world".
+export const PLAYLIST_META: Record<string, { genre: GenreKey; icon: IconName; color: string; label: Record<Lang, string>; group: "style" | "world" }> = {
+  "Top Hits":   { genre: "hits",  group: "style", icon: "sparkles",   color: "var(--i-lemon)",  label: { en: "Pop & hits",         es: "Éxitos y pop",        ur: "پاپ اور ہٹس" } },
+  "Electronic": { genre: "dance", group: "style", icon: "headphones", color: "var(--i-violet)", label: { en: "Dance & electronic", es: "Dance y electrónica", ur: "ڈانس اور الیکٹرانک" } },
+  "Hip-Hop":    { genre: "urban", group: "style", icon: "mic",        color: "var(--i-pink)",   label: { en: "Hip-hop",            es: "Hip-hop",             ur: "ہپ ہاپ" } },
+  "Chill":      { genre: "chill", group: "style", icon: "moon",       color: "var(--i-teal)",   label: { en: "Chill",              es: "Relax",               ur: "پرسکون" } },
+  "Latin Pop":  { genre: "latin", group: "style", icon: "flame",      color: "var(--i-red)",    label: { en: "Latin pop",          es: "Pop latino",          ur: "لاطینی پاپ" } },
+  "Spanish":    { genre: "world", group: "world", icon: "languages",  color: "var(--i-red)",    label: { en: "Spanish",            es: "Española",            ur: "ہسپانوی" } },
+  "French":     { genre: "world", group: "world", icon: "languages",  color: "var(--i-blue)",   label: { en: "French",             es: "Francesa",            ur: "فرانسیسی" } },
+  "Arabic":     { genre: "world", group: "world", icon: "languages",  color: "var(--i-green)",  label: { en: "Arabic",             es: "Árabe",               ur: "عربی" } },
+  "Russian":    { genre: "world", group: "world", icon: "languages",  color: "var(--i-sky)",    label: { en: "Russian",            es: "Rusa",                ur: "روسی" } },
+  "Chinese":    { genre: "world", group: "world", icon: "languages",  color: "var(--i-orange)", label: { en: "Chinese",            es: "China",               ur: "چینی" } },
+  // v5.16 extra playlists (playlists.ts)
+  "Jazz Café":         { genre: "jazz",      group: "style", icon: "music-note", color: "var(--i-orange)", label: { en: "Jazz café",          es: "Jazz café",           ur: "جاز کیفے" } },
+  "Piano & Classical": { genre: "classical", group: "style", icon: "music-note", color: "var(--i-sky)",    label: { en: "Piano & classical",  es: "Piano y clásica",     ur: "پیانو اور کلاسیکی" } },
+  "Retro Hits":        { genre: "decades",   group: "style", icon: "history",    color: "var(--i-lemon)",  label: { en: "Retro hits 70s–90s", es: "Éxitos retro 70–90",  ur: "پرانے ہٹس 70 تا 90" } },
+  "Amapiano":          { genre: "dance",     group: "style", icon: "headphones", color: "var(--i-green)",  label: { en: "Amapiano & Afro",    es: "Amapiano y afro",     ur: "اماپیانو اور افریقی" } },
+  "Bollywood":         { genre: "bollywood", group: "world", icon: "sparkles",   color: "var(--i-pink)",   label: { en: "Bollywood",          es: "Bollywood",           ur: "بالی وڈ" } },
+  "Pakistani Hits":    { genre: "world",     group: "world", icon: "languages",  color: "var(--i-green)",  label: { en: "Pakistani hits",     es: "Éxitos de Pakistán",  ur: "پاکستانی ہٹس" } },
+  "Coke Studio":       { genre: "world",     group: "world", icon: "mic",        color: "var(--i-teal)",   label: { en: "Coke Studio Pakistan", es: "Coke Studio Pakistán", ur: "کوک اسٹوڈیو پاکستان" } },
+};
+
+// Radio stations by name, per language list in lib/radios.ts.
+const STATION_GENRE: Record<string, GenreKey> = {
+  // English (UK)
+  "Capital FM": "hits",
+  "Heart 70s": "decades", "Heart 80s": "decades", "Heart 90s": "decades", "Gold": "decades",
+  "Heart Dance": "dance",
+  "Smooth Chill": "chill",
+  "Classic FM": "classical",
+  "BBC World": "news",
+  "talkSPORT": "sport",
+  // Spanish
+  "LOS 40": "hits", "Cadena 100": "hits", "KISS FM": "hits",
+  "80 Éxitos": "decades", "LOS40 Classic": "decades",
+  "Los 40 Urban": "urban",
+  "Café del Mar": "chill",
+  "Deep House": "dance", "Ibiza Global": "dance",
+  "Radio Marca": "sport",
+  // Urdu (Pakistan)
+  "Hum FM 106.2": "hits", "Samaa FM 107.4": "hits", "All4Masti": "hits", "Radio Madhoshi": "hits", "BIG 92.7 FM": "hits",
+  "Radio Pakistan Lahore": "news", "Radio Pakistan News": "news",
+  "Sout-ul-Quran FM 93.4": "spiritual",
+  // v5.16 extra stations (stations.ts)
+  "Radio X": "rock", "Radio X Classic Rock": "rock", "Rock FM": "rock",
+  "Capital XTRA": "urban",
+  "Capital Dance": "dance", "LOS40 Dance": "dance",
+  "KISS": "hits", "Cadena Dial": "hits", "City FM 89": "hits", "FM 101 Islamabad": "hits",
+  "Heart 00s": "decades", "M80 Radio": "decades",
+  "Smooth Radio": "chill",
+  "Jazz London Radio": "jazz",
+  "Radiolé": "flamenco", "Flamenco FM": "flamenco",
+  "Radio Clásica": "classical",
+  "LBC": "news", "LBC News": "news", "Cadena SER": "news", "Radio Nacional": "news", "Onda Cero": "news", "Radio Pakistan Islamabad": "news",
+  "Bollywood Now": "bollywood", "Nostalgic Bollywood 90s": "bollywood", "Radio Udaan": "bollywood", "Sunrise Radio": "bollywood",
+  "RED FM Punjabi": "punjabi", "Sher-E-Punjab": "punjabi",
+  "Radio Central 24": "spiritual",
+};
+
+export function stationGenre(name: string): GenreKey {
+  return STATION_GENRE[name] ?? "more";
+}
+
+/** Group a station list by genre, keeping each genre's first-appearance order. */
+export function groupStations<T extends { n: string }>(stations: T[]): { genre: GenreKey; items: { st: T; idx: number }[] }[] {
+  const groups: { genre: GenreKey; items: { st: T; idx: number }[] }[] = [];
+  stations.forEach((st, idx) => {
+    const g = stationGenre(st.n);
+    let group = groups.find((x) => x.genre === g);
+    if (!group) { group = { genre: g, items: [] }; groups.push(group); }
+    group.items.push({ st, idx });
+  });
+  return groups;
+}
