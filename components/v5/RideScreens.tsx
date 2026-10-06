@@ -13,26 +13,57 @@ const LANG_CHOICES: { id: Lang; label: string }[] = [
   { id: "ur", label: "اردو" },
 ];
 
-/** Welcome: each language button is written in its own language. */
+/** Amish's five gold stars (owner, v5.33: like the 4.33 tip banner's ★★★★★;
+ *  awesome-design-md airbnb/DESIGN.md rating-display / host-card). */
+function Stars() {
+  return (
+    <span className="v5-stars" role="img" aria-label="5 stars">
+      {[0, 1, 2, 3, 4].map((i) => (
+        <svg key={i} viewBox="0 0 24 24" width={18} height={18} fill="currentColor" aria-hidden>
+          <path d="M12 2.6l2.82 6.03 6.6.76-4.9 4.5 1.33 6.52L12 17.12l-5.85 3.29 1.33-6.52-4.9-4.5 6.6-.76z" />
+        </svg>
+      ))}
+    </span>
+  );
+}
+
+/** Who is driving: name line, stars, executive line. No rating number (owner). */
+function Profile({ s, name }: { s: V5Strings; name?: string }) {
+  return (
+    <div className="v5-profile">
+      {name && <span className="v5-ride-sub">{name}</span>}
+      <Stars />
+      <span className="v5-profile-line">{s.driverProfile}</span>
+    </div>
+  );
+}
+
+/** Welcome (v5.33 layout): greeting and Amish in the upper part, languages as
+ *  ruled rows below — composed, not a stack of identical cards (impeccable
+ *  SKILL.md absolute bans: identical card grids). Each language is written in
+ *  its own language. */
 export function Welcome({ onBegin, secondsLeft }: { onBegin: (l: Lang) => void; secondsLeft: number }) {
   const en = STRINGS.en;
   return (
     <div className="v5-ride v5-welcome" role="dialog" aria-label={en.welcomeTitle}>
-      <span className="v5-wordmark">LuxPro</span>
-      <div className="v5-ride-head">
+      <div className="v5-welcome-top">
+        <span className="v5-wordmark">LuxPro</span>
         <span className="v5-ride-title">{en.welcomeTitle}</span>
-        <span className="v5-ride-sub">{en.welcomeDriver}</span>
+        <Profile s={en} name={en.welcomeDriver} />
       </div>
-      <div className="v5-ride-langs">
-        {LANG_CHOICES.map((l) => (
-          <button key={l.id} className="v5-ride-lang" data-lang={l.id} dir={l.id === "ur" ? "rtl" : "ltr"} onClick={() => onBegin(l.id)}>
-            <span className="v5-ride-lang-name">{l.label}</span>
-            <span className="v5-ride-lang-hint">{STRINGS[l.id].chooseLanguage}</span>
-          </button>
-        ))}
+      <div className="v5-welcome-low">
+        <div className="v5-ride-langs">
+          {LANG_CHOICES.map((l) => (
+            <button key={l.id} className="v5-ride-lang" data-lang={l.id} dir={l.id === "ur" ? "rtl" : "ltr"} onClick={() => onBegin(l.id)}>
+              <span className="v5-ride-lang-name">{l.label}</span>
+              <span className="v5-ride-lang-hint">{STRINGS[l.id].chooseLanguage}</span>
+              <Icon name="chevron-right" size={22} className="v5-flip v5-ride-lang-go" />
+            </button>
+          ))}
+        </div>
+        <span className="v5-sub">{en.welcomeNote}</span>
+        <span className="v5-micro" aria-live="off">Continuing in English in {secondsLeft}s</span>
       </div>
-      <span className="v5-sub" style={{ maxWidth: 420 }}>{en.welcomeNote}</span>
-      <span className="v5-micro" aria-live="off">Continuing in English in {secondsLeft}s</span>
     </div>
   );
 }
@@ -49,7 +80,8 @@ export function Farewell({ s, tipped, tipButtons, phone }: {
       <span className="v5-wordmark">LuxPro</span>
       <div className="v5-ride-head">
         <span className="v5-ride-title">{s.farewellTitle}</span>
-        <span className="v5-ride-sub" style={{ display: "inline-flex", alignItems: "center", gap: 10 }}>
+        <Profile s={s} />
+        <span className="v5-ride-sub" style={{ display: "inline-flex", alignItems: "center", gap: 10, marginTop: 8 }}>
           <Icon name="hand" size={20} style={{ color: "var(--i-lemon)", flexShrink: 0 }} />
           {s.farewellBelongings}
         </span>

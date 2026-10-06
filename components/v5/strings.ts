@@ -114,6 +114,7 @@ export interface V5Strings {
   testVoice: string;
   contactAmish: string;
   contactSub: string;
+  driverProfile: string;
   nightMode: string;
   welcomeTitle: string;
   welcomeDriver: string;
@@ -262,7 +263,8 @@ export const STRINGS: Record<Lang, V5Strings> = {
     musicVolume: "Music volume",
     testVoice: "Test",
     contactAmish: "Contact Amish",
-    contactSub: "Lost property, or to book Amish again",
+    contactSub: "Lost property",
+    driverProfile: "Executive driver · 15,000+ trips",
     nightMode: "Night mode",
     welcomeTitle: "Welcome aboard",
     welcomeDriver: "Your driver today is Amish",
@@ -409,7 +411,8 @@ export const STRINGS: Record<Lang, V5Strings> = {
     musicVolume: "Volumen de la música",
     testVoice: "Probar",
     contactAmish: "Contactar con Amish",
-    contactSub: "Objetos perdidos, o para reservar otra vez con Amish",
+    contactSub: "Objetos perdidos",
+    driverProfile: "Conductor ejecutivo · más de 15.000 viajes",
     nightMode: "Modo noche",
     welcomeTitle: "Bienvenido a bordo",
     welcomeDriver: "Su conductor hoy es Amish",
@@ -556,7 +559,8 @@ export const STRINGS: Record<Lang, V5Strings> = {
     musicVolume: "موسیقی کا والیوم",
     testVoice: "سنیں",
     contactAmish: "امیش سے رابطہ",
-    contactSub: "گمشدہ سامان، یا امیش کے ساتھ دوبارہ سفر کے لیے",
+    contactSub: "گمشدہ سامان",
+    driverProfile: "ایگزیکٹو ڈرائیور · 15,000 سے زیادہ سفر",
     nightMode: "نائٹ موڈ",
     welcomeTitle: "خوش آمدید",
     welcomeDriver: "آج آپ کے ڈرائیور امیش ہیں",

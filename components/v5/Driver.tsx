@@ -142,9 +142,9 @@ export default function Driver({ stage, isFS, kiosk, phone, endAt, onClose, onNe
 
   const title = mode === "enter" ? "Driver PIN" : mode === "verify" ? "Enter the current PIN" : mode === "set" ? "Set a 4-digit driver PIN" : mode === "confirm" ? "Enter the PIN again" : "Driver";
 
-  const action = (icon: IconName, label: string, sub: string, onClick: () => void, extra?: { gold?: boolean; on?: boolean }) => (
-    <button className="v5-drv-btn" data-gold={extra?.gold} aria-pressed={extra?.on} onClick={onClick}>
-      <Icon name={icon} size={22} />
+  const action = (icon: IconName, label: string, sub: string, onClick: () => void, extra?: { gold?: boolean; on?: boolean; primary?: boolean }) => (
+    <button className="v5-drv-btn" data-gold={extra?.gold} data-primary={extra?.primary || undefined} aria-pressed={extra?.on} onClick={onClick}>
+      <Icon name={icon} size={extra?.primary ? 28 : 22} />
       <span style={{ display: "grid", gap: 2, textAlign: "start" }}>
         <span className="v5-label" style={{ color: "inherit" }}>{label}</span>
         <span className="v5-sub">{sub}</span>
@@ -180,12 +180,15 @@ export default function Driver({ stage, isFS, kiosk, phone, endAt, onClose, onNe
         ) : (
           <div className="v5-drv-actions">
             <span className="v5-caption">Ride: {stage === "welcome" ? "waiting for passenger" : stage === "ride" ? "in progress" : "ended"} · <span dir="ltr">v{APP_VERSION} · {BUILD_ID}</span></span>
-            {action("history", armed ? "Tap again to clear the tablet" : "New passenger",
-              "Clears requests, tip, games and music; shows the welcome screen",
-              () => { if (armed) { setArmed(false); onClose(); onNewPassenger(); } else setArmed(true); }, { gold: armed })}
-            {endAt
-              ? action("hand", `Thank-you screen in ${mmss}`, "Tap to cancel the end of the trip", () => { onCancelEnd(); }, { gold: true })
-              : action("hand", "End trip", "Nearly there now · thank-you screen 2 minutes later", () => { onClose(); onEndTrip(); })}
+            {/* The two ride buttons, big, like on Amish's phone (v5.33) */}
+            <div className="v5-drv-primary">
+              {action("history", armed ? "Tap again to clear" : "New passenger",
+                armed ? "Clears everything, shows Welcome" : "Restart for the next ride",
+                () => { if (armed) { setArmed(false); onClose(); onNewPassenger(); } else setArmed(true); }, { gold: armed, primary: true })}
+              {endAt
+                ? action("hand", `Thank-you in ${mmss}`, "Tap to cancel", () => { onCancelEnd(); }, { gold: true, primary: true })
+                : action("hand", "End trip", "Nearly there now · thank-you in 2 min", () => { onClose(); onEndTrip(); }, { primary: true })}
+            </div>
             {action(isFS ? "close" : "present", isFS ? "Exit full screen" : "Full screen", "", onFullscreen)}
             {action("tweaks", kiosk ? "Kiosk lock: on" : "Kiosk lock: off",
               "Keeps the app full screen, blocks Back and long-press menus", () => onKiosk(!kiosk), { on: kiosk })}

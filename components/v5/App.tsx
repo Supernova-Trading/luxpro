@@ -479,7 +479,7 @@ export default function V5App() {
           <button key={t.key} className="v5-tip-opt" aria-pressed={on} onClick={() => tapTip(t.key)}>
             <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <Icon name={on ? "check" : t.icon} size={20} style={{ color: on ? "currentColor" : t.color }} />
-              <span className="v5-label" style={{ color: "inherit", fontSize: 17 }}>{s.tip[t.key].label}</span>
+              <span className="v5-label" style={{ color: "inherit" }}>{s.tip[t.key].label}</span>
             </span>
             <small>{s.tip[t.key].sub}</small>
           </button>
@@ -557,7 +557,7 @@ export default function V5App() {
               <button key={side} data-side={side} aria-pressed={on} onClick={() => tapClimate(side)}>
                 <Icon name={on ? "check" : side === "cool" ? "snowflake" : "flame"} size={24}
                   style={{ color: on ? "var(--gold)" : side === "cool" ? "var(--i-sky)" : "var(--i-orange)" }} />
-                <span className="v5-label" style={{ fontSize: 17 }}>{side === "cool" ? s.cooler : s.warmer}</span>
+                <span className="v5-label">{side === "cool" ? s.cooler : s.warmer}</span>
               </button>
             );
           })}
