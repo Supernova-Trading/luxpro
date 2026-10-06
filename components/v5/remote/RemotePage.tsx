@@ -329,9 +329,10 @@ export default function RemotePage() {
           <dt><Icon name="cash" size={18} /><span className="v5-sr">Tip</span></dt>
           <dd>{st?.tip ? en.tip[st.tip as TipKey]?.label ?? st.tip : "—"}</dd>
         </div>
-        <div title={st ? (st.prize.status === "claimed" ? `Quiz prize won: ${tierName} (${st.prize.correct} correct)` : `Quiz: ${st.prize.correct} correct answers`) : "Quiz"}>
-          <dt><Icon name="lightbulb" size={18} /><span className="v5-sr">Quiz prize</span></dt>
-          <dd>{!st ? "—" : st.prize.status === "claimed" ? tierName : `${en.quizShort} ${st.prize.correct}/${[5, 10, 15, 20, 25].find((t) => t > st.prize.correct) ?? 25}`}</dd>
+        <div title={st?.best ? `Prize to hand over: ${en.tiers[TIERS[st.best.tier]]} (won in ${st.best.game})` : st ? `Quiz: ${st.prize.correct} correct answers` : "Quiz"}>
+          <dt><Icon name="lightbulb" size={18} /><span className="v5-sr">Prize</span></dt>
+          {/* The one prize to hand over and where it was won (owner, v5.41) */}
+          <dd>{!st ? "—" : st.best ? <>{en.tiers[TIERS[st.best.tier]]} <small className="v5-rm-from">{st.best.game}</small></> : `${en.quizShort} ${st.prize.correct}/${[5, 10, 15, 20, 25].find((t) => t > st.prize.correct) ?? 25}`}</dd>
         </div>
         <div title={st?.music.title ? `${st.music.playing ? "Playing" : "Paused"}: ${st.music.title}` : "Nothing playing"}>
           <dt><Icon name="music-note" size={18} /><span className="v5-sr">Music</span></dt>

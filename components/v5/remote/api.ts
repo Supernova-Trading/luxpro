@@ -28,6 +28,7 @@ export interface TabletState {
   climate: "cool" | "warm" | null;
   tip: string | null;
   prize: { correct: number; status: string; tier: number };
+  best?: { tier: number; game: string } | null; // the ride's one prize to hand over (v5.41)
   music: { source: string; title: string; playing: boolean };
   lastCmd?: number; // id of the last phone command the tablet ran (v5.23)
   volume?: number;  // music volume 0-100 (v5.25)

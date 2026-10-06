@@ -6,7 +6,7 @@ import type { QuizLevel, V5Strings } from "../strings";
 import { newBoard, dig, toggleFlag, flagsLeft, type Board } from "./mines";
 import { useEndGuard } from "./useEndGuard";
 import GamePrize from "./GamePrize";
-import { MINES_TIER, type Prize } from "./prize";
+import { MINES_TIER, type Best } from "./prize";
 
 // Mines for a moving car: one board size with big squares, the level only
 // changes how many mines. No timer, no long-press — a Dig / Flag switch
@@ -31,13 +31,13 @@ const NUM_COLOR = ["", "var(--i-sky)", "var(--i-green)", "var(--i-orange)", "var
 
 export interface MinesSave { board: Board; level: QuizLevel; before: Board | null; undoUsed: boolean }
 
-export default function MinesGame({ s, saved, onSave, onClose, top, prize, onPrize }: {
+export default function MinesGame({ s, saved, onSave, onClose, top, best, onPrize }: {
   s: V5Strings;
   saved: MinesSave | null;
   onSave: (m: MinesSave) => void;
   onClose: () => void;
   top: number; // where the half-screen panel starts (just under the tip box)
-  prize: Prize; // the ride's prize (one per ride, shared with Quiz and Blocks)
+  best: Best | null; // the ride's best prize so far (v5.41)
   onPrize: (tier: number, level: QuizLevel) => void;
 }) {
   const fresh = !saved || saved.board.rows !== SIZES[saved.level].rows || saved.board.cols !== SIZES[saved.level].cols;
@@ -177,7 +177,7 @@ export default function MinesGame({ s, saved, onSave, onClose, top, prize, onPri
         </button>
       </div>
       {board.state === "won" && (
-        <GamePrize s={s} caption={s.boardCleared.replace("{level}", s.levels[level])} tier={MINES_TIER[level]} prize={prize}
+        <GamePrize s={s} caption={s.boardCleared.replace("{level}", s.levels[level])} tier={MINES_TIER[level]} best={best}
           ready={againReady} onAgain={() => restart()} onTake={() => onPrize(MINES_TIER[level], level)} />
       )}
     </div>

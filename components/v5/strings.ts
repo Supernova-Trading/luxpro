@@ -79,7 +79,8 @@ export interface V5Strings {
   pointsWord: string;    // "{n}"
   pointsToWin: string;   // "{n}", "{tier}"
   boardCleared: string;  // "{level}"
-  oneRidePrize: string;  // "{tier}"
+  keptPrize: string;     // "{tier}" — the better prize already won this ride
+  replacesPrize: string; // "{tier}" — the prize it replaces
   quizShort: string;
   wellPlayed: string;
   notThisTime: string;
@@ -243,7 +244,8 @@ export const STRINGS: Record<Lang, V5Strings> = {
     pointsWord: "{n} points",
     pointsToWin: "Score {n} points to win {tier}",
     boardCleared: "{level} board cleared",
-    oneRidePrize: "One prize per ride. You already have your {tier} prize.",
+    keptPrize: "You keep your {tier} prize. Only the best prize of the ride counts.",
+    replacesPrize: "Better than your {tier}, so it replaces it.",
     quizShort: "Quiz",
     wellPlayed: "Well played",
     notThisTime: "Not this time",
@@ -405,7 +407,8 @@ export const STRINGS: Record<Lang, V5Strings> = {
     pointsWord: "{n} puntos",
     pointsToWin: "Consiga {n} puntos para ganar {tier}",
     boardCleared: "Tablero {level} completado",
-    oneRidePrize: "Un premio por viaje. Ya tiene su premio {tier}.",
+    keptPrize: "Conserva su premio {tier}. Solo cuenta el mejor premio del viaje.",
+    replacesPrize: "Mejor que su {tier}, así que lo sustituye.",
     quizShort: "Quiz",
     wellPlayed: "Bien jugado",
     notThisTime: "Esta vez no",
@@ -567,7 +570,8 @@ export const STRINGS: Record<Lang, V5Strings> = {
     pointsWord: "{n} پوائنٹس",
     pointsToWin: "{tier} جیتنے کے لیے {n} پوائنٹس بنائیں",
     boardCleared: "{level} بورڈ مکمل",
-    oneRidePrize: "ہر سفر میں ایک انعام۔ آپ کا {tier} انعام پہلے ہی مل چکا ہے۔",
+    keptPrize: "آپ کا {tier} انعام برقرار ہے۔ سفر کا صرف سب سے اچھا انعام شمار ہوتا ہے۔",
+    replacesPrize: "یہ آپ کے {tier} سے بہتر ہے، اس لیے اس کی جگہ لے گا۔",
     quizShort: "کوئز",
     wellPlayed: "بہت خوب",
     notThisTime: "اس بار نہیں",
@@ -654,6 +658,7 @@ export const SPEECH: {
   test: string;
   prize: (tier: string, n: number) => string;
   gamePrize: (tier: string, game: string, detail: string) => string;
+  prizeUpgrade: (tier: string, old: string, game: string, detail: string) => string;
 } = {
   requests: {
     charger:    { on: "{driver}, could I use the phone charger, please?",       off: "{driver}, no need for the charger now, thank you." },
@@ -686,6 +691,8 @@ export const SPEECH: {
   prize: (tier, n) => `{driver}, the passenger has won the ${tier} prize, with ${n} correct answers.`,
   // Blocks / Mines prize (v5.39): e.g. "in Blocks, with 320 points"
   gamePrize: (tier, game, detail) => `{driver}, the passenger has won the ${tier} prize in ${game}, ${detail}.`,
+  // Only the best prize of the ride counts (v5.41)
+  prizeUpgrade: (tier, old, game, detail) => `{driver}, the passenger's prize is now ${tier} instead of ${old}, won in ${game}, ${detail}.`,
 };
 
 // Said to the passenger when Amish presses Nearly there / End ride / New

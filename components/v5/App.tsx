@@ -24,7 +24,7 @@ import GameBoundary from "./GameBoundary";
 import RevolutQr from "./RevolutQr";
 import Wordmark from "./Wordmark";
 import { DEFAULT_DRIVER, readDriver, saveDriver, personalise, personaliseByLang, type DriverProfile } from "./driverProfile";
-import { newPrize, answer as prizeAnswer, take as prizeTake, keepPlaying, restart as prizeRestart, lastCall as prizeLastCall, claimOther, TIER_KEYS } from "./games/prize";
+import { newPrize, answer as prizeAnswer, take as prizeTake, keepPlaying, restart as prizeRestart, lastCall as prizeLastCall, beats, upgrade, decline, TIER_KEYS, type Best, type PrizeGame } from "./games/prize";
 import type { MinesSave } from "./games/MinesGame";
 import type { SnakeSave } from "./games/SnakeGame";
 import type { BlocksSave } from "./games/BlocksGame";
@@ -168,6 +168,7 @@ export default function V5App() {
   };
   // One prize ladder per ride, shared by Quiz and Riddles (games/prize.ts).
   const [prize, setPrize] = useState(newPrize);
+  const [best, setBest] = useState<Best | null>(null); // the ride's best prize so far (v5.41)
   const [asked, setAsked] = useState<Partial<Record<"quiz" | "riddles", boolean>>>({});
 
   const lastTap = useRef<Record<string, number>>({});
@@ -273,6 +274,7 @@ export default function V5App() {
     climate,
     tip,
     prize: { correct: prize.correct, status: prize.status, tier: prize.tier },
+    best, // the one prize the driver hands over (v5.41)
     music: {
       source: music.source,
       title: music.source === "radio" ? music.radio.currentStation?.n ?? "" : music.source === "playlists" ? music.sc.track?.title ?? "" : "",
@@ -389,19 +391,26 @@ export default function V5App() {
   // so a prize can't be claimed with a screenshot or a story.
   function takePrize() {
     const won = prizeTake(prize);
-    if (won === prize) return;
+    if (won === prize || !beats(best, won.tier)) return;
     setPrize(won);
-    const tier = T.en.tiers[TIER_KEYS[won.tier]];
-    speech.say("prize", SP.prize(tier, won.correct), () => showToast(s.didntHear));
+    awardBest(won.tier, game === "riddles" ? "Riddles" : "Quiz", `with ${won.correct} correct answers`);
   }
 
-  // Blocks and Mines prizes (Amish, v5.39): one prize per ride across all the
-  // games, said to the driver like the Quiz prize.
-  function takeGamePrize(tier: number, game: "Blocks" | "Mines", detail: string) {
-    const won = claimOther(prize, tier);
-    if (won === prize) return;
-    setPrize(won);
-    speech.say("prize", SP.gamePrize(T.en.tiers[TIER_KEYS[tier]], game, detail), () => showToast(s.didntHear));
+  // The ride keeps only its best prize (owner, v5.41): a better prize from any
+  // game replaces it, a lower one doesn't count. The driver hears each change,
+  // and his phone shows just the one prize to hand over.
+  function awardBest(tier: number, from: PrizeGame, detail: string) {
+    if (!beats(best, tier)) return;
+    const old = best;
+    setBest(upgrade(best, tier, from));
+    const name = T.en.tiers[TIER_KEYS[tier]];
+    const line = old ? SP.prizeUpgrade(name, T.en.tiers[TIER_KEYS[old.tier]], from, detail) : SP.gamePrize(name, from, detail);
+    speech.say("prize", line, () => showToast(s.didntHear));
+  }
+
+  // Blocks and Mines prizes (Amish, v5.39) feed the same best-of-ride prize.
+  function takeGamePrize(tier: number, from: "Blocks" | "Mines", detail: string) {
+    awardBest(tier, from, detail);
   }
 
   function newRide() {
@@ -414,6 +423,7 @@ export default function V5App() {
     setSnakeSave(null);
     setBlocksSave(null);
     setPrize(newPrize());
+    setBest(null);
     setAsked({});
     setRequests({});
     setClimate(null);
@@ -442,7 +452,7 @@ export default function V5App() {
     setEndAt(Date.now() + END_TRIP_MS);
     // A prize passed up or still waiting: offer it once more before arriving
     const lc = prizeLastCall(prize);
-    if (lc !== prize) {
+    if (lc !== prize && beats(best, lc.tier)) {
       setPrize(lc);
       if (game !== "quiz" && game !== "riddles") setGame("quiz");
     }
@@ -762,6 +772,8 @@ export default function V5App() {
           prize={prize}
           onAnswer={(ok) => setPrize((p) => prizeAnswer(p, ok))}
           onTake={takePrize}
+          onDecline={() => setPrize((p) => decline(p))}
+          best={best}
           onKeep={() => setPrize((p) => keepPlaying(p))}
           onRestart={() => setPrize((p) => prizeRestart(p))}
           asked={!!asked[game]}
@@ -772,10 +784,10 @@ export default function V5App() {
       )}
       {game === "snake" && <SnakeGame s={s} saved={snakeSave} onSave={setSnakeSave} onClose={() => setGame(null)} top={halfTop} hold={!!sheet || qr} />}
       {game === "blocks" && <BlocksGame s={s} saved={blocksSave} onSave={setBlocksSave} onClose={() => setGame(null)} top={halfTop} hold={!!sheet || qr}
-        prize={prize} onPrize={(tier, score) => takeGamePrize(tier, "Blocks", `with ${score} points`)} />}
+        ridePrize={best} onPrize={(tier, score) => takeGamePrize(tier, "Blocks", `with ${score} points`)} />}
       {game === "mines" && (
         <MinesGame s={s} saved={minesSave} onSave={setMinesSave} onClose={() => setGame(null)} top={halfTop}
-          prize={prize} onPrize={(tier, level) => takeGamePrize(tier, "Mines", `on the ${T.en.levels[level]} board`)} />
+          best={best} onPrize={(tier, level) => takeGamePrize(tier, "Mines", `on the ${T.en.levels[level]} board`)} />
       )}
       </GameBoundary>
 
@@ -803,7 +815,7 @@ export default function V5App() {
       {nearly && stage === "ride" && <NearlyBanner s={s} onClose={() => setNearly(false)} />}
       {stage === "welcome" && <Welcome T={T} driver={driver} onBegin={beginRide} secondsLeft={welcomeLeft} />}
       {stage === "farewell" && <Farewell s={s} name={driverName} trips={driver.trips} tipped={!!tip} tipButtons={tipOpts} phone={driver.phone}
-        prize={prize.status === "claimed" ? s.tiers[TIER_KEYS[prize.tier]] : null} />}
+        prize={best ? s.tiers[TIER_KEYS[best.tier]] : null} />}
       {driverOpen && (
         <Driver
           stage={stage}

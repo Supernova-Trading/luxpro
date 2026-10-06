@@ -113,16 +113,19 @@ test("the ride ending offers a passed-up prize once more", async () => {
   assert.equal(lastCall(take(lc)).status, "claimed");   // already taken: nothing
 });
 
-test("Blocks and Mines prizes, one prize per ride", async () => {
-  const { blocksTier, claimOther, MINES_TIER } = await import("./prize.ts");
+test("Blocks and Mines prizes; the ride keeps only its best prize", async () => {
+  const { blocksTier, beats, upgrade, MINES_TIER } = await import("./prize.ts");
   assert.equal(blocksTier(99), -1);
   assert.equal(blocksTier(100), 0);
   assert.equal(blocksTier(320), 1);
   assert.equal(blocksTier(5000), 4);
   assert.equal(MINES_TIER.medium, 1);
-  const won = claimOther(newPrize(), 2);
-  assert.equal(won.status, "claimed");
-  assert.equal(won.tier, 2);
-  assert.equal(claimOther(won, 4), won);          // already has one this ride
-  assert.equal(claimOther(newPrize(), -1).status, "playing");
+  let best = upgrade(null, 0, "Quiz");                 // Bronze in Quiz
+  assert.deepEqual(best, { tier: 0, game: "Quiz" });
+  best = upgrade(best, 1, "Blocks");                  // Silver in Blocks replaces it
+  assert.deepEqual(best, { tier: 1, game: "Blocks" });
+  assert.equal(upgrade(best, 0, "Mines"), best);      // Bronze in Mines: Silver stays
+  assert.equal(upgrade(best, 1, "Mines"), best);      // equal: the first one stays
+  assert.equal(beats(best, 2), true);
+  assert.equal(beats(best, -1), false);
 });

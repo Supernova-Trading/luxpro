@@ -6,7 +6,7 @@ import type { Lang } from "@/lib/translations";
 import type { V5Strings } from "./strings";
 import type { Deck } from "./useDeck";
 import { loadBank, type Bank, type Mcq } from "./bank";
-import { TIERS, TIER_KEYS, isTopTier, levelFor, nextTier, type Prize } from "./games/prize";
+import { TIERS, TIER_KEYS, beats, isTopTier, levelFor, nextTier, type Best, type Prize } from "./games/prize";
 import { useEndGuard } from "./games/useEndGuard";
 
 // Quiz and Riddles as one prize game (owner, 2026-10-05): four options, one
@@ -35,7 +35,7 @@ function shuffled(item: Mcq): string[] {
   return out;
 }
 
-export default function WordGame({ kind, s, lang, deck, prize, onAnswer, onTake, onKeep, onRestart, asked, onAsk, onClose, top }: {
+export default function WordGame({ kind, s, lang, deck, prize, onAnswer, onTake, onDecline, best, onKeep, onRestart, asked, onAsk, onClose, top }: {
   kind: "quiz" | "riddles";
   s: V5Strings;
   lang: Lang;
@@ -43,6 +43,8 @@ export default function WordGame({ kind, s, lang, deck, prize, onAnswer, onTake,
   prize: Prize;
   onAnswer: (ok: boolean) => void;
   onTake: () => void;
+  onDecline: () => void;   // a Diamond that can't beat the ride's prize: close the ladder
+  best: Best | null;       // the ride's best prize so far (v5.41)
   onKeep: () => void;
   onRestart: () => void;
   asked: boolean;
@@ -175,7 +177,7 @@ export default function WordGame({ kind, s, lang, deck, prize, onAnswer, onTake,
             {up >= 0 && <span>{s.nextPrize.replace("{n}", String(TIERS[up] - prize.correct)).replace("{tier}", tierName(up))}</span>}
           </>
         ) : (
-          <span style={{ color: "var(--gold)" }}>{s.claimedBanner.replace("{tier}", tierName(prize.tier))}</span>
+          <span style={{ color: "var(--gold)" }}>{s.claimedBanner.replace("{tier}", tierName(best ? best.tier : prize.tier))}</span>
         )}
       </div>
 
@@ -247,13 +249,20 @@ export default function WordGame({ kind, s, lang, deck, prize, onAnswer, onTake,
           <span className="v5-prize-tier">{tierName(prize.tier)}</span>
           <span className="v5-coachline" aria-hidden />
           <span className="v5-heading">{(prize.lastCall ? s.lastCallTitle : s.wonPrize).replace("{tier}", tierName(prize.tier))}</span>
-          <span className="v5-sub">{s.prizeWhat}</span>
+          {/* The ride keeps only its best prize (v5.41): say what this one means */}
+          <span className="v5-sub">
+            {!beats(best, prize.tier) && best ? s.keptPrize.replace("{tier}", tierName(best.tier))
+              : best ? s.replacesPrize.replace("{tier}", tierName(best.tier)) : s.prizeWhat}
+          </span>
           <div className="v5-prize-actions">
-            <button className="v5-next" data-gold disabled={!offerReady} onClick={() => { setJustClaimed(true); onTake(); }}>
-              <Icon name="check" size={20} />{s.takePrize}
-            </button>
+            {beats(best, prize.tier) && (
+              <button className="v5-next" data-gold disabled={!offerReady} onClick={() => { setJustClaimed(true); onTake(); }}>
+                <Icon name="check" size={20} />{s.takePrize}
+              </button>
+            )}
             {prize.lastCall ? null : isTopTier(prize.tier) ? (
-              <span className="v5-sub">{s.topPrize}</span>
+              beats(best, prize.tier) ? <span className="v5-sub">{s.topPrize}</span>
+                : <button className="v5-next" disabled={!offerReady} onClick={onDecline}>{s.done}</button>
             ) : (
               <>
                 <button className="v5-newgame" disabled={!offerReady} onClick={onKeep}>
@@ -281,7 +290,7 @@ export default function WordGame({ kind, s, lang, deck, prize, onAnswer, onTake,
       {prize.status === "bust" && (
         <div className="v5-prize-overlay" role="alertdialog" aria-label={s.bustTitle}>
           <span className="v5-heading">{s.bustTitle}</span>
-          {prize.atRisk >= 0 && <span className="v5-label">{s.bustLost.replace("{tier}", tierName(prize.atRisk))}</span>}
+          {prize.atRisk >= 0 && beats(best, prize.atRisk) && <span className="v5-label">{s.bustLost.replace("{tier}", tierName(prize.atRisk))}</span>}
           <span className="v5-sub">{s.bustSub}</span>
           <div className="v5-prize-actions">
             <button className="v5-next" disabled={!bustReady} onClick={() => { onRestart(); next(true); }}>

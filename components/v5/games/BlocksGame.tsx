@@ -9,7 +9,7 @@ import {
 } from "./blocks";
 import { resolveColor, rounded, readBest, saveBest, prepare } from "./canvas";
 import GamePrize from "./GamePrize";
-import { BLOCKS_POINTS, blocksTier, type Prize } from "./prize";
+import { BLOCKS_POINTS, blocksTier, type Best } from "./prize";
 import { useEndGuard } from "./useEndGuard";
 
 // Blocks for a moving car (roadmap P5): four big buttons — Left, Right,
@@ -36,14 +36,14 @@ type Action = "left" | "right" | "rotate" | "down";
 
 export interface BlocksSave { game: Blocks; speed: Speed }
 
-export default function BlocksGame({ s, saved: savedIn, onSave, onClose, top, hold, prize, onPrize }: {
+export default function BlocksGame({ s, saved: savedIn, onSave, onClose, top, hold, ridePrize, onPrize }: {
   s: V5Strings;
   saved: BlocksSave | null;
   onSave: (g: BlocksSave) => void;
   onClose: () => void;
   top: number;   // where the half-screen panel starts (just under the tip box)
   hold: boolean; // something is open on top of the panel
-  prize: Prize;   // the ride's prize (one per ride, shared with Quiz and Mines)
+  ridePrize: Best | null; // the ride's best prize so far (v5.41)
   onPrize: (tier: number, score: number) => void;
 }) {
   // A game saved on the old full-screen board doesn't fit this one.
@@ -299,7 +299,7 @@ export default function BlocksGame({ s, saved: savedIn, onSave, onClose, top, ho
         {control("down", "arrow-up", s.down, "v5-b-down", 180, true)}
       </div>
       {over && (
-        <GamePrize s={s} caption={s.pointsWord.replace("{n}", String(view.score))} tier={blocksTier(view.score)} prize={prize}
+        <GamePrize s={s} caption={s.pointsWord.replace("{n}", String(view.score))} tier={blocksTier(view.score)} best={ridePrize}
           ladder={BLOCKS_POINTS} ready={againReady} onAgain={restart}
           hint={s.pointsToWin.replace("{n}", String(BLOCKS_POINTS[0])).replace("{tier}", s.tiers.bronze)}
           onTake={() => onPrize(blocksTier(view.score), view.score)} />

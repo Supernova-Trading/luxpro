@@ -410,6 +410,7 @@ a.v5-row { color: inherit; text-decoration: none; }
 .v5-rm-mini { margin: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr) minmax(0, 1fr); gap: 6px; }
 .v5-rm-mini > div { display: flex; align-items: center; gap: 8px; min-width: 0; min-height: 48px; padding: 6px 10px; border-radius: 8px; background: var(--s1); border: 1px solid var(--line); }
 .v5-rm-mini dt { display: flex; color: var(--muted); flex-shrink: 0; }
+.v5-rm-from { font-size: var(--t-xs); font-weight: 500; color: var(--muted); }
 .v5-rm-mini dd { margin: 0; min-width: 0; font-size: var(--t-sm); font-weight: 600; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .v5-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .v5-rm-asked { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }

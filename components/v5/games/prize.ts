@@ -77,11 +77,25 @@ export function blocksTier(score: number): number {
 /** Mines (Amish, v5.39): clearing the board wins Bronze, Silver or Gold. */
 export const MINES_TIER: Record<"easy" | "medium" | "hard", number> = { easy: 0, medium: 1, hard: 2 };
 
-/** A prize won in Blocks or Mines. Still one prize per ride across all
- *  games: nothing changes if one was already taken. */
-export function claimOther(p: Prize, tier: number): Prize {
-  if (p.status === "claimed" || tier < 0) return p;
-  return { ...p, status: "claimed", tier, atRisk: -1, lastCall: false };
+/** The ride's prize (owner, v5.41): every game can be won, but the ride keeps
+ *  only its BEST prize — Bronze in Quiz then Silver in Blocks means Silver.
+ *  The driver hands over one treat, and his phone shows just that one. */
+export type PrizeGame = "Quiz" | "Riddles" | "Blocks" | "Mines";
+export interface Best { tier: number; game: PrizeGame }
+
+/** True when this prize would be better than the one the ride already has. */
+export function beats(best: Best | null, tier: number): boolean {
+  return tier >= 0 && (!best || tier > best.tier);
+}
+
+export function upgrade(best: Best | null, tier: number, game: PrizeGame): Best | null {
+  return beats(best, tier) ? { tier, game } : best;
+}
+
+/** Quiz offer that can't beat the ride's prize at the top of the ladder:
+ *  close the ladder without taking anything. */
+export function decline(p: Prize): Prize {
+  return p.status === "offer" ? { ...p, status: "claimed" } : p;
 }
 
 /** Questions get harder as the passenger climbs: easy, then medium, then hard. */
