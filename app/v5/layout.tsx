@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { notFound } from "next/navigation";
 import "@/components/v5/v5.css";
 
 // Brand option A, "Coachline" (v5.38): the LP + pinstripe icon for the browser
@@ -20,9 +19,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = { themeColor: "#100E0B" };
 
-// LuxPro v5 lives only on the design/v2-preview branch's preview deployments.
-// Even if merged by accident, it 404s on production until go-live (P7).
+// LuxPro v5 is the live app since go-live (P7, owner approved 2026-10-06);
+// the old production guard is gone. "/" redirects here; 4.33 is at /classic.
 export default function V5Layout({ children }: { children: React.ReactNode }) {
-  if (process.env.VERCEL_ENV === "production") notFound();
   return children;
 }
