@@ -434,8 +434,22 @@ export default function V5App() {
     speech.announce("announce", ANNOUNCE.nearly, lang);
   }
 
+  // Amish hears which language the passenger chose (owner, v5.29): one
+  // word in the English voice — "English." / "Spanish." / "Urdu."
+  function sayLanguage(l: Lang) {
+    speech.withdraw("lang");
+    speech.say("lang", `${{ en: "English", es: "Spanish", ur: "Urdu" }[l]}.`);
+  }
+
+  function switchLang(l: Lang) {
+    if (l === lang) return;
+    setLang(l);
+    sayLanguage(l);
+  }
+
   function beginRide(l: Lang) {
     setLang(l);
+    sayLanguage(l);
     setStage("ride");
     // The language tap is a real touch, so full screen is allowed here.
     if (kiosk && !document.fullscreenElement) document.documentElement.requestFullscreen?.().catch(() => {});
@@ -484,7 +498,7 @@ export default function V5App() {
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
         {LANGS.map((l) => (
-          <button key={l.id} className="v5-lang" aria-pressed={lang === l.id} onClick={() => setLang(l.id)}>{l.label}</button>
+          <button key={l.id} className="v5-lang" aria-pressed={lang === l.id} onClick={() => switchLang(l.id)}>{l.label}</button>
         ))}
         <button className="v5-iconbtn" style={{ marginInlineStart: 8 }} aria-label={s.settings} onClick={() => setSheet("settings")}>
           <Icon name="settings" size={18} />

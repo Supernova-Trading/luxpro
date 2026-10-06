@@ -11,7 +11,7 @@ import { remote, type RemoteCmd, type TabletState } from "./api";
 // v5.23 (owner's feedback): the buttons sit at the top, where nothing on the
 // page (like Vercel's preview toolbar) can cover them, and every tap reports
 // back: Sending → Waiting for the tablet → Done on the tablet ✓, or why not.
-// v5.26 (owner): just two big buttons. End trip runs the drop-off chain on
+// v5.26 (owner): just two big buttons (v5.29: New passenger on top). End trip runs the drop-off chain on
 // the tablet (nearly there now, thank-you screen 2 minutes later, with a
 // countdown and Cancel here); New passenger resets it for the next ride.
 const PHONE_KEY = "luxpro.v5.phone";
@@ -200,6 +200,13 @@ export default function RemotePage() {
 
       {/* Two big buttons first, at the top, where nothing can sit over them */}
       <section className="v5-rm-actions" aria-label="Send to the tablet">
+        <button className="v5-rm-btn v5-rm-wide v5-rm-big" data-armed={armed} disabled={sending} onClick={newPassenger}>
+          <Icon name="history" size={30} />
+          <span className="v5-rm-btn-text">
+            <span>{armed ? "Tap again to clear the tablet" : "New passenger"}</span>
+            <small>{armed ? "Clears everything and shows Welcome" : "Restart the tablet for the next ride"}</small>
+          </span>
+        </button>
         {endsAt ? (
           <div className="v5-rm-ending">
             <span className="v5-rm-ending-t">
@@ -217,13 +224,6 @@ export default function RemotePage() {
             </span>
           </button>
         )}
-        <button className="v5-rm-btn v5-rm-wide v5-rm-big" data-armed={armed} disabled={sending} onClick={newPassenger}>
-          <Icon name="history" size={30} />
-          <span className="v5-rm-btn-text">
-            <span>{armed ? "Tap again to clear the tablet" : "New passenger"}</span>
-            <small>{armed ? "Clears everything and shows Welcome" : "Restart the tablet for the next ride"}</small>
-          </span>
-        </button>
       </section>
 
       {/* Tablet music volume, in 10% steps like the tablet's own − / + */}
