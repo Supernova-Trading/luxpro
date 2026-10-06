@@ -21,6 +21,8 @@ import { useDeck } from "./useDeck";
 import { nightFor, type NightMode } from "./night";
 import WordGame from "./WordGame";
 import GameBoundary from "./GameBoundary";
+import RevolutQr from "./RevolutQr";
+import { DEFAULT_DRIVER, readDriver, saveDriver, personalise, personaliseByLang, type DriverProfile } from "./driverProfile";
 import { newPrize, answer as prizeAnswer, take as prizeTake, keepPlaying, restart as prizeRestart, lastCall as prizeLastCall, TIER_KEYS } from "./games/prize";
 import type { MinesSave } from "./games/MinesGame";
 import type { SnakeSave } from "./games/SnakeGame";
@@ -76,7 +78,6 @@ const HOLD_FOR_DRIVER_MS = 1500;   // hold the wordmark this long to open the Dr
 const WELCOME_WAIT_S = 30;         // no language picked by then: carry on in English (owner, v5.24)
 const END_TRIP_MS = 120_000;       // End trip: "nearly there" now, thank-you screen this much later (owner, v5.26)
 const VOICE_MIN = 20; // the voice can be quieter, never silent: a muted request would look sent
-const AMISH_PHONE = { tel: "07438537561", shown: "07438 537 561" }; // as in the live app (Modals.tsx)
 
 // − / + in 10% steps, never a slider: precise sliding fails on bumps.
 function Volume({ label, value, min = 0, onChange }: { label: string; value: number; min?: number; onChange: (v: number) => void }) {
@@ -120,7 +121,18 @@ export default function V5App() {
   const { lang, setLang, isRTL, radios: liveRadios } = useLanguage();
   // The live station list plus v5's extra stations (stations.ts)
   const radios = useMemo(() => stationsFor(lang, liveRadios), [lang, liveRadios]);
-  const s: V5Strings = STRINGS[lang];
+  // The driver's details fill every word, spoken line and the QR (v5.35)
+  const [driver, setDriver] = useState<DriverProfile>(DEFAULT_DRIVER);
+  useEffect(() => { setDriver(readDriver()); }, []);
+  const T = useMemo(() => ({
+    en: personalise(STRINGS.en, driver, "en"),
+    es: personalise(STRINGS.es, driver, "es"),
+    ur: personalise(STRINGS.ur, driver, "ur"),
+  }), [driver]);
+  const SP = useMemo(() => personalise(SPEECH, driver, "en"), [driver]);
+  const AN = useMemo(() => personaliseByLang(ANNOUNCE, driver), [driver]);
+  const driverName = lang === "ur" && driver.nameUr ? driver.nameUr : driver.name;
+  const s: V5Strings = T[lang];
   const music = useMusic(radios, lang);
   const [voiceVol, setVoiceVol] = useState(100);
   const [nightMode, setNightMode] = useState<NightMode>("auto");
@@ -316,10 +328,10 @@ export default function V5App() {
     const on = !requests[key];
     setRequests((p) => ({ ...p, [key]: on }));
     if (on) {
-      speech.say(key, SPEECH.requests[key].on, () => failRequest(key));
+      speech.say(key, SP.requests[key].on, () => failRequest(key));
     } else if (!speech.withdraw(key)) {
       // Only say "no need" if the request was actually heard.
-      speech.say(`${key}:off`, SPEECH.requests[key].off);
+      speech.say(`${key}:off`, SP.requests[key].off);
     }
   }
 
@@ -328,11 +340,11 @@ export default function V5App() {
     const dropped = speech.withdraw("climate");
     if (climate === side) {
       setClimate(null);
-      if (!dropped) speech.say("climate:off", SPEECH.climate.off);
+      if (!dropped) speech.say("climate:off", SP.climate.off);
       return;
     }
     setClimate(side);
-    speech.say("climate", SPEECH.climate[side], () => {
+    speech.say("climate", SP.climate[side], () => {
       setClimate(null);
       showToast(s.didntHear);
     });
@@ -348,7 +360,7 @@ export default function V5App() {
     }
     speech.withdraw("tip");
     setTip(key);
-    speech.say("tip", SPEECH.tip[key], () => {
+    speech.say("tip", SP.tip[key], () => {
       setTip(null);
       showToast(s.didntHear);
     });
@@ -360,10 +372,10 @@ export default function V5App() {
   }
 
   // "Play with Amish": said once per game per ride; a repeat tap is silent.
-  function askAmishToPlay(key: "quiz" | "riddles") {
+  function askDriverToPlay(key: "quiz" | "riddles") {
     if (!passBump(`game:${key}`) || asked[key]) return;
     setAsked((p) => ({ ...p, [key]: true }));
-    speech.say(`game:${key}`, SPEECH.games[key], () => {
+    speech.say(`game:${key}`, SP.games[key], () => {
       setAsked((p) => ({ ...p, [key]: false }));
       showToast(s.didntHear);
     });
@@ -375,8 +387,8 @@ export default function V5App() {
     const won = prizeTake(prize);
     if (won === prize) return;
     setPrize(won);
-    const tier = STRINGS.en.tiers[TIER_KEYS[won.tier]];
-    speech.say("prize", SPEECH.prize(tier, won.correct), () => showToast(s.didntHear));
+    const tier = T.en.tiers[TIER_KEYS[won.tier]];
+    speech.say("prize", SP.prize(tier, won.correct), () => showToast(s.didntHear));
   }
 
   function newRide() {
@@ -403,7 +415,7 @@ export default function V5App() {
   function newPassenger() {
     newRide();
     setStage("welcome");
-    speech.announce("announce", ANNOUNCE.welcome, "en");
+    speech.announce("announce", AN.welcome, "en");
   }
 
   // Domino (owner, v5.26): Amish presses End trip about 2 minutes before
@@ -413,7 +425,7 @@ export default function V5App() {
     if (stage === "farewell" || endAt) return;
     if (stage === "welcome") setStage("ride");
     setNearly(true);
-    speech.announce("announce", ANNOUNCE.nearly, lang);
+    speech.announce("announce", AN.nearly, lang);
     setEndAt(Date.now() + END_TRIP_MS);
     // A prize passed up or still waiting: offer it once more before arriving
     const lc = prizeLastCall(prize);
@@ -437,7 +449,7 @@ export default function V5App() {
   function nearlyThere() {
     if (stage !== "ride") return;
     setNearly(true);
-    speech.announce("announce", ANNOUNCE.nearly, lang);
+    speech.announce("announce", AN.nearly, lang);
   }
 
   // Amish hears which language the passenger chose (owner, v5.29): one
@@ -468,7 +480,7 @@ export default function V5App() {
     setNearly(false);
     setEndAt(null);
     setStage("farewell");
-    speech.announce("announce", ANNOUNCE.arrived, lang);
+    speech.announce("announce", AN.arrived, lang);
   }
 
   function toggleFullscreen() {
@@ -534,8 +546,8 @@ export default function V5App() {
         </section>
 
         {/* ── Ask Amish: on/off; "on" shows as a gold ring + check badge ── */}
-        <section aria-label={s.askAmish}>
-          <SectionHead title={s.askAmish} hint={s.askAmishHint} />
+        <section aria-label={s.askDriver}>
+          <SectionHead title={s.askDriver} hint={s.askDriverHint} />
           <div className="v5-grid4">
             {COMFORT.map((it) => (
               <Circle key={it.key} icon={it.icon} color={it.color}
@@ -662,7 +674,7 @@ export default function V5App() {
               <span className="v5-set-line">
                 <Icon name="volume" size={20} style={{ color: "var(--ink)" }} />
                 <span className="v5-label" style={{ flex: 1 }}>{s.voiceVolume}</span>
-                <button className="v5-pill" onClick={() => { if (passBump("test")) speech.say("test", SPEECH.test); }}>
+                <button className="v5-pill" onClick={() => { if (passBump("test")) speech.say("test", SP.test); }}>
                   <Icon name="play" size={16} />{s.testVoice}
                 </button>
               </span>
@@ -695,10 +707,10 @@ export default function V5App() {
             <div className="v5-row">
               <Icon name="phone" size={20} style={{ color: "var(--i-green)" }} />
               <span className="v5-set-text">
-                <span className="v5-label">{s.contactAmish}</span>
+                <span className="v5-label">{s.contactDriver}</span>
                 <span className="v5-sub">{s.contactSub}</span>
               </span>
-              <span className="v5-set-phone" dir="ltr" style={{ userSelect: "text" }}>{AMISH_PHONE.shown}</span>
+              <span className="v5-set-phone" dir="ltr" style={{ userSelect: "text" }}>{driver.phone}</span>
             </div>
             {/* Full screen and New ride are Amish's now: Driver panel (hold the LuxPro name) */}
           </div>
@@ -740,7 +752,7 @@ export default function V5App() {
           onKeep={() => setPrize((p) => keepPlaying(p))}
           onRestart={() => setPrize((p) => prizeRestart(p))}
           asked={!!asked[game]}
-          onAsk={() => askAmishToPlay(game)}
+          onAsk={() => askDriverToPlay(game)}
           onClose={() => setGame(null)}
           top={halfTop}
         />
@@ -765,7 +777,7 @@ export default function V5App() {
           ) : (
             <div className="v5-qr">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/qr-tip.png" alt={s.qrTitle} width={260} height={260} onError={() => setQrFailed(true)} />
+              <RevolutQr driver={driver} alt={s.qrTitle} onFail={() => setQrFailed(true)} />
             </div>
           )}
           {!qrFailed && <span className="v5-label" style={{ fontWeight: 400, color: "var(--body)", maxWidth: 420 }}>{s.qrSub}</span>}
@@ -774,8 +786,8 @@ export default function V5App() {
       )}
 
       {nearly && stage === "ride" && <NearlyBanner s={s} onClose={() => setNearly(false)} />}
-      {stage === "welcome" && <Welcome onBegin={beginRide} secondsLeft={welcomeLeft} />}
-      {stage === "farewell" && <Farewell s={s} tipped={!!tip} tipButtons={tipOpts} phone={AMISH_PHONE.shown}
+      {stage === "welcome" && <Welcome T={T} driver={driver} onBegin={beginRide} secondsLeft={welcomeLeft} />}
+      {stage === "farewell" && <Farewell s={s} name={driverName} trips={driver.trips} tipped={!!tip} tipButtons={tipOpts} phone={driver.phone}
         prize={prize.status === "claimed" ? s.tiers[TIER_KEYS[prize.tier]] : null} />}
       {driverOpen && (
         <Driver
@@ -790,6 +802,8 @@ export default function V5App() {
           onCancelEnd={cancelEnd}
           onFullscreen={toggleFullscreen}
           onKiosk={changeKiosk}
+          driver={driver}
+          onDriver={(p) => { saveDriver(p); setDriver(p); }}
         />
       )}
 

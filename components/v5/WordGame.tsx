@@ -229,8 +229,8 @@ export default function WordGame({ kind, s, lang, deck, prize, onAnswer, onTake,
         <button className="v5-gtile v5-amish" aria-pressed={asked} onClick={onAsk}>
           <span className="v5-gtile-icon"><Icon name="comment" size={20} style={{ color: "var(--i-teal)" }} /></span>
           <span style={{ display: "grid", gap: 2, minWidth: 0 }}>
-            <span className="v5-label">{s.playWithAmish}</span>
-            <span className="v5-sub">{s.playWithAmishSub}</span>
+            <span className="v5-label">{s.playWithDriver}</span>
+            <span className="v5-sub">{s.playWithDriverSub}</span>
           </span>
           {asked && <span className="v5-badge" aria-hidden style={{ top: 8, insetInlineEnd: 8 }}><Icon name="check" size={13} strokeWidth={2.4} /></span>}
         </button>

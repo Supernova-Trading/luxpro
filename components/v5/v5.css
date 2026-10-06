@@ -271,7 +271,16 @@ a.v5-row { color: inherit; text-decoration: none; }
 .v5-welcome { justify-content: space-between; padding: 128px 40px 36px; }
 .v5-welcome-top { display: grid; gap: 22px; justify-items: center; }
 .v5-welcome-low { display: grid; gap: 16px; justify-items: center; width: 100%; }
-.v5-profile { display: grid; gap: 10px; justify-items: center; }
+/* Driver card (v5.35): the name on its own tile; gold only on the initial
+   and the stars */
+.v5-dcard { display: flex; align-items: center; gap: 20px; max-width: 100%; padding: 18px 28px 18px 18px; border-radius: 16px; background: var(--s1); border: 1px solid var(--line-strong); text-align: start; }
+.v5-dcard-mono { flex: 0 0 72px; height: 72px; display: flex; align-items: center; justify-content: center; border-radius: 9999px; background: var(--gold-tint); border: 1px solid var(--gold-line); color: var(--gold); font-family: var(--serif); font-size: var(--t-2xl); line-height: 1; }
+.v5-dcard-text { display: grid; gap: 4px; min-width: 0; }
+.v5-dcard-label { font-size: var(--t-xs); font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.v5-dcard-name { font-family: var(--serif); font-size: var(--t-2xl); line-height: 1.15; color: var(--ink); overflow-wrap: anywhere; }
+.v5-dcard-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 12px; }
+.v5[data-lang="ur"] .v5-dcard-name { font-size: var(--t-xl); line-height: 1.7; }
+.v5-welcome-q { justify-self: stretch; width: 100%; max-width: 560px; margin-inline: auto; font-family: var(--serif); font-size: var(--t-lg); color: var(--ink); text-align: start; }
 .v5-stars { display: inline-flex; gap: 6px; color: var(--gold); }
 .v5-profile-line { font-size: var(--t-xs); font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
 .v5-ride-langs { display: grid; width: 100%; max-width: 560px; border-top: 1px solid var(--line-strong); }
@@ -308,6 +317,14 @@ a.v5-row { color: inherit; text-decoration: none; }
 .v5-drv-btn[data-gold="true"] .v5-sub { color: var(--on-gold); }
 .v5-drv-btn[data-primary][aria-pressed="true"] { border-color: var(--gold-line); }
 .v5-drv-actions > .v5-drv-btn:last-child { border-bottom: 0; }
+/* Driver details form (v5.35) */
+.v5-drv-form { display: grid; gap: 12px; }
+.v5-drv-field { display: grid; gap: 4px; }
+.v5-drv-input { display: flex; align-items: center; gap: 4px; height: 52px; padding-inline: 14px; border-radius: 8px; background: var(--s1); border: 1px solid var(--line-strong); color: var(--muted); }
+.v5-drv-input:focus-within { border-color: var(--ink); }
+.v5-drv-input input { flex: 1; min-width: 0; height: 100%; background: none; border: 0; outline: 0; color: var(--ink); font: inherit; font-size: var(--t-md); -webkit-user-select: text; user-select: text; }
+.v5-drv-form-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: flex-end; }
+.v5-drv-form-actions > .v5-next { min-width: 140px; }
 .v5-drv-pair { display: grid; gap: 6px; justify-items: center; padding: 14px; border-radius: 16px; background: var(--s0); border: 1px solid var(--gold-line); text-align: center; }
 .v5-drv-pair b { font-size: var(--t-md); color: var(--ink); word-break: break-all; }
 .v5-drv-code { font-size: var(--t-2xl); font-weight: 600; letter-spacing: 0.12em; color: var(--gold); font-variant-numeric: tabular-nums; }
