@@ -6,7 +6,7 @@ import { Icon, type IconName } from "../Icon";
 import { useLanguage } from "@/hooks/useLanguage";
 import { PLAYLISTS } from "./playlists";
 import type { Lang } from "@/lib/translations";
-import { STRINGS, SPEECH, type RequestKey, type TipKey, type GameKey, type V5Strings } from "./strings";
+import { STRINGS, SPEECH, ANNOUNCE, type RequestKey, type TipKey, type GameKey, type V5Strings } from "./strings";
 import { useSpeech } from "./useSpeech";
 import { useMusic } from "./useMusic";
 import MusicHero from "./MusicHero";
@@ -73,6 +73,7 @@ const SETTINGS_KEY = "luxpro.v5.settings"; // settings survive a reload; ride st
 const FAREWELL_RESET_MS = 180_000; // after drop-off, the tablet resets itself for the next passenger
 const NEARLY_MS = 20_000;          // how long the "Nearly there" banner stays
 const HOLD_FOR_DRIVER_MS = 1500;   // hold the wordmark this long to open the Driver panel
+const WELCOME_WAIT_S = 30;         // no language picked by then: carry on in English (owner, v5.24)
 const VOICE_MIN = 20; // the voice can be quieter, never silent: a muted request would look sent
 const AMISH_PHONE = { tel: "07438537561", shown: "07438 537 561" }; // as in the live app (Modals.tsx)
 
@@ -214,6 +215,19 @@ export default function V5App() {
 
   useKiosk(kiosk);
 
+  // Welcome: no language picked within WELCOME_WAIT_S → English, app shown.
+  const [welcomeLeft, setWelcomeLeft] = useState(WELCOME_WAIT_S);
+  useEffect(() => {
+    if (stage !== "welcome") return;
+    setWelcomeLeft(WELCOME_WAIT_S);
+    const started = Date.now();
+    const t = setInterval(() => {
+      const left = WELCOME_WAIT_S - Math.floor((Date.now() - started) / 1000);
+      if (left <= 0) { clearInterval(t); setStage("ride"); } else setWelcomeLeft(left);
+    }, 1000);
+    return () => clearInterval(t);
+  }, [stage]);
+
   // Drop-off: the farewell stays a few minutes, then the tablet resets itself.
   useEffect(() => {
     if (stage !== "farewell") return;
@@ -244,7 +258,7 @@ export default function V5App() {
   };
   const phone = useRemote(rideReport, (cmd: RemoteCmd) => {
     if (cmd === "new_passenger") newPassenger();
-    else if (cmd === "nearly") { if (stage === "ride") setNearly(true); }
+    else if (cmd === "nearly") nearlyThere();
     else if (cmd === "end_ride") endRide();
   });
 
@@ -371,6 +385,13 @@ export default function V5App() {
   function newPassenger() {
     newRide();
     setStage("welcome");
+    speech.announce("announce", ANNOUNCE.welcome, "en");
+  }
+
+  function nearlyThere() {
+    if (stage !== "ride") return;
+    setNearly(true);
+    speech.announce("announce", ANNOUNCE.nearly, lang);
   }
 
   function beginRide(l: Lang) {
@@ -386,6 +407,7 @@ export default function V5App() {
     setQr(false);
     setNearly(false);
     setStage("farewell");
+    speech.announce("announce", ANNOUNCE.arrived, lang);
   }
 
   function toggleFullscreen() {
@@ -691,7 +713,7 @@ export default function V5App() {
       )}
 
       {nearly && stage === "ride" && <NearlyBanner s={s} onClose={() => setNearly(false)} />}
-      {stage === "welcome" && <Welcome onBegin={beginRide} />}
+      {stage === "welcome" && <Welcome onBegin={beginRide} secondsLeft={welcomeLeft} />}
       {stage === "farewell" && <Farewell s={s} tipped={!!tip} tipButtons={tipOpts} phone={AMISH_PHONE.shown} />}
       {driverOpen && (
         <Driver
@@ -701,7 +723,7 @@ export default function V5App() {
           phone={phone}
           onClose={() => setDriverOpen(false)}
           onNewPassenger={newPassenger}
-          onNearly={() => setNearly(true)}
+          onNearly={nearlyThere}
           onEndRide={endRide}
           onFullscreen={toggleFullscreen}
           onKiosk={changeKiosk}
@@ -711,6 +733,14 @@ export default function V5App() {
       {toast && <div className="v5-toast" role="status">{toast}</div>}
 
       {/* Hidden SoundCloud player — driven entirely by the hero's controls */}
+      {/* Android sometimes needs one tap inside the player itself (v5.23) */}
+      {music.sc.needsTap && music.source === "playlists" && (
+        <div className="v5-sc-tap" role="dialog" aria-label={s.tapToStart}>
+          <span className="v5-label">{s.tapToStart}</span>
+          <span className="v5-sc-slot" aria-hidden />
+          <button className="v5-pill" onClick={() => music.sc.pause()}>{s.close}</button>
+        </div>
+      )}
       {music.sc.src && (
         <iframe
           key={music.sc.src}
@@ -718,9 +748,10 @@ export default function V5App() {
           src={music.sc.src}
           title="Playlist player"
           allow="autoplay"
-          aria-hidden
+          aria-hidden={!(music.sc.needsTap && music.source === "playlists")}
           tabIndex={-1}
-          style={{ position: "absolute", width: 1, height: 1, opacity: 0, pointerEvents: "none", border: 0 }}
+          className={music.sc.needsTap && music.source === "playlists" ? "v5-sc-frame" : undefined}
+          style={music.sc.needsTap && music.source === "playlists" ? undefined : { position: "absolute", width: 1, height: 1, opacity: 0, pointerEvents: "none", border: 0 }}
         />
       )}
     </div>

@@ -5,7 +5,9 @@ import { useCallback, useEffect, useRef } from "react";
 // Speech to Amish. Messages queue instead of cutting each other off, so back-
 // to-back requests are both heard (council round 4, in-car UX). A request
 // withdrawn before its message is spoken is dropped silently.
-type Item = { key: string; text: string; onError?: () => void };
+type Item = { key: string; text: string; onError?: () => void; lang?: string; voice?: SpeechSynthesisVoice | null };
+
+const BCP47: Record<string, string> = { en: "en-GB", es: "es-ES", ur: "ur-PK" };
 
 export function useSpeech(onDuck?: (ducked: boolean) => void, volume = 1) {
   const duckRef = useRef(onDuck);
@@ -45,9 +47,10 @@ export function useSpeech(onDuck?: (ducked: boolean) => void, volume = 1) {
     const item = queue.current.shift()!;
     current.current = item;
     const u = new SpeechSynthesisUtterance(item.text);
-    u.lang = "en-GB";
+    u.lang = item.lang ?? "en-GB";
     u.volume = volumeRef.current;
-    if (voice.current) u.voice = voice.current;
+    const v = item.voice !== undefined ? item.voice : voice.current;
+    try { if (v) u.voice = v; } catch { /* odd voice object: the default voice still speaks */ }
     const next = () => {
       current.current = null;
       pumpRef.current();
@@ -85,5 +88,22 @@ export function useSpeech(onDuck?: (ducked: boolean) => void, volume = 1) {
     if (typeof window !== "undefined" && "speechSynthesis" in window) window.speechSynthesis.cancel();
   }, []);
 
-  return { say, withdraw, clear };
+  /** Speak to the passenger in their language when the tablet has that voice,
+   *  otherwise in English (v5.24: the driver buttons' announcements). */
+  const announce = useCallback((key: string, lines: Record<string, string>, lang: string) => {
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+    let item: Item = { key, text: lines.en };
+    if (lang !== "en" && lines[lang]) {
+      const want = (BCP47[lang] ?? lang).toLowerCase();
+      const voices = window.speechSynthesis.getVoices();
+      const v = voices.find((x) => x.lang?.toLowerCase().replace("_", "-") === want)
+        ?? voices.find((x) => x.lang?.toLowerCase().startsWith(lang));
+      if (v) item = { key, text: lines[lang], lang: v.lang, voice: v };
+    }
+    queue.current = queue.current.filter((q) => q.key !== key); // a repeat replaces the waiting one
+    queue.current.push(item);
+    pumpRef.current();
+  }, []);
+
+  return { say, withdraw, clear, announce };
 }

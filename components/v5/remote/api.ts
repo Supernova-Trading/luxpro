@@ -29,6 +29,7 @@ export interface TabletState {
   tip: string | null;
   prize: { correct: number; status: string; tier: number };
   music: { source: string; title: string; playing: boolean };
+  lastCmd?: number; // id of the last phone command the tablet ran (v5.23)
 }
 
 export const remote = {
@@ -39,6 +40,8 @@ export const remote = {
     rpc<{ commands: { id: number; cmd: RemoteCmd }[]; paired: boolean } | null>("luxpro_tablet_sync", { p_car: car, p_secret: secret, p_state: state }),
   phonePair: (code: string) => rpc<{ car: string; token: string } | null>("luxpro_phone_pair", { p_code: code }),
   phoneCommand: (car: string, token: string, cmd: RemoteCmd) => rpc<boolean>("luxpro_phone_command", { p_car: car, p_token: token, p_cmd: cmd }),
+  /** Like phoneCommand, but returns the command's id (null = not paired) so the phone can wait for the tablet. */
+  phoneSend: (car: string, token: string, cmd: RemoteCmd) => rpc<number | null>("luxpro_phone_send", { p_car: car, p_token: token, p_cmd: cmd }),
   phoneState: (car: string, token: string) =>
     rpc<{ state: TabletState | Record<string, never>; state_at: string | null; now: string } | null>("luxpro_phone_state", { p_car: car, p_token: token }),
 };

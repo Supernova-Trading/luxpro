@@ -136,9 +136,9 @@ export default function Driver({ stage, isFS, kiosk, phone, onClose, onNewPassen
             <span className="v5-caption">Ride: {stage === "welcome" ? "waiting for passenger" : stage === "ride" ? "in progress" : "ended"}</span>
             {action("history", armed ? "Tap again to clear the tablet" : "New passenger",
               "Clears requests, tip, games and music; shows the welcome screen",
-              () => { if (armed) { setArmed(false); onNewPassenger(); onClose(); } else setArmed(true); }, { gold: armed })}
-            {action("map-pin", "Nearly there", "Tells the passenger ~5 minutes to go", () => { onNearly(); onClose(); })}
-            {action("hand", "End ride", "Shows the thank-you and tip screen", () => { onEndRide(); onClose(); })}
+              () => { if (armed) { setArmed(false); onClose(); onNewPassenger(); } else setArmed(true); }, { gold: armed })}
+            {action("map-pin", "Nearly there", "Tells the passenger ~5 minutes to go", () => { onClose(); onNearly(); })}
+            {action("hand", "End ride", "Shows the thank-you and tip screen", () => { onClose(); onEndRide(); })}
             {action(isFS ? "close" : "present", isFS ? "Exit full screen" : "Full screen", "", onFullscreen)}
             {action("tweaks", kiosk ? "Kiosk lock: on" : "Kiosk lock: off",
               "Keeps the app full screen, blocks Back and long-press menus", () => onKiosk(!kiosk), { on: kiosk })}

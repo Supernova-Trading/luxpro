@@ -96,6 +96,7 @@ export interface V5Strings {
   lives: string;
   nextPrize: string;      // "{n}", "{tier}"
   thinkTime: string;
+  tapToStart: string;
   showOptions: string;
   hint: string;
   hintText: string;       // "{x}"
@@ -243,6 +244,7 @@ export const STRINGS: Record<Lang, V5Strings> = {
     lives: "Lives",
     nextPrize: "{n} to {tier}",
     thinkTime: "Think it over…",
+    tapToStart: "Tap ▶ in the player once to start the music",
     showOptions: "Show the options",
     hint: "Hint",
     hintText: "Starts with “{x}”",
@@ -388,6 +390,7 @@ export const STRINGS: Record<Lang, V5Strings> = {
     lives: "Vidas",
     nextPrize: "{n} para el {tier}",
     thinkTime: "Piénselo…",
+    tapToStart: "Toque ▶ una vez en el reproductor para empezar la música",
     showOptions: "Ver las opciones",
     hint: "Pista",
     hintText: "Empieza por «{x}»",
@@ -533,6 +536,7 @@ export const STRINGS: Record<Lang, V5Strings> = {
     lives: "جانیں",
     nextPrize: "{tier} تک {n}",
     thinkTime: "سوچیے…",
+    tapToStart: "موسیقی شروع کرنے کے لیے پلیئر میں ایک بار ▶ دبائیں",
     showOptions: "جوابات دکھائیں",
     hint: "اشارہ",
     hintText: "پہلا حرف: {x}",
@@ -615,4 +619,25 @@ export const SPEECH: {
   test: "Amish, this is only a volume test.",
   // Said when the passenger takes a prize, so it can't be faked with a screenshot
   prize: (tier, n) => `Amish, the passenger has won the ${tier} prize, with ${n} correct answers.`,
+};
+
+// Said to the passenger when Amish presses Nearly there / End ride / New
+// passenger (phone or Driver panel). In the passenger's language when the
+// tablet has that voice, otherwise English (v5.24, owner).
+export const ANNOUNCE: Record<"nearly" | "arrived" | "welcome", Record<Lang, string>> = {
+  nearly: {
+    en: "We're nearly there. About five minutes to your destination. Please gather your belongings.",
+    es: "Casi hemos llegado. Faltan unos cinco minutos. Vaya recogiendo sus pertenencias, por favor.",
+    ur: "ہم تقریباً پہنچ گئے ہیں۔ تقریباً پانچ منٹ باقی ہیں۔ براہ کرم اپنا سامان سمیٹ لیں۔",
+  },
+  arrived: {
+    en: "We've arrived. Thank you for riding with Amish. Please check you have all your belongings. Have a wonderful day.",
+    es: "Hemos llegado. Gracias por viajar con Amish. Compruebe que lleva todas sus pertenencias. Que tenga un buen día.",
+    ur: "ہم پہنچ گئے ہیں۔ امیش کے ساتھ سفر کرنے کا شکریہ۔ براہ کرم اپنا سامان چیک کر لیں۔ آپ کا دن اچھا گزرے۔",
+  },
+  welcome: {
+    en: "Welcome aboard. Your driver today is Amish. Please choose your language on the screen.",
+    es: "Welcome aboard. Your driver today is Amish. Please choose your language on the screen.",
+    ur: "Welcome aboard. Your driver today is Amish. Please choose your language on the screen.",
+  },
 };

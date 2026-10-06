@@ -14,7 +14,7 @@ const LANG_CHOICES: { id: Lang; label: string }[] = [
 ];
 
 /** Welcome: each language button is written in its own language. */
-export function Welcome({ onBegin }: { onBegin: (l: Lang) => void }) {
+export function Welcome({ onBegin, secondsLeft }: { onBegin: (l: Lang) => void; secondsLeft: number }) {
   const en = STRINGS.en;
   return (
     <div className="v5-ride v5-welcome" role="dialog" aria-label={en.welcomeTitle}>
@@ -32,6 +32,7 @@ export function Welcome({ onBegin }: { onBegin: (l: Lang) => void }) {
         ))}
       </div>
       <span className="v5-sub" style={{ maxWidth: 420 }}>{en.welcomeNote}</span>
+      <span className="v5-micro" aria-live="off">Continuing in English in {secondsLeft}s</span>
     </div>
   );
 }

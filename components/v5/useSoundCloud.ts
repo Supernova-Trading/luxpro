@@ -18,6 +18,7 @@ type ScWidget = {
   prev: () => void;
   setVolume: (v: number) => void;
   skip: (index: number) => void;
+  getPosition: (cb: (ms: number) => void) => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getSounds: (cb: (sounds: any[]) => void) => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -75,6 +76,23 @@ export function useSoundCloud() {
   const [playing, setPlaying] = useState(false);
   const [failed, setFailed] = useState(false);
   const [track, setTrack] = useState<Track | null>(null);
+  // Android Chrome sometimes reports "playing" while a hidden cross-origin
+  // player makes no sound until it is tapped once. If the song hasn't moved
+  // 3 s after Play, the app shows the player for one tap (v5.23).
+  const [needsTap, setNeedsTap] = useState(false);
+  const wantPlay = useRef(false);
+  const checkTimer = useRef<ReturnType<typeof setTimeout>>();
+
+  /** After a Play: if the position is still at 0 three seconds later, ask for a tap. */
+  const checkStarted = useCallback(() => {
+    wantPlay.current = true;
+    clearTimeout(checkTimer.current);
+    checkTimer.current = setTimeout(() => {
+      const w = widgetRef.current;
+      if (!w || !wantPlay.current) return;
+      w.getPosition((ms) => { if (wantPlay.current && (ms ?? 0) < 300) setNeedsTap(true); });
+    }, 3000);
+  }, []);
 
   /** Jump to a random unheard song and play it. */
   const jumpRandom = useCallback((w: ScWidget) => {
@@ -86,8 +104,9 @@ export function useSoundCloud() {
       historyRef.current.push(i);
       w.skip(i);
       setTimeout(() => w.play(), 300);
+      checkStarted();
     });
-  }, []);
+  }, [checkStarted]);
 
   useEffect(() => {
     setReady(false);
@@ -121,7 +140,11 @@ export function useSoundCloud() {
           if (autoplayRef.current) { shuffledRef.current = true; jumpRandom(widget!); }
         });
         widget.bind(E.PLAY, () => { if (!cancelled) { setPlaying(true); refresh(); } });
+        // (A blocked start also fires PAUSE, so this must not cancel the
+        // "did it really start?" check — only our own pause() does.)
         widget.bind(E.PAUSE, () => { if (!cancelled) setPlaying(false); });
+        // The song really is moving: the one-tap prompt can go.
+        widget.bind(E.PLAY_PROGRESS, () => { if (!cancelled) setNeedsTap(false); });
         // End of a song: carry on with another random one
         widget.bind(E.FINISH, () => { if (!cancelled) { setPlaying(false); jumpRandom(widget!); } });
         widget.bind(E.ERROR, () => { if (!cancelled) setFailed(true); });
@@ -158,9 +181,13 @@ export function useSoundCloud() {
   const play = useCallback(() => {
     const w = widgetRef.current;
     if (!w) return;
-    if (!shuffledRef.current) { shuffledRef.current = true; jumpRandom(w); } else w.play();
-  }, [jumpRandom]);
-  const pause = useCallback(() => widgetRef.current?.pause(), []);
+    // Start sound inside this tap (some tablets only allow it here), then
+    // move to a random song while it is already playing.
+    w.play();
+    checkStarted();
+    if (!shuffledRef.current) { shuffledRef.current = true; jumpRandom(w); }
+  }, [jumpRandom, checkStarted]);
+  const pause = useCallback(() => { wantPlay.current = false; setNeedsTap(false); widgetRef.current?.pause(); }, []);
   const next = useCallback(() => {
     const w = widgetRef.current;
     if (w) { shuffledRef.current = true; jumpRandom(w); }
@@ -178,5 +205,5 @@ export function useSoundCloud() {
     widgetRef.current?.setVolume(v);
   }, []);
 
-  return { iframeRef, src, ready, playing, failed, track, load, unload, play, pause, next, prev, setVolume };
+  return { iframeRef, src, ready, playing, failed, track, needsTap, load, unload, play, pause, next, prev, setVolume };
 }

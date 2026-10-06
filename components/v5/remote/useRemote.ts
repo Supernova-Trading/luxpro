@@ -29,6 +29,8 @@ export function useRemote(state: TabletState, onCommand: (cmd: RemoteCmd) => voi
   const cmdRef = useRef(onCommand);
   cmdRef.current = onCommand;
   const seen = useRef(new Set<number>());
+  const lastCmd = useRef(0);           // reported back so the phone can show "Done"
+  const pairing = useRef<Promise<string | null> | null>(null); // one Connect at a time
 
   useEffect(() => { setId(readId()); }, []);
 
@@ -42,7 +44,7 @@ export function useRemote(state: TabletState, onCommand: (cmd: RemoteCmd) => voi
       let wait = EVERY_MS;
       if (document.visibilityState === "visible") {
         try {
-          const r = await remote.sync(id.car, id.secret, stateRef.current);
+          const r = await remote.sync(id.car, id.secret, { ...stateRef.current, lastCmd: lastCmd.current });
           if (r) {
             setOnline(true);
             setPaired(r.paired);
@@ -50,6 +52,7 @@ export function useRemote(state: TabletState, onCommand: (cmd: RemoteCmd) => voi
               if (seen.current.has(c.id)) continue;
               seen.current.add(c.id);
               cmdRef.current(c.cmd);
+              lastCmd.current = Math.max(lastCmd.current, c.id);
             }
           } else { setOnline(false); wait = BACKOFF_MS; }
         } catch { setOnline(false); wait = BACKOFF_MS; }
@@ -61,7 +64,14 @@ export function useRemote(state: TabletState, onCommand: (cmd: RemoteCmd) => voi
   }, [id]);
 
   /** First time: give this tablet an id and secret; then get a pairing code. */
-  const pairCode = useCallback(async (): Promise<string | null> => {
+  const pairCode = useCallback((): Promise<string | null> => {
+    // A double tap on "Connect phone" used to register the tablet twice.
+    if (pairing.current) return pairing.current;
+    pairing.current = makeCode().finally(() => { pairing.current = null; });
+    return pairing.current;
+  }, []);
+
+  async function makeCode(): Promise<string | null> {
     let me = readId();
     if (!me) {
       me = { car: crypto.randomUUID(), secret: randomHex(32) };
@@ -70,7 +80,7 @@ export function useRemote(state: TabletState, onCommand: (cmd: RemoteCmd) => voi
       setId(me);
     }
     return remote.pairCode(me.car, me.secret);
-  }, []);
+  }
 
   const unpair = useCallback(async () => {
     const me = readId();
