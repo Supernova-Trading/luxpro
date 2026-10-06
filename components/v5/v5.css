@@ -237,7 +237,13 @@ a.v5-row { color: inherit; text-decoration: none; }
 .v5-set-line { display: flex; align-items: center; gap: 16px; }
 .v5-sheet .v5-seg > button { height: 48px; }
 .v5-full { position: absolute; inset: 0; z-index: 50; background: var(--s0); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; padding: 24px; text-align: center; animation: v5-fade 240ms var(--ease-out); }
-.v5-qr { background: oklch(0.985 0.002 90); padding: 16px; border-radius: 4px; line-height: 0; }
+/* Tip QR card (v5.39, owner): crisp black on white, an "R" badge in the
+   middle and the Revolut username underneath, like a printed tip card */
+.v5-qr { display: grid; gap: 14px; justify-items: center; padding: 24px 24px 18px; border-radius: 16px; background: oklch(1 0 0); }
+.v5-qr-code { position: relative; width: 280px; height: 280px; }
+.v5-qr-svg, .v5-qr-svg svg { display: block; width: 100%; height: 100%; }
+.v5-qr-badge { position: absolute; left: 50%; top: 50%; display: flex; align-items: center; justify-content: center; width: 64px; height: 64px; transform: translate(-50%, -50%); border-radius: 9999px; background: oklch(0 0 0); color: oklch(1 0 0); box-shadow: 0 0 0 7px oklch(1 0 0); font-family: var(--font-inter), "Inter", system-ui, sans-serif; font-size: 36px; font-weight: 800; line-height: 1; }
+.v5-qr-handle { font-family: var(--font-inter), "Inter", system-ui, sans-serif; font-size: var(--t-lg); font-weight: 600; color: oklch(0 0 0); line-height: 1.2; }
 .v5-toast { position: absolute; inset-inline: 20px; bottom: 20px; z-index: 60; padding: 14px 18px; border-radius: 16px; background: var(--s2); border: 1px solid var(--line-strong); color: var(--ink); font-size: var(--t-md); text-align: center; animation: v5-fade 200ms var(--ease-out); }
 
 /* ── Games: Quiz / Riddles full screen (v5.5) ──────────────────────────── */
@@ -401,7 +407,7 @@ a.v5-row { color: inherit; text-decoration: none; }
 .v5-rm-row { display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 6px 14px; border-radius: 16px; background: var(--s1); border: 1px solid var(--line); }
 .v5-rm-icons { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 8px; }
 .v5-rm-icons > li { width: 42px; height: 42px; border-radius: 9999px; display: flex; align-items: center; justify-content: center; background: var(--gold-tint); border: 1px solid var(--gold-line); color: var(--gold); }
-.v5-rm-mini { margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.v5-rm-mini { margin: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr) minmax(0, 1fr); gap: 6px; }
 .v5-rm-mini > div { display: flex; align-items: center; gap: 8px; min-width: 0; min-height: 48px; padding: 6px 10px; border-radius: 8px; background: var(--s1); border: 1px solid var(--line); }
 .v5-rm-mini dt { display: flex; color: var(--muted); flex-shrink: 0; }
 .v5-rm-mini dd { margin: 0; min-width: 0; font-size: var(--t-sm); font-weight: 600; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -455,6 +461,8 @@ a.v5-row { color: inherit; text-decoration: none; }
 .v5-prize-tier { font-family: var(--serif); font-size: var(--t-4xl); line-height: 1.1; color: var(--gold); }
 .v5-prize-actions { display: grid; gap: 12px; width: 100%; max-width: 440px; margin-top: 8px; }
 .v5-prize-actions > button { width: 100%; }
+/* Blocks scoreboard in the end-of-game pop-up (v5.39): the points for each prize */
+.v5-prize-ladder { width: 100%; max-width: 560px; }
 
 /* Half-screen game panel (v5.13 mockup): sits under the tip box, below the
    sheets, so music, tips and the picker stay usable while playing. */
@@ -625,6 +633,7 @@ a.v5-row { color: inherit; text-decoration: none; }
 }
 .v5[data-night="true"] .v5-hero-art { opacity: 0.35; }
 .v5[data-night="true"] .v5-qr { background: oklch(0.90 0.002 90); } /* still scans, no glare */
+.v5[data-night="true"] .v5-qr-badge { box-shadow: 0 0 0 7px oklch(0.90 0.002 90); }
 
 /* ── Old Chrome (before 111: no oklch, no color-mix) ─────────────────────
    The same colours as plain hex, converted from the tokens above
@@ -658,4 +667,8 @@ a.v5-row { color: inherit; text-decoration: none; }
   .v5-opt[data-result="right"] { background: #2b3b2b; }
   .v5-opt[data-result="wrong"] { background: #442e2a; }
   .v5[data-night="true"] .v5-qr { background: #dededc; }
+  .v5-qr { background: #ffffff; }
+  .v5-qr-badge { background: #000000; color: #ffffff; box-shadow: 0 0 0 7px #ffffff; }
+  .v5-qr-handle { color: #000000; }
+  .v5[data-night="true"] .v5-qr-badge { box-shadow: 0 0 0 7px #dededc; }
 }

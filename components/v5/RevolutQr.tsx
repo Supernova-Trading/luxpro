@@ -1,27 +1,33 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { DEFAULT_DRIVER, revolutLink, type DriverProfile } from "./driverProfile";
+import { revolutLink, type DriverProfile } from "./driverProfile";
 
-// The Revolut tipping QR (v5.35). Amish keeps his tested image
-// (public/qr-tip.png, confirmed scanning to his page 2026-10-06); any other
-// driver's QR is drawn on the tablet from their Revolut username.
+// The Revolut tipping QR (v5.35; v5.39 owner: "the current one is low
+// quality"). Drawn on the tablet as a sharp vector from the driver's Revolut
+// username — Amish's included (his old image encoded the same link,
+// https://revolut.me/amishg4sqm, checked 2026-10-06). Plain black on white,
+// with an "R" badge in the middle; the high error-correction level (H) keeps
+// it scannable with the badge covering the centre.
 export default function RevolutQr({ driver, alt, onFail }: { driver: DriverProfile; alt: string; onFail: () => void }) {
-  const isDefault = driver.revolut === DEFAULT_DRIVER.revolut;
-  const [src, setSrc] = useState<string | null>(isDefault ? "/qr-tip.png" : null);
+  const [svg, setSvg] = useState<string | null>(null);
 
   useEffect(() => {
-    if (isDefault) { setSrc("/qr-tip.png"); return; }
     if (!driver.revolut) { onFail(); return; }
     let off = false;
+    setSvg(null);
     import("qrcode")
-      .then((Q) => Q.toDataURL(revolutLink(driver), { width: 520, margin: 0, errorCorrectionLevel: "M", color: { dark: "#000000", light: "#00000000" } }))
-      .then((u) => { if (!off) setSrc(u); })
+      .then((Q) => Q.toString(revolutLink(driver), { type: "svg", errorCorrectionLevel: "H", margin: 0, color: { dark: "#000000", light: "#0000" } }))
+      .then((s) => { if (!off) setSvg(s); })
       .catch(() => { if (!off) onFail(); });
     return () => { off = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [driver.revolut, isDefault]);
+  }, [driver.revolut]);
 
-  // eslint-disable-next-line @next/next/no-img-element
-  return src ? <img src={src} alt={alt} width={260} height={260} onError={onFail} /> : <div style={{ width: 260, height: 260 }} />;
+  return (
+    <div className="v5-qr-code" role="img" aria-label={alt}>
+      {svg && <span className="v5-qr-svg" dangerouslySetInnerHTML={{ __html: svg }} />}
+      {svg && <span className="v5-qr-badge" aria-hidden>R</span>}
+    </div>
+  );
 }

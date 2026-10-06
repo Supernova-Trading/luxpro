@@ -24,7 +24,7 @@ import GameBoundary from "./GameBoundary";
 import RevolutQr from "./RevolutQr";
 import Wordmark from "./Wordmark";
 import { DEFAULT_DRIVER, readDriver, saveDriver, personalise, personaliseByLang, type DriverProfile } from "./driverProfile";
-import { newPrize, answer as prizeAnswer, take as prizeTake, keepPlaying, restart as prizeRestart, lastCall as prizeLastCall, TIER_KEYS } from "./games/prize";
+import { newPrize, answer as prizeAnswer, take as prizeTake, keepPlaying, restart as prizeRestart, lastCall as prizeLastCall, claimOther, TIER_KEYS } from "./games/prize";
 import type { MinesSave } from "./games/MinesGame";
 import type { SnakeSave } from "./games/SnakeGame";
 import type { BlocksSave } from "./games/BlocksGame";
@@ -395,6 +395,15 @@ export default function V5App() {
     speech.say("prize", SP.prize(tier, won.correct), () => showToast(s.didntHear));
   }
 
+  // Blocks and Mines prizes (Amish, v5.39): one prize per ride across all the
+  // games, said to the driver like the Quiz prize.
+  function takeGamePrize(tier: number, game: "Blocks" | "Mines", detail: string) {
+    const won = claimOther(prize, tier);
+    if (won === prize) return;
+    setPrize(won);
+    speech.say("prize", SP.gamePrize(T.en.tiers[TIER_KEYS[tier]], game, detail), () => showToast(s.didntHear));
+  }
+
   function newRide() {
     speech.clear();
     music.reset();
@@ -762,9 +771,11 @@ export default function V5App() {
         />
       )}
       {game === "snake" && <SnakeGame s={s} saved={snakeSave} onSave={setSnakeSave} onClose={() => setGame(null)} top={halfTop} hold={!!sheet || qr} />}
-      {game === "blocks" && <BlocksGame s={s} saved={blocksSave} onSave={setBlocksSave} onClose={() => setGame(null)} top={halfTop} hold={!!sheet || qr} />}
+      {game === "blocks" && <BlocksGame s={s} saved={blocksSave} onSave={setBlocksSave} onClose={() => setGame(null)} top={halfTop} hold={!!sheet || qr}
+        prize={prize} onPrize={(tier, score) => takeGamePrize(tier, "Blocks", `with ${score} points`)} />}
       {game === "mines" && (
-        <MinesGame s={s} saved={minesSave} onSave={setMinesSave} onClose={() => setGame(null)} top={halfTop} />
+        <MinesGame s={s} saved={minesSave} onSave={setMinesSave} onClose={() => setGame(null)} top={halfTop}
+          prize={prize} onPrize={(tier, level) => takeGamePrize(tier, "Mines", `on the ${T.en.levels[level]} board`)} />
       )}
       </GameBoundary>
 
@@ -780,8 +791,8 @@ export default function V5App() {
             </div>
           ) : (
             <div className="v5-qr">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
               <RevolutQr driver={driver} alt={s.qrTitle} onFail={() => setQrFailed(true)} />
+              <span className="v5-qr-handle" dir="ltr">@{driver.revolut}</span>
             </div>
           )}
           {!qrFailed && <span className="v5-label" style={{ fontWeight: 400, color: "var(--body)", maxWidth: 420 }}>{s.qrSub}</span>}

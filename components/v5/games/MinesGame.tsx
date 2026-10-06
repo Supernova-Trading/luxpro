@@ -5,6 +5,8 @@ import { Icon } from "../../Icon";
 import type { QuizLevel, V5Strings } from "../strings";
 import { newBoard, dig, toggleFlag, flagsLeft, type Board } from "./mines";
 import { useEndGuard } from "./useEndGuard";
+import GamePrize from "./GamePrize";
+import { MINES_TIER, type Prize } from "./prize";
 
 // Mines for a moving car: one board size with big squares, the level only
 // changes how many mines. No timer, no long-press — a Dig / Flag switch
@@ -13,9 +15,14 @@ import { useEndGuard } from "./useEndGuard";
 // v5.13 mockup (Amish's idea): the game opens in the lower half of the screen,
 // under the tip box, so music and tips stay in view — a shorter 8 × 6 board
 // keeps the squares as big as before. Same mine density as the 8 × 10 board.
-const ROWS = 6;
-const COLS = 8;
-const MINES: Record<QuizLevel, number> = { easy: 6, medium: 8, hard: 11 };
+// v5.39 (owner): the board grows with the level — Medium has twice the
+// squares of Easy. Hard stays 8 rows high: more rows would make squares too
+// small to tap in a moving car in the half panel (about 33 px already).
+const SIZES: Record<QuizLevel, { rows: number; cols: number; mines: number }> = {
+  easy: { rows: 6, cols: 8, mines: 6 },      // 48 squares
+  medium: { rows: 8, cols: 12, mines: 13 },  // 96
+  hard: { rows: 8, cols: 16, mines: 20 },    // 128
+};
 const LEVELS: QuizLevel[] = ["easy", "medium", "hard"];
 const GAP = 4;
 const TAP_GUARD_MS = 300; // a jolt can land a second tap
@@ -24,20 +31,24 @@ const NUM_COLOR = ["", "var(--i-sky)", "var(--i-green)", "var(--i-orange)", "var
 
 export interface MinesSave { board: Board; level: QuizLevel; before: Board | null; undoUsed: boolean }
 
-export default function MinesGame({ s, saved, onSave, onClose, top }: {
+export default function MinesGame({ s, saved, onSave, onClose, top, prize, onPrize }: {
   s: V5Strings;
   saved: MinesSave | null;
   onSave: (m: MinesSave) => void;
   onClose: () => void;
   top: number; // where the half-screen panel starts (just under the tip box)
+  prize: Prize; // the ride's prize (one per ride, shared with Quiz and Blocks)
+  onPrize: (tier: number, level: QuizLevel) => void;
 }) {
-  const fresh = !saved || saved.board.rows !== ROWS || saved.board.cols !== COLS;
+  const fresh = !saved || saved.board.rows !== SIZES[saved.level].rows || saved.board.cols !== SIZES[saved.level].cols;
   const [level, setLevel] = useState<QuizLevel>(saved?.level ?? "easy");
-  const [board, setBoard] = useState<Board>(!fresh && saved ? saved.board : newBoard(ROWS, COLS, MINES[saved?.level ?? "easy"]));
+  const [board, setBoard] = useState<Board>(!fresh && saved ? saved.board : newBoard(SIZES[saved?.level ?? "easy"].rows, SIZES[saved?.level ?? "easy"].cols, SIZES[saved?.level ?? "easy"].mines));
   const [mode, setMode] = useState<"dig" | "flag">("dig");
   const [before, setBefore] = useState<Board | null>(saved?.before ?? null); // the board before the last dig
   const [undoUsed, setUndoUsed] = useState(saved?.undoUsed ?? false);
   const [size, setSize] = useState(0);
+  const ROWS = board.rows;
+  const COLS = board.cols;
   const wrap = useRef<HTMLDivElement>(null);
   const lastTap = useRef(0);
 
@@ -58,11 +69,11 @@ export default function MinesGame({ s, saved, onSave, onClose, top }: {
     const ro = new ResizeObserver(fit);
     ro.observe(el);
     return () => ro.disconnect();
-  }, []);
+  }, [ROWS, COLS]);
 
   function restart(l: QuizLevel = level) {
     setLevel(l);
-    setBoard(newBoard(ROWS, COLS, MINES[l]));
+    setBoard(newBoard(SIZES[l].rows, SIZES[l].cols, SIZES[l].mines));
     setMode("dig");
     setBefore(null);
     setUndoUsed(false);
@@ -165,6 +176,10 @@ export default function MinesGame({ s, saved, onSave, onClose, top }: {
           {s.newGame}
         </button>
       </div>
+      {board.state === "won" && (
+        <GamePrize s={s} caption={s.boardCleared.replace("{level}", s.levels[level])} tier={MINES_TIER[level]} prize={prize}
+          ready={againReady} onAgain={() => restart()} onTake={() => onPrize(MINES_TIER[level], level)} />
+      )}
     </div>
   );
 }

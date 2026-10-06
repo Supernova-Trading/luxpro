@@ -8,6 +8,8 @@ import {
   type Blocks, type Key,
 } from "./blocks";
 import { resolveColor, rounded, readBest, saveBest, prepare } from "./canvas";
+import GamePrize from "./GamePrize";
+import { BLOCKS_POINTS, blocksTier, type Prize } from "./prize";
 import { useEndGuard } from "./useEndGuard";
 
 // Blocks for a moving car (roadmap P5): four big buttons — Left, Right,
@@ -34,13 +36,15 @@ type Action = "left" | "right" | "rotate" | "down";
 
 export interface BlocksSave { game: Blocks; speed: Speed }
 
-export default function BlocksGame({ s, saved: savedIn, onSave, onClose, top, hold }: {
+export default function BlocksGame({ s, saved: savedIn, onSave, onClose, top, hold, prize, onPrize }: {
   s: V5Strings;
   saved: BlocksSave | null;
   onSave: (g: BlocksSave) => void;
   onClose: () => void;
   top: number;   // where the half-screen panel starts (just under the tip box)
   hold: boolean; // something is open on top of the panel
+  prize: Prize;   // the ride's prize (one per ride, shared with Quiz and Mines)
+  onPrize: (tier: number, score: number) => void;
 }) {
   // A game saved on the old full-screen board doesn't fit this one.
   const saved = savedIn && savedIn.game.rows === ROWS && savedIn.game.cols === COLS ? savedIn : null;
@@ -270,15 +274,6 @@ export default function BlocksGame({ s, saved: savedIn, onSave, onClose, top, ho
                 </button>
               </div>
             )}
-            {over && (
-              <div className="v5-snake-note" data-solid>
-                <span className="v5-heading">{view.score > 0 ? s.wellPlayed : s.notThisTime}</span>
-                <span className="v5-label" style={{ color: "var(--muted)" }}>{s.score} <b dir="ltr" style={{ color: "var(--ink)" }}>{view.score}</b></span>
-                <button className="v5-next" style={{ minWidth: 180 }} disabled={!againReady} onClick={restart}>
-                  <Icon name="refresh" size={20} />{s.playAgain}
-                </button>
-              </div>
-            )}
           </div>
         </div>
 
@@ -303,6 +298,12 @@ export default function BlocksGame({ s, saved: savedIn, onSave, onClose, top, ho
         {control("rotate", "refresh", s.rotate, "v5-b-rotate")}
         {control("down", "arrow-up", s.down, "v5-b-down", 180, true)}
       </div>
+      {over && (
+        <GamePrize s={s} caption={s.pointsWord.replace("{n}", String(view.score))} tier={blocksTier(view.score)} prize={prize}
+          ladder={BLOCKS_POINTS} ready={againReady} onAgain={restart}
+          hint={s.pointsToWin.replace("{n}", String(BLOCKS_POINTS[0])).replace("{tier}", s.tiers.bronze)}
+          onTake={() => onPrize(blocksTier(view.score), view.score)} />
+      )}
     </div>
   );
 }

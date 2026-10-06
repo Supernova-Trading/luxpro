@@ -76,6 +76,11 @@ export interface V5Strings {
   paused: string;
   snakeStart: string;
   playAgain: string;
+  pointsWord: string;    // "{n}"
+  pointsToWin: string;   // "{n}", "{tier}"
+  boardCleared: string;  // "{level}"
+  oneRidePrize: string;  // "{tier}"
+  quizShort: string;
   wellPlayed: string;
   notThisTime: string;
   undoBump: string;
@@ -234,6 +239,11 @@ export const STRINGS: Record<Lang, V5Strings> = {
     paused: "Paused",
     snakeStart: "Tap an arrow to start",
     playAgain: "Play again",
+    pointsWord: "{n} points",
+    pointsToWin: "Score {n} points to win {tier}",
+    boardCleared: "{level} board cleared",
+    oneRidePrize: "One prize per ride. You already have your {tier} prize.",
+    quizShort: "Quiz",
     wellPlayed: "Well played",
     notThisTime: "Not this time",
     undoBump: "Undo, was that a bump?",
@@ -286,7 +296,7 @@ export const STRINGS: Record<Lang, V5Strings> = {
     welcomeDriver: "Your driver today is {driver}",
     chooseLanguage: "Continue in English",
     welcomeNote: "Music, games and requests for {driver} are on the next screen. Answer 5 questions to win a treat from {driver}.",
-    farewellTitle: "Thank you for riding with {driver}",
+    farewellTitle: "Thank you for riding with us",
     farewellBelongings: "Please check you have all your belongings.",
     farewellTipped: "{driver} knows about your tip. Thank you!",
     farewellBye: "Have a wonderful day",
@@ -390,6 +400,11 @@ export const STRINGS: Record<Lang, V5Strings> = {
     paused: "En pausa",
     snakeStart: "Toque una flecha para empezar",
     playAgain: "Jugar otra vez",
+    pointsWord: "{n} puntos",
+    pointsToWin: "Consiga {n} puntos para ganar {tier}",
+    boardCleared: "Tablero {level} completado",
+    oneRidePrize: "Un premio por viaje. Ya tiene su premio {tier}.",
+    quizShort: "Quiz",
     wellPlayed: "Bien jugado",
     notThisTime: "Esta vez no",
     undoBump: "Deshacer: ¿fue un bache?",
@@ -442,7 +457,7 @@ export const STRINGS: Record<Lang, V5Strings> = {
     welcomeDriver: "Su conductor hoy es {driver}",
     chooseLanguage: "Continuar en español",
     welcomeNote: "La música, los juegos y las peticiones a {driver} están en la siguiente pantalla. Responda 5 preguntas y gane un detalle de {driver}.",
-    farewellTitle: "Gracias por viajar con {driver}",
+    farewellTitle: "Gracias por viajar con nosotros",
     farewellBelongings: "Por favor, compruebe que lleva todas sus pertenencias.",
     farewellTipped: "{driver} ya sabe lo de su propina. ¡Gracias!",
     farewellBye: "Que tenga un buen día",
@@ -546,6 +561,11 @@ export const STRINGS: Record<Lang, V5Strings> = {
     paused: "رکا ہوا",
     snakeStart: "شروع کرنے کے لیے کوئی تیر دبائیں",
     playAgain: "دوبارہ کھیلیں",
+    pointsWord: "{n} پوائنٹس",
+    pointsToWin: "{tier} جیتنے کے لیے {n} پوائنٹس بنائیں",
+    boardCleared: "{level} بورڈ مکمل",
+    oneRidePrize: "ہر سفر میں ایک انعام۔ آپ کا {tier} انعام پہلے ہی مل چکا ہے۔",
+    quizShort: "کوئز",
     wellPlayed: "بہت خوب",
     notThisTime: "اس بار نہیں",
     undoBump: "واپس کریں، کیا یہ جھٹکا تھا؟",
@@ -598,7 +618,7 @@ export const STRINGS: Record<Lang, V5Strings> = {
     welcomeDriver: "آج آپ کے ڈرائیور {driver} ہیں",
     chooseLanguage: "اردو میں جاری رکھیں",
     welcomeNote: "موسیقی، گیمز اور {driver} سے درخواستیں اگلی اسکرین پر ہیں۔ پانچ سوالوں کے جواب دیں اور {driver} سے تحفہ جیتیں۔",
-    farewellTitle: "{driver} کے ساتھ سفر کرنے کا شکریہ",
+    farewellTitle: "ہمارے ساتھ سفر کرنے کا شکریہ",
     farewellBelongings: "براہ کرم اپنا تمام سامان ساتھ لے جانا یقینی بنائیں۔",
     farewellTipped: "{driver} کو آپ کی ٹپ کا علم ہے۔ شکریہ!",
     farewellBye: "آپ کا دن اچھا گزرے",
@@ -629,6 +649,7 @@ export const SPEECH: {
   games: Record<"quiz" | "riddles", string>;
   test: string;
   prize: (tier: string, n: number) => string;
+  gamePrize: (tier: string, game: string, detail: string) => string;
 } = {
   requests: {
     charger:    { on: "{driver}, could I use the phone charger, please?",       off: "{driver}, no need for the charger now, thank you." },
@@ -659,6 +680,8 @@ export const SPEECH: {
   test: "{driver}, this is only a volume test.",
   // Said when the passenger takes a prize, so it can't be faked with a screenshot
   prize: (tier, n) => `{driver}, the passenger has won the ${tier} prize, with ${n} correct answers.`,
+  // Blocks / Mines prize (v5.39): e.g. "in Blocks, with 320 points"
+  gamePrize: (tier, game, detail) => `{driver}, the passenger has won the ${tier} prize in ${game}, ${detail}.`,
 };
 
 // Said to the passenger when Amish presses Nearly there / End ride / New

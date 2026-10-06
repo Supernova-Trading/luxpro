@@ -66,6 +66,24 @@ export function restart(p: Prize): Prize {
   return p.status === "bust" ? newPrize() : p;
 }
 
+/** Blocks (Amish, v5.39): the score at game over wins a prize. */
+export const BLOCKS_POINTS = [100, 250, 500, 1000, 2000] as const;
+export function blocksTier(score: number): number {
+  let t = -1;
+  BLOCKS_POINTS.forEach((p, i) => { if (score >= p) t = i; });
+  return t;
+}
+
+/** Mines (Amish, v5.39): clearing the board wins Bronze, Silver or Gold. */
+export const MINES_TIER: Record<"easy" | "medium" | "hard", number> = { easy: 0, medium: 1, hard: 2 };
+
+/** A prize won in Blocks or Mines. Still one prize per ride across all
+ *  games: nothing changes if one was already taken. */
+export function claimOther(p: Prize, tier: number): Prize {
+  if (p.status === "claimed" || tier < 0) return p;
+  return { ...p, status: "claimed", tier, atRisk: -1, lastCall: false };
+}
+
 /** Questions get harder as the passenger climbs: easy, then medium, then hard. */
 export function levelFor(correct: number): "easy" | "medium" | "hard" {
   return correct < 10 ? "easy" : correct < 20 ? "medium" : "hard";

@@ -112,3 +112,17 @@ test("the ride ending offers a passed-up prize once more", async () => {
   assert.equal(lastCall(newPrize()).status, "playing"); // nothing at stake: no pop-up
   assert.equal(lastCall(take(lc)).status, "claimed");   // already taken: nothing
 });
+
+test("Blocks and Mines prizes, one prize per ride", async () => {
+  const { blocksTier, claimOther, MINES_TIER } = await import("./prize.ts");
+  assert.equal(blocksTier(99), -1);
+  assert.equal(blocksTier(100), 0);
+  assert.equal(blocksTier(320), 1);
+  assert.equal(blocksTier(5000), 4);
+  assert.equal(MINES_TIER.medium, 1);
+  const won = claimOther(newPrize(), 2);
+  assert.equal(won.status, "claimed");
+  assert.equal(won.tier, 2);
+  assert.equal(claimOther(won, 4), won);          // already has one this ride
+  assert.equal(claimOther(newPrize(), -1).status, "playing");
+});
