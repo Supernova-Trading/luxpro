@@ -66,9 +66,11 @@ export function useRemote(state: TabletState, onCommand: (cmd: RemoteCmd) => voi
             for (const c of r.commands) {
               if (seen.current.has(c.id) || c.id <= lastCmd.current) continue;
               seen.current.add(c.id);
-              cmdRef.current(c.cmd);
+              // Saved before running it: "reload" restarts the page and must
+              // not run a second time when the tablet comes back (v5.36)
               lastCmd.current = Math.max(lastCmd.current, c.id);
               try { localStorage.setItem(ACK_KEY, String(lastCmd.current)); } catch { /* storage blocked */ }
+              cmdRef.current(c.cmd);
             }
             if (!r.paired && Date.now() > pairingUntil.current) wait = UNPAIRED_MS;
           } else { setOnline(false); wait = BACKOFF_MS; }

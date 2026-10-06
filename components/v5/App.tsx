@@ -289,6 +289,9 @@ export default function V5App() {
     // Amish's phone can turn the music up or down in 10% steps (v5.25)
     else if (cmd === "vol_up") music.nudgeVolume(10);
     else if (cmd === "vol_down") music.nudgeVolume(-10);
+    // "Refresh tablet" from the driver's phone (v5.36, owner): a fresh start
+    // when the tablet seems stuck; the phone shows "done" once it's back.
+    else if (cmd === "reload") setTimeout(() => window.location.reload(), 400);
   });
 
   // Hold the wordmark to open Amish's Driver panel (a tap does nothing).

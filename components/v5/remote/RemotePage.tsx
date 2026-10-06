@@ -58,6 +58,7 @@ export default function RemotePage() {
   const [note, setNote] = useState<Note | null>(null);
   const [armed, setArmed] = useState(false);
   const [unpairArmed, setUnpairArmed] = useState(false); // "Unpair" needs a second tap (v5.31)
+  const [reloadArmed, setReloadArmed] = useState(false); // "Refresh tablet" too: it clears the ride (v5.36)
   const [sending, setSending] = useState(false);
   const armTimer = useRef<ReturnType<typeof setTimeout>>();
   const pending = useRef<{ id: number; label: string; at: number; warned: boolean } | null>(null);
@@ -158,6 +159,16 @@ export default function RemotePage() {
     clearTimeout(armTimer.current);
     setArmed(false);
     void send("new_passenger", "New passenger");
+  }
+
+  function refreshTablet() {
+    if (!reloadArmed) {
+      setReloadArmed(true);
+      setTimeout(() => setReloadArmed(false), 4000);
+      return;
+    }
+    setReloadArmed(false);
+    void send("reload", "Refresh tablet");
   }
 
   function forget() {
@@ -297,9 +308,15 @@ export default function RemotePage() {
         </div>
       </dl>
 
-      <button className="v5-rm-unpair" data-armed={unpairArmed} onClick={forget}>
-        {unpairArmed ? "Tap again to unpair this phone" : "Unpair this phone"}
-      </button>
+      {/* Refresh the tablet from here when it seems stuck (owner, v5.36) */}
+      <div className="v5-rm-foot">
+        <button className="v5-pill v5-rm-refresh" data-armed={reloadArmed} disabled={sending} onClick={refreshTablet}>
+          <Icon name="refresh" size={18} />{reloadArmed ? "Tap again to refresh" : "Refresh tablet"}
+        </button>
+        <button className="v5-rm-unpair" data-armed={unpairArmed} onClick={forget}>
+          {unpairArmed ? "Tap again to unpair" : "Unpair this phone"}
+        </button>
+      </div>
     </div>
   );
 }

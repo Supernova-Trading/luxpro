@@ -404,6 +404,9 @@ a.v5-row { color: inherit; text-decoration: none; }
 .v5-rm-asked > li svg { color: var(--gold); flex-shrink: 0; }
 .v5-rm-unpair { align-self: center; padding: 10px 16px; font-size: var(--t-sm); color: var(--muted); text-decoration: underline; text-underline-offset: 3px; }
 .v5-rm-unpair[data-armed="true"] { color: var(--i-red); }
+.v5-rm-foot { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+.v5-rm-foot > .v5-rm-unpair { align-self: auto; }
+.v5-rm-refresh[data-armed="true"] { background: var(--gold); border-color: var(--gold); color: var(--on-gold); }
 .v5-remote-steps { margin: 0; padding-inline-start: 20px; display: grid; gap: 6px; color: var(--body); font-size: var(--t-md); line-height: 1.4; }
 .v5-remote-code { height: 64px; border-radius: 16px; border: 1px solid var(--line-strong); background: var(--s1); color: var(--ink); font-size: var(--t-xl); font-weight: 600; letter-spacing: 0.15em; text-align: center; text-transform: uppercase; }
 
