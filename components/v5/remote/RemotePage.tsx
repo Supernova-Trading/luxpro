@@ -18,7 +18,10 @@ const PHONE_KEY = "luxpro.v5.phone";
 const EVERY_MS = 2500;
 const STALE_S = 20;        // no news from the tablet for this long: show it as offline
 const NO_PICKUP_MS = 15_000; // a command the tablet hasn't run by then gets a warning
-const EXPIRE_MS = 120_000;    // the server drops commands after 2 minutes (luxpro_tablet_sync2)
+const EXPIRE_MS = 120_000;
+// The button Amish pressed stays highlighted, then fades (Amish, v5.37):
+// gold ring when sent, plus a check once the tablet has done it.
+const LIT_MS = 15_000;    // the server drops commands after 2 minutes (luxpro_tablet_sync2)
 
 /** "40 s" / "3 min": how long the tablet has been silent, in words (v5.31). */
 function since(s: number): string {
@@ -61,7 +64,15 @@ export default function RemotePage() {
   const [reloadArmed, setReloadArmed] = useState(false); // "Refresh tablet" too: it clears the ride (v5.36)
   const [sending, setSending] = useState(false);
   const armTimer = useRef<ReturnType<typeof setTimeout>>();
-  const pending = useRef<{ id: number; label: string; at: number; warned: boolean } | null>(null);
+  const pending = useRef<{ id: number; cmd: RemoteCmd; label: string; at: number; warned: boolean } | null>(null);
+  const [lit, setLit] = useState<{ cmd: RemoteCmd; state: "sent" | "done" } | null>(null);
+  useEffect(() => {
+    if (!lit) return;
+    const t = setTimeout(() => setLit(null), LIT_MS);
+    return () => clearTimeout(t);
+  }, [lit]);
+  const litOf = (c: RemoteCmd) => (lit?.cmd === c ? lit.state : undefined);
+  const doneMark = (c: RemoteCmd) => litOf(c) === "done" && <span className="v5-rm-tick" aria-hidden><Icon name="check" size={14} /></span>;
   const [endsAt, setEndsAt] = useState<number | null>(null); // phone clock: thank-you screen time
   const [, tick] = useState(0);
   useEffect(() => {
@@ -105,9 +116,11 @@ export default function RemotePage() {
         const p = pending.current;
         if (p && st && (st.lastCmd ?? 0) >= p.id) {
           setNote({ text: `${p.label}: done on the tablet ✓`, tone: "ok" });
+          setLit({ cmd: p.cmd, state: "done" });
           pending.current = null;
         } else if (p && Date.now() - p.at > EXPIRE_MS) {
           setNote({ text: `${p.label}: not done. The tablet was offline for 2 minutes. Tap again if it's still needed.`, tone: "err" });
+          setLit(null);
           pending.current = null;
         } else if (p && !p.warned && Date.now() - p.at > NO_PICKUP_MS) {
           p.warned = true;
@@ -142,7 +155,8 @@ export default function RemotePage() {
     try {
       const id = await remote.phoneSend(pairing.car, pairing.token, cmd);
       if (id === null) { setNote({ text: "Not sent: this phone isn't paired any more. Pair it again from the tablet.", tone: "err" }); return; }
-      pending.current = { id, label, at: Date.now(), warned: false };
+      pending.current = { id, cmd, label, at: Date.now(), warned: false };
+      setLit({ cmd, state: "sent" });
       setNote({ text: `${label}: sent · waiting for the tablet…`, tone: "wait" });
     } catch {
       setNote({ text: `${label}: not sent. No internet on this phone?`, tone: "err" });
@@ -229,9 +243,13 @@ export default function RemotePage() {
         </span>
       </header>
 
-      {/* Two big buttons first, at the top, where nothing can sit over them */}
+      {/* Three buttons again (Amish, v5.37): New passenger on top, then Nearly
+          there and End ride side by side — each acts the moment it's pressed,
+          as in v5.25. A countdown started from the tablet's Driver panel
+          still shows here with Cancel. */}
       <section className="v5-rm-actions" aria-label="Send to the tablet">
-        <button className="v5-rm-btn v5-rm-wide v5-rm-big" data-armed={armed} disabled={sending} onClick={newPassenger}>
+        <button className="v5-rm-btn v5-rm-wide v5-rm-big" data-armed={armed} data-lit={litOf("new_passenger")} disabled={sending} onClick={newPassenger}>
+          {doneMark("new_passenger")}
           <Icon name="history" size={30} />
           <span className="v5-rm-btn-text">
             <span>{armed ? "Tap again to clear the tablet" : "New passenger"}</span>
@@ -244,22 +262,33 @@ export default function RemotePage() {
               <Icon name="hand" size={26} />
               Thank-you screen in {(() => { const left = Math.max(0, Math.round((endsAt - Date.now()) / 1000)); return `${Math.floor(left / 60)}:${String(left % 60).padStart(2, "0")}`; })()}
             </span>
-            <button className="v5-pill" disabled={sending} onClick={() => send("cancel_end", "Cancel end of trip")}>Cancel</button>
+            <button className="v5-pill" data-lit={litOf("cancel_end")} disabled={sending} onClick={() => send("cancel_end", "Cancel end of trip")}>Cancel</button>
           </div>
         ) : (
-          <button className="v5-rm-btn v5-rm-wide v5-rm-big" disabled={sending || st?.stage === "farewell"} onClick={() => send("end_trip", "End trip")}>
-            <Icon name="hand" size={30} />
-            <span className="v5-rm-btn-text">
-              <span>End trip</span>
-              <small>Nearly there now · thank-you screen in 2 min</small>
-            </span>
-          </button>
+          <>
+            <button className="v5-rm-btn v5-rm-half" data-lit={litOf("nearly")} disabled={sending || st?.stage !== "ride"} onClick={() => send("nearly", "Nearly there")}>
+              {doneMark("nearly")}
+              <Icon name="map-pin" size={28} />
+              <span className="v5-rm-btn-text">
+                <span>Nearly there</span>
+                <small>Banner + voice</small>
+              </span>
+            </button>
+            <button className="v5-rm-btn v5-rm-half" data-lit={litOf("end_ride")} disabled={sending || st?.stage === "farewell"} onClick={() => send("end_ride", "End ride")}>
+              {doneMark("end_ride")}
+              <Icon name="hand" size={28} />
+              <span className="v5-rm-btn-text">
+                <span>End ride</span>
+                <small>Thank-you screen</small>
+              </span>
+            </button>
+          </>
         )}
       </section>
 
       {/* Tablet music volume, in 10% steps like the tablet's own − / + */}
       <section className="v5-rm-vol" aria-label="Tablet music volume">
-        <button className="v5-rm-volbtn" disabled={sending || (st?.volume ?? 50) <= 0} aria-label="Music volume down" onClick={() => send("vol_down", "Volume down")}>
+        <button className="v5-rm-volbtn" data-lit={litOf("vol_down")} disabled={sending || (st?.volume ?? 50) <= 0} aria-label="Music volume down" onClick={() => send("vol_down", "Volume down")}>
           <Icon name="minus" size={26} />
         </button>
         <span className="v5-rm-volmid">
@@ -269,7 +298,7 @@ export default function RemotePage() {
           </span>
           <b dir="ltr">{st?.volume !== undefined ? `${st.volume}%` : "—"}</b>
         </span>
-        <button className="v5-rm-volbtn" disabled={sending || (st?.volume ?? 50) >= 100} aria-label="Music volume up" onClick={() => send("vol_up", "Volume up")}>
+        <button className="v5-rm-volbtn" data-lit={litOf("vol_up")} disabled={sending || (st?.volume ?? 50) >= 100} aria-label="Music volume up" onClick={() => send("vol_up", "Volume up")}>
           <Icon name="plus" size={26} />
         </button>
       </section>
@@ -310,7 +339,8 @@ export default function RemotePage() {
 
       {/* Refresh the tablet from here when it seems stuck (owner, v5.36) */}
       <div className="v5-rm-foot">
-        <button className="v5-pill v5-rm-refresh" data-armed={reloadArmed} disabled={sending} onClick={refreshTablet}>
+        <button className="v5-pill v5-rm-refresh" data-armed={reloadArmed} data-lit={litOf("reload")} disabled={sending} onClick={refreshTablet}>
+          {doneMark("reload")}
           <Icon name="refresh" size={18} />{reloadArmed ? "Tap again to refresh" : "Refresh tablet"}
         </button>
         <button className="v5-rm-unpair" data-armed={unpairArmed} onClick={forget}>

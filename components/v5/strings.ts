@@ -291,7 +291,7 @@ export const STRINGS: Record<Lang, V5Strings> = {
     farewellTipped: "{driver} knows about your tip. Thank you!",
     farewellBye: "Have a wonderful day",
     nearlyThere: "Nearly there",
-    nearlySub: "About 2 minutes to go. Please gather your belongings.",
+    nearlySub: "We'll be there shortly. Please gather your belongings.",
     gameError: "That game stopped. Please open it again.",
     nightSub: "Dimmer screen after sunset",
     nightModes: { auto: "Auto", on: "On", off: "Off" },
@@ -447,7 +447,7 @@ export const STRINGS: Record<Lang, V5Strings> = {
     farewellTipped: "{driver} ya sabe lo de su propina. ¡Gracias!",
     farewellBye: "Que tenga un buen día",
     nearlyThere: "Casi hemos llegado",
-    nearlySub: "Faltan unos 2 minutos. Vaya recogiendo sus cosas.",
+    nearlySub: "Llegaremos en breve. Vaya recogiendo sus cosas.",
     gameError: "El juego se ha detenido. Ábralo de nuevo.",
     nightSub: "Pantalla más tenue al anochecer",
     nightModes: { auto: "Auto", on: "Sí", off: "No" },
@@ -603,7 +603,7 @@ export const STRINGS: Record<Lang, V5Strings> = {
     farewellTipped: "{driver} کو آپ کی ٹپ کا علم ہے۔ شکریہ!",
     farewellBye: "آپ کا دن اچھا گزرے",
     nearlyThere: "ہم تقریباً پہنچ گئے",
-    nearlySub: "تقریباً 2 منٹ باقی ہیں۔ براہ کرم اپنا سامان سمیٹ لیں۔",
+    nearlySub: "ہم جلد پہنچ جائیں گے۔ براہ کرم اپنا سامان سمیٹ لیں۔",
     gameError: "گیم رک گئی۔ براہ کرم دوبارہ کھولیں۔",
     nightSub: "غروبِ آفتاب کے بعد اسکرین مدھم",
     nightModes: { auto: "خودکار", on: "آن", off: "آف" },
@@ -664,12 +664,13 @@ export const SPEECH: {
 // Said to the passenger when Amish presses Nearly there / End ride / New
 // passenger (phone or Driver panel). In the passenger's language when the
 // tablet has that voice, otherwise English (v5.24, owner).
-// "nearly" must match END_TRIP_MS in App.tsx (2 minutes; v5.30 council fix).
+// "nearly" names no number of minutes (v5.37): the driver can press Nearly
+// there at any time, so it must stay true whenever it is said.
 export const ANNOUNCE: Record<"nearly" | "arrived" | "welcome", Record<Lang, string>> = {
   nearly: {
-    en: "We're nearly there. About two minutes to your destination. Please gather your belongings.",
-    es: "Casi hemos llegado. Faltan unos dos minutos. Vaya recogiendo sus pertenencias, por favor.",
-    ur: "ہم تقریباً پہنچ گئے ہیں۔ تقریباً دو منٹ باقی ہیں۔ براہ کرم اپنا سامان سمیٹ لیں۔",
+    en: "We're nearly there. Please start gathering your belongings.",
+    es: "Casi hemos llegado. Vaya recogiendo sus pertenencias, por favor.",
+    ur: "ہم تقریباً پہنچ گئے ہیں۔ براہ کرم اپنا سامان سمیٹ لیں۔",
   },
   arrived: {
     en: "We've arrived. Thank you for riding with {driver}. Please check you have all your belongings. Have a wonderful day.",

@@ -329,7 +329,7 @@ a.v5-row { color: inherit; text-decoration: none; }
 .v5-drv-pair b { font-size: var(--t-md); color: var(--ink); word-break: break-all; }
 .v5-drv-code { font-size: var(--t-2xl); font-weight: 600; letter-spacing: 0.12em; color: var(--gold); font-variant-numeric: tabular-nums; }
 /* Amish's phone (/v5/remote) */
-.v5.v5-remote { height: auto; min-height: 100vh; min-height: 100dvh; overflow: visible; gap: 10px; padding: 12px 14px 24px; max-width: 520px; margin: 0 auto; -webkit-user-select: auto; user-select: auto; }
+.v5.v5-remote { height: auto; min-height: 100vh; min-height: 100dvh; overflow: visible; gap: 10px; padding: 12px 14px 14px; max-width: 520px; margin: 0 auto; -webkit-user-select: auto; user-select: auto; }
 .v5-remote-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .v5-remote-live { display: inline-flex; align-items: center; gap: 8px; font-size: var(--t-sm); color: var(--muted); }
 .v5-remote-live > i { width: 10px; height: 10px; border-radius: 9999px; background: var(--muted-soft); }
@@ -366,7 +366,15 @@ a.v5-row { color: inherit; text-decoration: none; }
 .v5-rm-btn:disabled { opacity: 0.6; }
 .v5-rm-wide { grid-column: 1 / -1; flex-direction: row; min-height: 60px; gap: 12px; }
 .v5-rm-btn[data-armed="true"] { background: var(--gold); border-color: var(--gold); color: var(--on-gold); }
-.v5-rm-big { min-height: 96px; justify-content: flex-start; padding-inline: 20px; gap: 16px; }
+.v5-rm-big { min-height: 88px; justify-content: flex-start; padding-inline: 20px; gap: 16px; }
+/* The pressed button keeps a gold ring (sent) and a check (done on the
+   tablet), then fades over 1.2 s after LIT_MS (Amish, v5.37) — the same
+   gold ring + check language as a request on the tablet */
+.v5-rm-btn, .v5-rm-volbtn, .v5-remote .v5-pill { position: relative; transition: background 120ms ease, border-color 1200ms ease, box-shadow 1200ms ease, transform 80ms ease; }
+.v5-remote [data-lit] { border-color: var(--gold); box-shadow: inset 0 0 0 1px var(--gold); transition: background 120ms ease, border-color 150ms ease, box-shadow 150ms ease, transform 80ms ease; }
+.v5-rm-tick { position: absolute; top: -6px; inset-inline-end: -6px; display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 9999px; background: var(--gold); color: var(--on-gold); border: 2px solid var(--s0); animation: v5-pop 200ms var(--ease-out); }
+.v5-rm-half { min-height: 96px; align-items: flex-start; justify-content: space-between; gap: 6px; padding: 12px 14px; }
+.v5-rm-half small { white-space: nowrap; }
 .v5-rm-btn-text { display: grid; gap: 2px; text-align: start; }
 .v5-rm-btn-text > span { font-size: var(--t-lg); font-weight: 600; }
 .v5-rm-btn-text > small { font-size: var(--t-sm); font-weight: 500; color: var(--muted); }
