@@ -74,6 +74,7 @@ const FAREWELL_RESET_MS = 180_000; // after drop-off, the tablet resets itself f
 const NEARLY_MS = 20_000;          // how long the "Nearly there" banner stays
 const HOLD_FOR_DRIVER_MS = 1500;   // hold the wordmark this long to open the Driver panel
 const WELCOME_WAIT_S = 30;         // no language picked by then: carry on in English (owner, v5.24)
+const END_TRIP_MS = 120_000;       // End trip: "nearly there" now, thank-you screen this much later (owner, v5.26)
 const VOICE_MIN = 20; // the voice can be quieter, never silent: a muted request would look sent
 const AMISH_PHONE = { tel: "07438537561", shown: "07438 537 561" }; // as in the live app (Modals.tsx)
 
@@ -136,6 +137,7 @@ export default function V5App() {
   // Ride stages (P8): welcome at pickup, the app during the ride, farewell at drop-off.
   const [stage, setStage] = useState<RideStage>("welcome");
   const [nearly, setNearly] = useState(false);
+  const [endAt, setEndAt] = useState<number | null>(null); // the drop-off chain is running
   const [driverOpen, setDriverOpen] = useState(false);
   const [kiosk, setKiosk] = useState(true);
   const holdTimer = useRef<ReturnType<typeof setTimeout>>();
@@ -215,6 +217,14 @@ export default function V5App() {
 
   useKiosk(kiosk);
 
+  // The End-trip chain: thank-you screen when the 2 minutes are up.
+  useEffect(() => {
+    if (!endAt) return;
+    const t = setTimeout(() => { setEndAt(null); endRide(); }, Math.max(0, endAt - Date.now()));
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [endAt]);
+
   // Welcome: no language picked within WELCOME_WAIT_S → English, app shown.
   const [welcomeLeft, setWelcomeLeft] = useState(WELCOME_WAIT_S);
   useEffect(() => {
@@ -231,7 +241,7 @@ export default function V5App() {
   // Drop-off: the farewell stays a few minutes, then the tablet resets itself.
   useEffect(() => {
     if (stage !== "farewell") return;
-    const t = setTimeout(newPassenger, FAREWELL_RESET_MS);
+    const t = setTimeout(resetForNext, FAREWELL_RESET_MS);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stage]);
@@ -256,11 +266,14 @@ export default function V5App() {
       playing: music.source === "radio" ? music.radio.playing : music.sc.playing,
     },
     volume: music.volume,
+    endAt,
   };
   const phone = useRemote(rideReport, (cmd: RemoteCmd) => {
     if (cmd === "new_passenger") newPassenger();
     else if (cmd === "nearly") nearlyThere();
     else if (cmd === "end_ride") endRide();
+    else if (cmd === "end_trip") endTrip();
+    else if (cmd === "cancel_end") cancelEnd();
     // Amish's phone can turn the music up or down in 10% steps (v5.25)
     else if (cmd === "vol_up") music.setVolume(music.volume + 10);
     else if (cmd === "vol_down") music.setVolume(music.volume - 10);
@@ -383,6 +396,7 @@ export default function V5App() {
     setQr(false);
     setSheet(null);
     setNearly(false);
+    setEndAt(null);
     setLang("en");
   }
 
@@ -390,6 +404,28 @@ export default function V5App() {
     newRide();
     setStage("welcome");
     speech.announce("announce", ANNOUNCE.welcome, "en");
+  }
+
+  // Domino (owner, v5.26): Amish presses End trip about 2 minutes before
+  // arriving → "nearly there" banner and voice now → thank-you screen and
+  // voice 2 minutes later → the tablet resets itself 3 minutes after that.
+  function endTrip() {
+    if (stage === "farewell" || endAt) return;
+    if (stage === "welcome") setStage("ride");
+    setNearly(true);
+    speech.announce("announce", ANNOUNCE.nearly, lang);
+    setEndAt(Date.now() + END_TRIP_MS);
+  }
+
+  function cancelEnd() {
+    setEndAt(null);
+    setNearly(false);
+  }
+
+  // After the farewell: back to Welcome quietly (nobody in the car to greet).
+  function resetForNext() {
+    newRide();
+    setStage("welcome");
   }
 
   function nearlyThere() {
@@ -410,6 +446,7 @@ export default function V5App() {
     setSheet(null);
     setQr(false);
     setNearly(false);
+    setEndAt(null);
     setStage("farewell");
     speech.announce("announce", ANNOUNCE.arrived, lang);
   }
@@ -727,8 +764,9 @@ export default function V5App() {
           phone={phone}
           onClose={() => setDriverOpen(false)}
           onNewPassenger={newPassenger}
-          onNearly={nearlyThere}
-          onEndRide={endRide}
+          endAt={endAt}
+          onEndTrip={endTrip}
+          onCancelEnd={cancelEnd}
           onFullscreen={toggleFullscreen}
           onKiosk={changeKiosk}
         />

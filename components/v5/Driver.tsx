@@ -38,15 +38,16 @@ export interface PhoneLink {
   unpair: () => Promise<void>;
 }
 
-export default function Driver({ stage, isFS, kiosk, phone, onClose, onNewPassenger, onNearly, onEndRide, onFullscreen, onKiosk }: {
+export default function Driver({ stage, isFS, kiosk, phone, endAt, onClose, onNewPassenger, onEndTrip, onCancelEnd, onFullscreen, onKiosk }: {
   stage: RideStage;
   phone: PhoneLink;
   isFS: boolean;
   kiosk: boolean;
   onClose: () => void;
   onNewPassenger: () => void;
-  onNearly: () => void;
-  onEndRide: () => void;
+  endAt: number | null;
+  onEndTrip: () => void;
+  onCancelEnd: () => void;
   onFullscreen: () => void;
   onKiosk: (on: boolean) => void;
 }) {
@@ -58,6 +59,14 @@ export default function Driver({ stage, isFS, kiosk, phone, onClose, onNewPassen
   const [pairing, setPairing] = useState<string | null>(null); // code on screen
   const [pairMsg, setPairMsg] = useState("");
   const tries = useRef(0);
+  const [, tickNow] = useState(0); // re-render each second while the End-trip countdown runs
+  useEffect(() => {
+    if (!endAt) return;
+    const t = setInterval(() => tickNow((n) => n + 1), 1000);
+    return () => clearInterval(t);
+  }, [endAt]);
+  const left = endAt ? Math.max(0, Math.round((endAt - Date.now()) / 1000)) : 0;
+  const mmss = `${Math.floor(left / 60)}:${String(left % 60).padStart(2, "0")}`;
   const lockedUntil = useRef(0);
 
   useEffect(() => {
@@ -137,8 +146,9 @@ export default function Driver({ stage, isFS, kiosk, phone, onClose, onNewPassen
             {action("history", armed ? "Tap again to clear the tablet" : "New passenger",
               "Clears requests, tip, games and music; shows the welcome screen",
               () => { if (armed) { setArmed(false); onClose(); onNewPassenger(); } else setArmed(true); }, { gold: armed })}
-            {action("map-pin", "Nearly there", "Tells the passenger ~5 minutes to go", () => { onClose(); onNearly(); })}
-            {action("hand", "End ride", "Shows the thank-you and tip screen", () => { onClose(); onEndRide(); })}
+            {endAt
+              ? action("hand", `Thank-you screen in ${mmss}`, "Tap to cancel the end of the trip", () => { onCancelEnd(); }, { gold: true })
+              : action("hand", "End trip", "Nearly there now · thank-you screen 2 minutes later", () => { onClose(); onEndTrip(); })}
             {action(isFS ? "close" : "present", isFS ? "Exit full screen" : "Full screen", "", onFullscreen)}
             {action("tweaks", kiosk ? "Kiosk lock: on" : "Kiosk lock: off",
               "Keeps the app full screen, blocks Back and long-press menus", () => onKiosk(!kiosk), { on: kiosk })}

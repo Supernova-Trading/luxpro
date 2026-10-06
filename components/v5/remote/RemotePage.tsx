@@ -11,6 +11,9 @@ import { remote, type RemoteCmd, type TabletState } from "./api";
 // v5.23 (owner's feedback): the buttons sit at the top, where nothing on the
 // page (like Vercel's preview toolbar) can cover them, and every tap reports
 // back: Sending → Waiting for the tablet → Done on the tablet ✓, or why not.
+// v5.26 (owner): just two big buttons. End trip runs the drop-off chain on
+// the tablet (nearly there now, thank-you screen 2 minutes later, with a
+// countdown and Cancel here); New passenger resets it for the next ride.
 const PHONE_KEY = "luxpro.v5.phone";
 const EVERY_MS = 2500;
 const STALE_S = 20;        // no news from the tablet for this long: show it as offline
@@ -51,6 +54,13 @@ export default function RemotePage() {
   const [sending, setSending] = useState(false);
   const armTimer = useRef<ReturnType<typeof setTimeout>>();
   const pending = useRef<{ id: number; label: string; at: number; warned: boolean } | null>(null);
+  const [endsAt, setEndsAt] = useState<number | null>(null); // phone clock: thank-you screen time
+  const [, tick] = useState(0);
+  useEffect(() => {
+    if (!endsAt) return;
+    const t = setInterval(() => tick((n) => n + 1), 1000);
+    return () => clearInterval(t);
+  }, [endsAt]);
 
   useEffect(() => { setPairing(readPairing()); setLoaded(true); }, []);
 
@@ -79,7 +89,9 @@ export default function RemotePage() {
         }
         const st = r.state && "stage" in r.state ? (r.state as TabletState) : null;
         if (st) setState(st);
-        setAge(r.state_at ? Math.max(0, Math.round((Date.parse(r.now) - Date.parse(r.state_at)) / 1000)) : null);
+        const ageS = r.state_at ? Math.max(0, Math.round((Date.parse(r.now) - Date.parse(r.state_at)) / 1000)) : null;
+        setAge(ageS);
+        if (st) setEndsAt(st.endingIn != null && st.endingIn > 0 ? Date.now() + (st.endingIn - (ageS ?? 0)) * 1000 : null);
         const p = pending.current;
         if (p && st && (st.lastCmd ?? 0) >= p.id) {
           setNote({ text: `${p.label}: done on the tablet ✓`, tone: "ok" });
@@ -180,19 +192,34 @@ export default function RemotePage() {
         {st && st.stage !== "welcome" && <span className="v5-sub">Passenger language: {LANG_NAME[st.lang] ?? st.lang}</span>}
       </section>
 
-      {/* Actions first: big, at the top, nothing can sit over them */}
+      {/* Two big buttons first, at the top, where nothing can sit over them */}
       <section className="v5-rm-actions" aria-label="Send to the tablet">
-        <button className="v5-rm-btn" disabled={sending} onClick={() => send("nearly", "Nearly there")}>
-          <Icon name="map-pin" size={26} /><span>Nearly there</span>
-        </button>
-        <button className="v5-rm-btn" disabled={sending} onClick={() => send("end_ride", "End ride")}>
-          <Icon name="hand" size={26} /><span>End ride</span>
-        </button>
-        <button className="v5-rm-btn v5-rm-wide" data-armed={armed} disabled={sending} onClick={newPassenger}>
-          <Icon name="history" size={26} />
-          <span>{armed ? "Tap again to clear the tablet" : "New passenger"}</span>
+        {endsAt ? (
+          <div className="v5-rm-ending">
+            <span className="v5-rm-ending-t">
+              <Icon name="hand" size={26} />
+              Thank-you screen in {(() => { const left = Math.max(0, Math.round((endsAt - Date.now()) / 1000)); return `${Math.floor(left / 60)}:${String(left % 60).padStart(2, "0")}`; })()}
+            </span>
+            <button className="v5-pill" disabled={sending} onClick={() => send("cancel_end", "Cancel end of trip")}>Cancel</button>
+          </div>
+        ) : (
+          <button className="v5-rm-btn v5-rm-wide v5-rm-big" disabled={sending || st?.stage === "farewell"} onClick={() => send("end_trip", "End trip")}>
+            <Icon name="hand" size={30} />
+            <span className="v5-rm-btn-text">
+              <span>End trip</span>
+              <small>Nearly there now · thank-you screen in 2 min</small>
+            </span>
+          </button>
+        )}
+        <button className="v5-rm-btn v5-rm-wide v5-rm-big" data-armed={armed} disabled={sending} onClick={newPassenger}>
+          <Icon name="history" size={30} />
+          <span className="v5-rm-btn-text">
+            <span>{armed ? "Tap again to clear the tablet" : "New passenger"}</span>
+            <small>{armed ? "Clears everything and shows Welcome" : "Restart the tablet for the next ride"}</small>
+          </span>
         </button>
       </section>
+
       {/* Tablet music volume, in 10% steps like the tablet's own − / + */}
       <section className="v5-rm-vol" aria-label="Tablet music volume">
         <button className="v5-rm-volbtn" disabled={sending || (st?.volume ?? 50) <= 0} aria-label="Music volume down" onClick={() => send("vol_down", "Volume down")}>

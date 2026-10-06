@@ -44,7 +44,9 @@ export function useRemote(state: TabletState, onCommand: (cmd: RemoteCmd) => voi
       let wait = EVERY_MS;
       if (document.visibilityState === "visible") {
         try {
-          const r = await remote.sync(id.car, id.secret, { ...stateRef.current, lastCmd: lastCmd.current });
+          const st = stateRef.current;
+          const endingIn = st.endAt ? Math.max(0, Math.round((st.endAt - Date.now()) / 1000)) : null;
+          const r = await remote.sync(id.car, id.secret, { ...st, endingIn, lastCmd: lastCmd.current });
           if (r) {
             setOnline(true);
             setPaired(r.paired);
