@@ -10,7 +10,6 @@ import { STRINGS, SPEECH, ANNOUNCE, type RequestKey, type TipKey, type GameKey, 
 import { useSpeech } from "./useSpeech";
 import { useMusic } from "./useMusic";
 import MusicHero from "./MusicHero";
-import { APP_VERSION, BUILD_ID } from "./version";
 import { GENRES, PLAYLIST_META, groupStations } from "./genres";
 import { stationsFor } from "./stations";
 import Driver, { type RideStage } from "./Driver";
@@ -493,10 +492,7 @@ export default function V5App() {
 
   const header = (
     <header className="v5-header">
-      <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
-        <span className="v5-wordmark v5-hold" onPointerDown={holdStart} onPointerUp={holdEnd} onPointerLeave={holdEnd} onPointerCancel={holdEnd}>LuxPro</span>
-        <span className="v5-micro" dir="ltr">v{APP_VERSION} · {BUILD_ID}</span>
-      </div>
+      <span className="v5-wordmark v5-hold" onPointerDown={holdStart} onPointerUp={holdEnd} onPointerLeave={holdEnd} onPointerCancel={holdEnd}>LuxPro</span>
       <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
         {LANGS.map((l) => (
           <button key={l.id} className="v5-lang" aria-pressed={lang === l.id} onClick={() => switchLang(l.id)}>{l.label}</button>
@@ -553,7 +549,7 @@ export default function V5App() {
 
         {/* ── Climate: Cooler | Warmer, no number ─────────────────────── */}
         <section aria-label={s.climateTitle}>
-        <SectionHead title={s.climateTitle} hint={s.climateHint} />
+        <SectionHead title={s.climateTitle} />
         <div className="v5-climate">
           {(["cool", "warm"] as const).map((side) => {
             const on = climate === side;
@@ -570,7 +566,7 @@ export default function V5App() {
 
         {/* ── Play: five games, one tap each (built from v5.3) ─────────── */}
         <section aria-label={s.gamesTitle}>
-          <SectionHead title={s.gamesTitle} hint={s.gamesHint} />
+          <SectionHead title={s.gamesTitle} />
           <div className="v5-grid5">
             {GAMES.map((g) => (
               <Circle key={g.key} icon={g.icon} color={g.color} label={resumable[g.key] ? s.resume : s.games[g.key]}

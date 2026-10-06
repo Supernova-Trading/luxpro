@@ -33,7 +33,7 @@ export default function MusicHero({ s, lang, music, header, onPicker, btOn, onBt
     playing = sc.playing;
     title = sc.track?.title || plGenre;
     sub = sc.track?.artist || "";
-    caption = sc.failed || (!online && !sc.playing) ? s.needInternet : sc.playing ? `${s.nowPlaying} · ${plGenre}` : `${plGenre} · ${sc.ready ? s.tapPlay : s.loading}`;
+    caption = sc.failed || (!online && !sc.playing) ? s.needInternet : sc.playing ? `${s.nowPlaying} · ${plGenre}` : (sc.ready ? plGenre : `${plGenre} · ${s.loading}`);
   } else if (source === "radio") {
     playing = radio.playing;
     const st = radio.currentStation;
@@ -46,7 +46,7 @@ export default function MusicHero({ s, lang, music, header, onPicker, btOn, onBt
       ? s.offline
       : radio.playing
       ? <><span className="v5-live" aria-hidden />{s.live} · {genre}</>
-      : radio.statusText.startsWith("Loading") ? s.loading : `${genre} · ${s.tapPlay}`;
+      : radio.statusText.startsWith("Loading") ? s.loading : genre;
   }
 
   const tabs: [Source, string][] = [["radio", s.radio], ["playlists", s.playlists], ["bluetooth", s.bluetooth]];

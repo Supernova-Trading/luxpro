@@ -247,7 +247,7 @@ export default function WordGame({ kind, s, lang, deck, prize, onAnswer, onTake,
           <span className="v5-prize-tier">{tierName(prize.tier)}</span>
           <span className="v5-heading">{s.wonPrize.replace("{tier}", tierName(prize.tier))}</span>
           <div className="v5-prize-actions">
-            <button className="v5-next" disabled={!offerReady} onClick={() => { setJustClaimed(true); onTake(); }}>
+            <button className="v5-next" data-gold disabled={!offerReady} onClick={() => { setJustClaimed(true); onTake(); }}>
               <Icon name="check" size={20} />{s.takePrize}
             </button>
             {isTopTier(prize.tier) ? (

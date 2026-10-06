@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Icon, type IconName } from "../Icon";
+import { APP_VERSION, BUILD_ID } from "./version";
 
 // Amish's Driver panel (roadmap P8): behind a 4-digit PIN, opened by holding
 // the LuxPro wordmark. Owner-only controls live here, out of passengers'
@@ -178,7 +179,7 @@ export default function Driver({ stage, isFS, kiosk, phone, endAt, onClose, onNe
           </>
         ) : (
           <div className="v5-drv-actions">
-            <span className="v5-caption">Ride: {stage === "welcome" ? "waiting for passenger" : stage === "ride" ? "in progress" : "ended"}</span>
+            <span className="v5-caption">Ride: {stage === "welcome" ? "waiting for passenger" : stage === "ride" ? "in progress" : "ended"} · <span dir="ltr">v{APP_VERSION} · {BUILD_ID}</span></span>
             {action("history", armed ? "Tap again to clear the tablet" : "New passenger",
               "Clears requests, tip, games and music; shows the welcome screen",
               () => { if (armed) { setArmed(false); onClose(); onNewPassenger(); } else setArmed(true); }, { gold: armed })}
