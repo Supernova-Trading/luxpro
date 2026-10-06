@@ -180,17 +180,23 @@ export default function RemotePage() {
 
   return (
     <div className="v5 v5-remote" data-lang="en">
+      {/* One compact status line (owner, v5.27): tablet dot, ride dot, language */}
       <header className="v5-rm-head">
-        <span className="v5-wordmark">LuxPro · Driver</span>
-        <span className="v5-remote-live" data-live={live}>
-          <i />{live ? "Tablet connected" : age === null ? "Connecting…" : `Tablet offline (${age}s)`}
+        <span className="v5-wordmark">LuxPro</span>
+        <span className="v5-rm-status">
+          <span className="v5-rm-dot" data-tone={live ? "ok" : age === null ? "wait" : "bad"}
+            title={live ? "Tablet connected" : age === null ? "Connecting…" : `Tablet offline (${age}s)`}>
+            <i />Tablet
+          </span>
+          <span className="v5-rm-dot" data-tone={!st ? "wait" : endsAt ? "gold" : st.stage === "ride" ? "ok" : "bad"}
+            title={stageText}>
+            <i />Ride
+          </span>
+          <span className="v5-rm-lang" title={st ? `Passenger language: ${LANG_NAME[st.lang] ?? st.lang}` : ""}>
+            {st ? st.lang.toUpperCase() : "—"}
+          </span>
         </span>
       </header>
-
-      <section className="v5-rm-stage" data-stage={st?.stage ?? "none"}>
-        <span className="v5-rm-stage-title">{stageText}</span>
-        {st && st.stage !== "welcome" && <span className="v5-sub">Passenger language: {LANG_NAME[st.lang] ?? st.lang}</span>}
-      </section>
 
       {/* Two big buttons first, at the top, where nothing can sit over them */}
       <section className="v5-rm-actions" aria-label="Send to the tablet">
