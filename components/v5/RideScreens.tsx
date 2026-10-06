@@ -4,6 +4,7 @@ import { Icon } from "../Icon";
 import type { Lang } from "@/lib/translations";
 import type { V5Strings } from "./strings";
 import type { DriverProfile } from "./driverProfile";
+import Wordmark from "./Wordmark";
 
 // Pickup and drop-off screens (roadmap P8), started from the Driver panel or
 // the driver's phone remote.
@@ -61,9 +62,8 @@ export function Welcome({ T, driver, onBegin, secondsLeft }: {
   return (
     <div className="v5-ride v5-welcome" role="dialog" aria-label={en.welcomeTitle}>
       <div className="v5-welcome-top">
-        <span className="v5-wordmark">LuxPro</span>
+        <span className="v5-wordmark"><Wordmark width={176} draw /></span>
         <span className="v5-ride-title">{en.welcomeTitle}</span>
-        <span className="v5-coachline" aria-hidden />
         <DriverCard s={en} name={driver.name} label={en.driverToday} trips={driver.trips} />
       </div>
       <div className="v5-welcome-low">
@@ -96,10 +96,9 @@ export function Farewell({ s, name, trips, tipped, tipButtons, phone, prize }: {
 }) {
   return (
     <div className="v5-ride v5-farewell" role="dialog" aria-label={s.farewellTitle}>
-      <span className="v5-wordmark">LuxPro</span>
+      <span className="v5-wordmark"><Wordmark width={176} draw /></span>
       <div className="v5-ride-head">
         <span className="v5-ride-title">{s.farewellTitle}</span>
-        <span className="v5-coachline" aria-hidden />
         <DriverCard s={s} name={name} label={s.yourDriver} trips={trips} />
         <span className="v5-ride-sub" style={{ display: "inline-flex", alignItems: "center", gap: 10, marginTop: 8 }}>
           <Icon name="hand" size={20} style={{ color: "var(--i-lemon)", flexShrink: 0 }} />

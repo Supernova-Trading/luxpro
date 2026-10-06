@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Wordmark from "@/components/v5/Wordmark";
 
 // A crash anywhere in v5 shows this calm screen instead of Chrome's
 // "Application error" page, then reloads itself (council 2026-10-06).
@@ -29,7 +30,7 @@ export default function V5Error({ error }: { error: Error & { digest?: string } 
   return (
     <div className="v5" data-lang="en" dir="ltr">
       <div className="v5-ride" role="alert">
-        <span className="v5-wordmark">LuxPro</span>
+        <span className="v5-wordmark"><Wordmark width={160} /></span>
         <div className="v5-ride-head">
           <span className="v5-ride-title">One moment</span>
           <span className="v5-ride-sub">The screen is restarting. It will be back in a few seconds.</span>

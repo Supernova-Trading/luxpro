@@ -87,7 +87,11 @@
 .v5 :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 
 /* ── Type roles (nothing essential below 14px) ─────────────────────────── */
-.v5-wordmark { font-family: var(--serif); font-size: 15px; letter-spacing: 6px; text-transform: uppercase; color: var(--ink); line-height: 1; }
+/* The wordmark (v5.38, brand option A "Coachline"): an outlined SVG, so it is
+   identical in every language and never waits for a font */
+.v5-wordmark { display: inline-flex; color: var(--ink); line-height: 0; }
+.v5-wm { display: block; overflow: visible; }
+.v5-wm-draw { transform-box: fill-box; transform-origin: center; animation: v5-draw 700ms var(--ease-out) 250ms both; }
 .v5-micro { font-size: var(--t-sm); font-weight: 500; color: var(--muted); font-variant-numeric: tabular-nums; }
 .v5-caption { font-size: var(--t-xs); font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); line-height: 1.4; }
 .v5-sub { font-size: var(--t-sm); color: var(--muted); line-height: 1.4; }
@@ -563,7 +567,6 @@ a.v5-row { color: inherit; text-decoration: none; }
 .v5[data-lang="ur"] * { letter-spacing: 0 !important; text-transform: none !important; }
 .v5[data-lang="ur"] .v5-circle-label { font-size: var(--t-md); line-height: 1.5; }
 /* The wordmark is the brand: Newsreader, tracked, uppercase in every language */
-.v5[data-lang="ur"] .v5-wordmark { font-family: var(--font-display), "Newsreader", Georgia, serif; letter-spacing: 6px !important; text-transform: uppercase !important; line-height: 1; }
 .v5[data-lang="ur"] .v5-label,
 .v5[data-lang="ur"] .v5-sub,
 .v5[data-lang="ur"] .v5-told,

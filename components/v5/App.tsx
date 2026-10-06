@@ -22,6 +22,7 @@ import { nightFor, type NightMode } from "./night";
 import WordGame from "./WordGame";
 import GameBoundary from "./GameBoundary";
 import RevolutQr from "./RevolutQr";
+import Wordmark from "./Wordmark";
 import { DEFAULT_DRIVER, readDriver, saveDriver, personalise, personaliseByLang, type DriverProfile } from "./driverProfile";
 import { newPrize, answer as prizeAnswer, take as prizeTake, keepPlaying, restart as prizeRestart, lastCall as prizeLastCall, TIER_KEYS } from "./games/prize";
 import type { MinesSave } from "./games/MinesGame";
@@ -513,7 +514,7 @@ export default function V5App() {
 
   const header = (
     <header className="v5-header">
-      <span className="v5-wordmark v5-hold" onPointerDown={holdStart} onPointerUp={holdEnd} onPointerLeave={holdEnd} onPointerCancel={holdEnd}>LuxPro</span>
+      <span className="v5-wordmark v5-hold" onPointerDown={holdStart} onPointerUp={holdEnd} onPointerLeave={holdEnd} onPointerCancel={holdEnd}><Wordmark width={132} /></span>
       <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
         {LANGS.map((l) => (
           <button key={l.id} className="v5-lang" aria-pressed={lang === l.id} onClick={() => switchLang(l.id)}>{l.label}</button>

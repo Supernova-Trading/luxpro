@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Icon, type IconName } from "../../Icon";
 import { STRINGS, type RequestKey, type TipKey } from "../strings";
+import Wordmark from "../Wordmark";
 import { remote, type RemoteCmd, type TabletState } from "./api";
 
 // Amish's phone (roadmap P8): pair once with the 8-character code the tablet
@@ -201,7 +202,8 @@ export default function RemotePage() {
   if (!pairing) {
     return (
       <div className="v5 v5-remote" data-lang="en">
-        <span className="v5-wordmark">LuxPro · Driver remote</span>
+        <span className="v5-wordmark"><Wordmark width={150} /></span>
+        <span className="v5-caption">Driver remote</span>
         <span className="v5-heading">Pair this phone</span>
         <ol className="v5-remote-steps">
           <li>On the tablet, hold the <b>LuxPro</b> name and enter your PIN.</li>
@@ -227,7 +229,7 @@ export default function RemotePage() {
     <div className="v5 v5-remote" data-lang="en">
       {/* One compact status line (owner, v5.27): tablet dot, ride dot, language */}
       <header className="v5-rm-head">
-        <span className="v5-wordmark">LuxPro</span>
+        <span className="v5-wordmark"><Wordmark width={104} /></span>
         <span className="v5-rm-status">
           {/* Words, not just colours (v5.31): phones never show title tooltips */}
           <span className="v5-rm-dot" data-tone={live ? "ok" : age === null ? "wait" : "bad"}>
