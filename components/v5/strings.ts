@@ -137,6 +137,7 @@ export interface V5Strings {
   farewellBelongings: string;
   farewellTipped: string;
   farewellBye: string;
+  farewellByeEvening: string; // after 5 pm (v5.40)
   nearlyThere: string;
   nearlySub: string;
   gameError: string;
@@ -296,10 +297,11 @@ export const STRINGS: Record<Lang, V5Strings> = {
     welcomeDriver: "Your driver today is {driver}",
     chooseLanguage: "Continue in English",
     welcomeNote: "Music, games and requests for {driver} are on the next screen. Answer 5 questions to win a treat from {driver}.",
-    farewellTitle: "Thank you for riding with us",
+    farewellTitle: "It was a pleasure driving you",
     farewellBelongings: "Please check you have all your belongings.",
     farewellTipped: "{driver} knows about your tip. Thank you!",
-    farewellBye: "Have a wonderful day",
+    farewellBye: "Enjoy the rest of your day",
+    farewellByeEvening: "Enjoy the rest of your evening",
     nearlyThere: "Nearly there",
     nearlySub: "We'll be there shortly. Please gather your belongings.",
     gameError: "That game stopped. Please open it again.",
@@ -457,10 +459,11 @@ export const STRINGS: Record<Lang, V5Strings> = {
     welcomeDriver: "Su conductor hoy es {driver}",
     chooseLanguage: "Continuar en español",
     welcomeNote: "La música, los juegos y las peticiones a {driver} están en la siguiente pantalla. Responda 5 preguntas y gane un detalle de {driver}.",
-    farewellTitle: "Gracias por viajar con nosotros",
+    farewellTitle: "Ha sido un placer llevarle",
     farewellBelongings: "Por favor, compruebe que lleva todas sus pertenencias.",
     farewellTipped: "{driver} ya sabe lo de su propina. ¡Gracias!",
-    farewellBye: "Que tenga un buen día",
+    farewellBye: "Que disfrute del resto del día",
+    farewellByeEvening: "Que disfrute del resto de la noche",
     nearlyThere: "Casi hemos llegado",
     nearlySub: "Llegaremos en breve. Vaya recogiendo sus cosas.",
     gameError: "El juego se ha detenido. Ábralo de nuevo.",
@@ -618,10 +621,11 @@ export const STRINGS: Record<Lang, V5Strings> = {
     welcomeDriver: "آج آپ کے ڈرائیور {driver} ہیں",
     chooseLanguage: "اردو میں جاری رکھیں",
     welcomeNote: "موسیقی، گیمز اور {driver} سے درخواستیں اگلی اسکرین پر ہیں۔ پانچ سوالوں کے جواب دیں اور {driver} سے تحفہ جیتیں۔",
-    farewellTitle: "ہمارے ساتھ سفر کرنے کا شکریہ",
+    farewellTitle: "آپ کی خدمت کر کے خوشی ہوئی",
     farewellBelongings: "براہ کرم اپنا تمام سامان ساتھ لے جانا یقینی بنائیں۔",
     farewellTipped: "{driver} کو آپ کی ٹپ کا علم ہے۔ شکریہ!",
-    farewellBye: "آپ کا دن اچھا گزرے",
+    farewellBye: "آپ کا باقی دن خوشگوار گزرے",
+    farewellByeEvening: "آپ کی شام خوشگوار گزرے",
     nearlyThere: "ہم تقریباً پہنچ گئے",
     nearlySub: "ہم جلد پہنچ جائیں گے۔ براہ کرم اپنا سامان سمیٹ لیں۔",
     gameError: "گیم رک گئی۔ براہ کرم دوبارہ کھولیں۔",

@@ -118,7 +118,8 @@ export function Farewell({ s, name, trips, tipped, tipButtons, phone, prize }: {
         </section>
       )}
       <div className="v5-ride-foot">
-        <span className="v5-ride-sub">{s.farewellBye}</span>
+        {/* The send-off follows the time of day: no "day" at a 23:00 drop-off (council, v5.40) */}
+        <span className="v5-ride-sub">{new Date().getHours() >= 17 ? s.farewellByeEvening : s.farewellBye}</span>
         <span className="v5-sub">{s.contactDriver} · <span dir="ltr">{phone}</span></span>
       </div>
     </div>
