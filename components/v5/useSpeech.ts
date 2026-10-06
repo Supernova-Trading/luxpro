@@ -9,6 +9,11 @@ type Item = { key: string; text: string; onError?: () => void; lang?: string; vo
 
 const BCP47: Record<string, string> = { en: "en-GB", es: "es-ES", ur: "ur-PK" };
 
+// Android Chrome sometimes never fires onend (or drops the utterance).
+// After this long a line counts as finished so the queue keeps moving;
+// if it never even started, the request is marked "didn't hear" (v5.30).
+const watchdogMs = (text: string) => 5000 + text.length * 100;
+
 export function useSpeech(onDuck?: (ducked: boolean) => void, volume = 1) {
   const duckRef = useRef(onDuck);
   duckRef.current = onDuck;
@@ -17,6 +22,10 @@ export function useSpeech(onDuck?: (ducked: boolean) => void, volume = 1) {
   const queue = useRef<Item[]>([]);
   const current = useRef<Item | null>(null);
   const voice = useRef<SpeechSynthesisVoice | null>(null);
+  // Kept in a ref: an utterance held only in a local variable can be
+  // garbage-collected before its onend fires.
+  const utter = useRef<SpeechSynthesisUtterance | null>(null);
+  const watchdog = useRef<ReturnType<typeof setTimeout>>();
 
   useEffect(() => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
@@ -32,6 +41,7 @@ export function useSpeech(onDuck?: (ducked: boolean) => void, volume = 1) {
     synth.addEventListener?.("voiceschanged", pick);
     return () => {
       synth.removeEventListener?.("voiceschanged", pick);
+      clearTimeout(watchdog.current);
       synth.cancel();
     };
   }, []);
@@ -47,19 +57,35 @@ export function useSpeech(onDuck?: (ducked: boolean) => void, volume = 1) {
     const item = queue.current.shift()!;
     current.current = item;
     const u = new SpeechSynthesisUtterance(item.text);
+    utter.current = u;
+    let started = false;
+    u.onstart = () => { started = true; };
     u.lang = item.lang ?? "en-GB";
     u.volume = volumeRef.current;
     const v = item.voice !== undefined ? item.voice : voice.current;
     try { if (v) u.voice = v; } catch { /* odd voice object: the default voice still speaks */ }
     const next = () => {
+      if (current.current !== item) return; // a late event from a line already finished or cleared
+      clearTimeout(watchdog.current);
       current.current = null;
+      utter.current = null;
       pumpRef.current();
     };
     u.onend = next;
     u.onerror = (e) => {
+      if (current.current !== item) return;
       if (e.error !== "interrupted" && e.error !== "canceled") item.onError?.();
       next();
     };
+    clearTimeout(watchdog.current);
+    watchdog.current = setTimeout(() => {
+      if (current.current !== item) return;
+      if (!started) {
+        item.onError?.();
+        try { window.speechSynthesis.cancel(); } catch { /* nothing to stop */ }
+      }
+      next();
+    }, watchdogMs(item.text));
     window.speechSynthesis.speak(u);
   };
 
@@ -84,6 +110,8 @@ export function useSpeech(onDuck?: (ducked: boolean) => void, volume = 1) {
   const clear = useCallback(() => {
     queue.current = [];
     current.current = null;
+    utter.current = null;
+    clearTimeout(watchdog.current);
     duckRef.current?.(false);
     if (typeof window !== "undefined" && "speechSynthesis" in window) window.speechSynthesis.cancel();
   }, []);

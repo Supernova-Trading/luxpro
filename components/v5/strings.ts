@@ -125,6 +125,7 @@ export interface V5Strings {
   farewellBye: string;
   nearlyThere: string;
   nearlySub: string;
+  gameError: string;
   nightSub: string;
   nightModes: Record<"auto" | "on" | "off", string>;
   qrFailed: string;
@@ -272,7 +273,8 @@ export const STRINGS: Record<Lang, V5Strings> = {
     farewellTipped: "Amish knows about your tip. Thank you!",
     farewellBye: "Have a wonderful day",
     nearlyThere: "Nearly there",
-    nearlySub: "About 5 minutes to go. Please gather your belongings.",
+    nearlySub: "About 2 minutes to go. Please gather your belongings.",
+    gameError: "That game stopped. Please open it again.",
     nightSub: "Dimmer screen after sunset",
     nightModes: { auto: "Auto", on: "On", off: "Off" },
     qrFailed: "The QR code didn't load. Cash or Uber still work.",
@@ -418,7 +420,8 @@ export const STRINGS: Record<Lang, V5Strings> = {
     farewellTipped: "Amish ya sabe lo de su propina. ¡Gracias!",
     farewellBye: "Que tenga un buen día",
     nearlyThere: "Casi hemos llegado",
-    nearlySub: "Faltan unos 5 minutos. Vaya recogiendo sus cosas.",
+    nearlySub: "Faltan unos 2 minutos. Vaya recogiendo sus cosas.",
+    gameError: "El juego se ha detenido. Ábralo de nuevo.",
     nightSub: "Pantalla más tenue al anochecer",
     nightModes: { auto: "Auto", on: "Sí", off: "No" },
     qrFailed: "El código QR no se cargó. El efectivo o Uber siguen funcionando.",
@@ -564,7 +567,8 @@ export const STRINGS: Record<Lang, V5Strings> = {
     farewellTipped: "امیش کو آپ کی ٹپ کا علم ہے۔ شکریہ!",
     farewellBye: "آپ کا دن اچھا گزرے",
     nearlyThere: "ہم تقریباً پہنچ گئے",
-    nearlySub: "تقریباً 5 منٹ باقی ہیں۔ براہ کرم اپنا سامان سمیٹ لیں۔",
+    nearlySub: "تقریباً 2 منٹ باقی ہیں۔ براہ کرم اپنا سامان سمیٹ لیں۔",
+    gameError: "گیم رک گئی۔ براہ کرم دوبارہ کھولیں۔",
     nightSub: "غروبِ آفتاب کے بعد اسکرین مدھم",
     nightModes: { auto: "خودکار", on: "آن", off: "آف" },
     qrFailed: "کیو آر کوڈ لوڈ نہیں ہوا۔ نقد یا اوبر اب بھی کام کرتے ہیں۔",
@@ -624,11 +628,12 @@ export const SPEECH: {
 // Said to the passenger when Amish presses Nearly there / End ride / New
 // passenger (phone or Driver panel). In the passenger's language when the
 // tablet has that voice, otherwise English (v5.24, owner).
+// "nearly" must match END_TRIP_MS in App.tsx (2 minutes; v5.30 council fix).
 export const ANNOUNCE: Record<"nearly" | "arrived" | "welcome", Record<Lang, string>> = {
   nearly: {
-    en: "We're nearly there. About five minutes to your destination. Please gather your belongings.",
-    es: "Casi hemos llegado. Faltan unos cinco minutos. Vaya recogiendo sus pertenencias, por favor.",
-    ur: "ہم تقریباً پہنچ گئے ہیں۔ تقریباً پانچ منٹ باقی ہیں۔ براہ کرم اپنا سامان سمیٹ لیں۔",
+    en: "We're nearly there. About two minutes to your destination. Please gather your belongings.",
+    es: "Casi hemos llegado. Faltan unos dos minutos. Vaya recogiendo sus pertenencias, por favor.",
+    ur: "ہم تقریباً پہنچ گئے ہیں۔ تقریباً دو منٹ باقی ہیں۔ براہ کرم اپنا سامان سمیٹ لیں۔",
   },
   arrived: {
     en: "We've arrived. Thank you for riding with Amish. Please check you have all your belongings. Have a wonderful day.",

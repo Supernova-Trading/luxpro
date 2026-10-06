@@ -21,6 +21,7 @@ import type { RemoteCmd, TabletState } from "./remote/api";
 import { useDeck } from "./useDeck";
 import { nightFor, type NightMode } from "./night";
 import WordGame from "./WordGame";
+import GameBoundary from "./GameBoundary";
 import { newPrize, answer as prizeAnswer, take as prizeTake, keepPlaying, restart as prizeRestart, TIER_KEYS } from "./games/prize";
 import type { MinesSave } from "./games/MinesGame";
 import type { SnakeSave } from "./games/SnakeGame";
@@ -657,7 +658,7 @@ export default function V5App() {
             </div>
             <div className="v5-row v5-row-stack">
               <span className="v5-set-line">
-                <Icon name="mic" size={20} style={{ color: "var(--ink)" }} />
+                <Icon name="volume" size={20} style={{ color: "var(--ink)" }} />
                 <span className="v5-label" style={{ flex: 1 }}>{s.voiceVolume}</span>
                 <button className="v5-pill" onClick={() => { if (passBump("test")) speech.say("test", SPEECH.test); }}>
                   <Icon name="play" size={16} />{s.testVoice}
@@ -688,14 +689,15 @@ export default function V5App() {
                 ))}
               </div>
             </div>
-            <a className="v5-row" href={`tel:${AMISH_PHONE.tel}`}>
+            {/* Shown as text, not a tel: link: a tap would open the dialler and leave the app (kiosk, v5.30) */}
+            <div className="v5-row">
               <Icon name="phone" size={20} style={{ color: "var(--i-green)" }} />
               <span className="v5-set-text">
                 <span className="v5-label">{s.contactAmish}</span>
                 <span className="v5-sub">{s.contactSub}</span>
               </span>
-              <span className="v5-set-phone" dir="ltr">{AMISH_PHONE.shown}</span>
-            </a>
+              <span className="v5-set-phone" dir="ltr" style={{ userSelect: "text" }}>{AMISH_PHONE.shown}</span>
+            </div>
             {/* Full screen and New ride are Amish's now: Driver panel (hold the LuxPro name) */}
           </div>
         </div>
@@ -722,7 +724,8 @@ export default function V5App() {
         </div>
       )}
 
-      {/* ── Quiz / Riddles ───────────────────────────────────────────── */}
+      {/* ── Games: a crash closes just that game (v5.30) ───────────────── */}
+      <GameBoundary key={game ?? "none"} onError={() => { setGame(null); showToast(s.gameError); }}>
       {(game === "quiz" || game === "riddles") && (
         <WordGame
           kind={game}
@@ -745,6 +748,7 @@ export default function V5App() {
       {game === "mines" && (
         <MinesGame s={s} saved={minesSave} onSave={setMinesSave} onClose={() => setGame(null)} top={halfTop} />
       )}
+      </GameBoundary>
 
       {/* ── Revolut QR ───────────────────────────────────────────────── */}
       {qr && (
@@ -804,6 +808,9 @@ export default function V5App() {
           src={music.sc.src}
           title="Playlist player"
           allow="autoplay"
+          // No popups or page changes: the player's SoundCloud links can't take
+          // the passenger out of the app when it is shown for a tap (v5.30)
+          sandbox="allow-scripts allow-same-origin allow-presentation"
           aria-hidden={!(music.sc.needsTap && music.source === "playlists")}
           tabIndex={-1}
           className={music.sc.needsTap && music.source === "playlists" ? "v5-sc-frame" : undefined}

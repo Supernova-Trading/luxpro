@@ -11,8 +11,13 @@ import { Icon, type IconName } from "../Icon";
 // The PIN is set on the tablet the first time; only a hash is stored, on the
 // tablet. Forgotten PIN: clear the site's data in Chrome and set a new one.
 const PIN_KEY = "luxpro.v5.driverPin";
+const LOCK_KEY = "luxpro.v5.driverLock"; // wrong-PIN count survives a reload (v5.30)
 const MAX_TRIES = 5;
 const LOCKOUT_MS = 30_000;
+// The panel closes itself if left open, so a passenger can't reach it
+// (council 2026-10-06). Longer while a phone code is on screen to be typed.
+const IDLE_MS = 60_000;
+const IDLE_PAIRING_MS = 180_000;
 
 async function hashPin(pin: string): Promise<string> {
   const text = `luxpro-driver:${pin}`;
@@ -27,6 +32,18 @@ async function hashPin(pin: string): Promise<string> {
 
 function readPin(): string | null {
   try { return localStorage.getItem(PIN_KEY); } catch { return null; }
+}
+
+type Lock = { tries: number; until: number };
+function readLock(): Lock {
+  try {
+    const v = JSON.parse(localStorage.getItem(LOCK_KEY) || "null");
+    if (v && typeof v.tries === "number" && typeof v.until === "number") return v;
+  } catch { /* storage blocked */ }
+  return { tries: 0, until: 0 };
+}
+function writeLock(l: Lock) {
+  try { localStorage.setItem(LOCK_KEY, JSON.stringify(l)); } catch { /* storage blocked */ }
 }
 
 export type RideStage = "welcome" | "ride" | "farewell";
@@ -51,14 +68,14 @@ export default function Driver({ stage, isFS, kiosk, phone, endAt, onClose, onNe
   onFullscreen: () => void;
   onKiosk: (on: boolean) => void;
 }) {
-  const [mode, setMode] = useState<"enter" | "set" | "confirm" | "panel">(() => (readPin() ? "enter" : "set"));
+  const [mode, setMode] = useState<"enter" | "verify" | "set" | "confirm" | "panel">(() => (readPin() ? "enter" : "set"));
   const [pin, setPin] = useState("");
   const [first, setFirst] = useState("");
   const [msg, setMsg] = useState("");
   const [armed, setArmed] = useState(false); // "New passenger" needs a second tap
   const [pairing, setPairing] = useState<string | null>(null); // code on screen
   const [pairMsg, setPairMsg] = useState("");
-  const tries = useRef(0);
+  const [touched, setTouched] = useState(() => Date.now());
   const [, tickNow] = useState(0); // re-render each second while the End-trip countdown runs
   useEffect(() => {
     if (!endAt) return;
@@ -67,7 +84,23 @@ export default function Driver({ stage, isFS, kiosk, phone, endAt, onClose, onNe
   }, [endAt]);
   const left = endAt ? Math.max(0, Math.round((endAt - Date.now()) / 1000)) : 0;
   const mmss = `${Math.floor(left / 60)}:${String(left % 60).padStart(2, "0")}`;
-  const lockedUntil = useRef(0);
+
+  // Close after a quiet minute, and whenever the ride stage changes underneath
+  // (e.g. Amish's phone ended the trip or started a new passenger).
+  const closeRef = useRef(onClose);
+  closeRef.current = onClose;
+  useEffect(() => {
+    const t = setTimeout(() => closeRef.current(), pairing && !phone.paired ? IDLE_PAIRING_MS : IDLE_MS);
+    return () => clearTimeout(t);
+  }, [touched, pairing, phone.paired]);
+  // (Not on Welcome carrying on into the ride by itself after 30 s, which
+  // would snatch the panel from Amish mid-setup.)
+  const lastStage = useRef(stage);
+  useEffect(() => {
+    const was = lastStage.current;
+    lastStage.current = stage;
+    if (stage !== was && !(was === "welcome" && stage === "ride")) closeRef.current();
+  }, [stage]);
 
   useEffect(() => {
     if (!armed) return;
@@ -76,12 +109,15 @@ export default function Driver({ stage, isFS, kiosk, phone, endAt, onClose, onNe
   }, [armed]);
 
   async function submit(code: string) {
-    if (mode === "enter") {
-      if (Date.now() < lockedUntil.current) { setMsg("Too many tries. Wait 30 seconds."); setPin(""); return; }
-      if ((await hashPin(code)) === readPin()) { tries.current = 0; setMode("panel"); setMsg(""); }
-      else {
-        tries.current += 1;
-        if (tries.current >= MAX_TRIES) { lockedUntil.current = Date.now() + LOCKOUT_MS; tries.current = 0; }
+    if (mode === "enter" || mode === "verify") {
+      const lock = readLock();
+      if (Date.now() < lock.until) { setMsg("Too many tries. Wait 30 seconds."); setPin(""); return; }
+      if ((await hashPin(code)) === readPin()) {
+        writeLock({ tries: 0, until: 0 });
+        setMode(mode === "verify" ? "set" : "panel"); setMsg("");
+      } else {
+        const tries = lock.tries + 1;
+        writeLock(tries >= MAX_TRIES ? { tries: 0, until: Date.now() + LOCKOUT_MS } : { tries, until: 0 });
         setMsg("Wrong PIN");
       }
     } else if (mode === "set") {
@@ -103,7 +139,7 @@ export default function Driver({ stage, isFS, kiosk, phone, endAt, onClose, onNe
     if (next.length === 4) void submit(next);
   }
 
-  const title = mode === "enter" ? "Driver PIN" : mode === "set" ? "Set a 4-digit driver PIN" : mode === "confirm" ? "Enter the PIN again" : "Driver";
+  const title = mode === "enter" ? "Driver PIN" : mode === "verify" ? "Enter the current PIN" : mode === "set" ? "Set a 4-digit driver PIN" : mode === "confirm" ? "Enter the PIN again" : "Driver";
 
   const action = (icon: IconName, label: string, sub: string, onClick: () => void, extra?: { gold?: boolean; on?: boolean }) => (
     <button className="v5-drv-btn" data-gold={extra?.gold} aria-pressed={extra?.on} onClick={onClick}>
@@ -116,7 +152,7 @@ export default function Driver({ stage, isFS, kiosk, phone, endAt, onClose, onNe
   );
 
   return (
-    <div className="v5-drv" role="dialog" aria-label={title} dir="ltr" data-lang="en">
+    <div className="v5-drv" role="dialog" aria-label={title} dir="ltr" data-lang="en" onPointerDown={() => setTouched(Date.now())}>
       <div className="v5-drv-card">
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
           <span className="v5-heading" style={{ fontFamily: "var(--font-display), Newsreader, serif" }}>{title}</span>
@@ -129,7 +165,7 @@ export default function Driver({ stage, isFS, kiosk, phone, endAt, onClose, onNe
               {[0, 1, 2, 3].map((i) => <i key={i} data-on={i < pin.length} />)}
             </div>
             <span className="v5-sub" role="status" style={{ minHeight: 20, color: msg ? "var(--i-red)" : undefined }}>
-              {msg || (mode === "set" ? "Only Amish should know it." : "")}
+              {msg || (mode === "set" ? "Only Amish should know it." : mode === "verify" ? "Needed before choosing a new one." : "")}
             </span>
             <div className="v5-drv-pad">
               {["1", "2", "3", "4", "5", "6", "7", "8", "9"].map((d) => (
@@ -174,7 +210,7 @@ export default function Driver({ stage, isFS, kiosk, phone, endAt, onClose, onNe
               </div>
             )}
             {pairMsg && <span className="v5-sub" role="status">{pairMsg}</span>}
-            {action("settings", "Change PIN", "", () => { setMode("set"); setMsg(""); })}
+            {action("settings", "Change PIN", "Asks for the current PIN first", () => { setMode("verify"); setMsg(""); })}
           </div>
         )}
       </div>
