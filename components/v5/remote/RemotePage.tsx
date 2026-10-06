@@ -193,6 +193,23 @@ export default function RemotePage() {
           <span>{armed ? "Tap again to clear the tablet" : "New passenger"}</span>
         </button>
       </section>
+      {/* Tablet music volume, in 10% steps like the tablet's own − / + */}
+      <section className="v5-rm-vol" aria-label="Tablet music volume">
+        <button className="v5-rm-volbtn" disabled={sending || (st?.volume ?? 50) <= 0} aria-label="Music volume down" onClick={() => send("vol_down", "Volume down")}>
+          <Icon name="minus" size={26} />
+        </button>
+        <span className="v5-rm-volmid">
+          <span className="v5-caption">Music volume</span>
+          <span className="v5-rm-volbar" aria-hidden>
+            {Array.from({ length: 10 }, (_, i) => <i key={i} data-on={st?.volume !== undefined && i < Math.round(st.volume / 10)} />)}
+          </span>
+          <b dir="ltr">{st?.volume !== undefined ? `${st.volume}%` : "—"}</b>
+        </span>
+        <button className="v5-rm-volbtn" disabled={sending || (st?.volume ?? 50) >= 100} aria-label="Music volume up" onClick={() => send("vol_up", "Volume up")}>
+          <Icon name="plus" size={26} />
+        </button>
+      </section>
+
       <div className="v5-rm-note" role="status" data-tone={note?.tone ?? "none"}>
         {note ? note.text : "Each button shows here when the tablet has done it."}
       </div>

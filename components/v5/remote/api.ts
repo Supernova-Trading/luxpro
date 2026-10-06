@@ -18,7 +18,7 @@ async function rpc<T>(fn: string, args: Record<string, unknown>): Promise<T> {
   return r.json() as Promise<T>;
 }
 
-export type RemoteCmd = "new_passenger" | "nearly" | "end_ride";
+export type RemoteCmd = "new_passenger" | "nearly" | "end_ride" | "vol_up" | "vol_down";
 
 /** What the tablet tells the phone, every few seconds. */
 export interface TabletState {
@@ -30,6 +30,7 @@ export interface TabletState {
   prize: { correct: number; status: string; tier: number };
   music: { source: string; title: string; playing: boolean };
   lastCmd?: number; // id of the last phone command the tablet ran (v5.23)
+  volume?: number;  // music volume 0-100 (v5.25)
 }
 
 export const remote = {

@@ -255,11 +255,15 @@ export default function V5App() {
       title: music.source === "radio" ? music.radio.currentStation?.n ?? "" : music.source === "playlists" ? music.sc.track?.title ?? "" : "",
       playing: music.source === "radio" ? music.radio.playing : music.sc.playing,
     },
+    volume: music.volume,
   };
   const phone = useRemote(rideReport, (cmd: RemoteCmd) => {
     if (cmd === "new_passenger") newPassenger();
     else if (cmd === "nearly") nearlyThere();
     else if (cmd === "end_ride") endRide();
+    // Amish's phone can turn the music up or down in 10% steps (v5.25)
+    else if (cmd === "vol_up") music.setVolume(music.volume + 10);
+    else if (cmd === "vol_down") music.setVolume(music.volume - 10);
   });
 
   // Hold the wordmark to open Amish's Driver panel (a tap does nothing).
