@@ -511,6 +511,14 @@ a.v5-row { color: inherit; text-decoration: none; }
 .v5-newgame:disabled { opacity: 0.55; }
 .v5-newgame[data-over="true"] { background: var(--gold); border-color: var(--gold); color: var(--on-gold); font-weight: 600; }
 
+/* The coachline (v5.34, council "signature moment"): a 1px gold line that
+   draws itself across, like a car's hand-painted pinstripe. Only under
+   "Welcome aboard", a prize, and "Thank you for riding with Amish".
+   Transform only, under a second (impeccable reference/delight.md:11
+   milestones only, :49 under 1 s; SKILL.md Motion: ease-out, never animate
+   layout). Reduced motion: shown already drawn (rule below). */
+.v5-coachline { display: block; width: 96px; height: 1px; background: var(--gold); transform-origin: center; animation: v5-draw 700ms var(--ease-out) 200ms both; }
+@keyframes v5-draw { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 @keyframes v5-fade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes v5-rise { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
 

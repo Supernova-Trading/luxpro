@@ -96,3 +96,19 @@ test("a guesser rarely reaches the first prize", () => {
   }
   assert.ok(wins / runs < 0.02, `guessers won ${((wins / runs) * 100).toFixed(1)}%`);
 });
+
+test("the ride ending offers a passed-up prize once more", async () => {
+  const { lastCall } = await import("./prize.ts");
+  let p = newPrize();
+  for (let i = 0; i < 5; i++) p = answer(p, true);   // Bronze on offer
+  p = keepPlaying(p);                                 // gambled it
+  p = answer(p, true);
+  const lc = lastCall(p);
+  assert.equal(lc.status, "offer");
+  assert.equal(lc.tier, 0);
+  assert.equal(lc.atRisk, -1);
+  assert.equal(lc.lastCall, true);
+  assert.equal(keepPlaying(lc), lc); // no "keep playing" on the last call
+  assert.equal(lastCall(newPrize()).status, "playing"); // nothing at stake: no pop-up
+  assert.equal(lastCall(take(lc)).status, "claimed");   // already taken: nothing
+});

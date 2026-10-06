@@ -18,6 +18,7 @@ export interface Prize {
   status: PrizeStatus;
   tier: number;   // tier on offer or claimed (index into TIERS), else -1
   atRisk: number; // highest tier passed up with "keep playing", else -1
+  lastCall?: boolean; // offered once more because the ride is ending (v5.34)
 }
 
 export function newPrize(): Prize {
@@ -47,8 +48,17 @@ export function isTopTier(tier: number): boolean {
 
 /** "Keep playing": the prize on offer is now at risk. Not offered for the top prize. */
 export function keepPlaying(p: Prize): Prize {
-  if (p.status !== "offer" || isTopTier(p.tier)) return p;
+  if (p.status !== "offer" || isTopTier(p.tier) || p.lastCall) return p;
   return { ...p, status: "playing", atRisk: p.tier, tier: -1 };
+}
+
+/** End of the ride (v5.34, council): a prize passed up with "keep playing"
+ *  is offered once more, so nobody leaves empty-handed right before the tip
+ *  moment (impeccable reference/delight.md: match the emotional moment). */
+export function lastCall(p: Prize): Prize {
+  if (p.status === "offer") return p.lastCall ? p : { ...p, lastCall: true };
+  if (p.status === "playing" && p.atRisk >= 0) return { ...p, status: "offer", tier: p.atRisk, atRisk: -1, lastCall: true };
+  return p;
 }
 
 /** After losing all lives: a fresh ladder (no prize has been taken this ride). */

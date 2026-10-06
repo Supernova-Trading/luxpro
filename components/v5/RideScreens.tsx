@@ -49,6 +49,7 @@ export function Welcome({ onBegin, secondsLeft }: { onBegin: (l: Lang) => void; 
       <div className="v5-welcome-top">
         <span className="v5-wordmark">LuxPro</span>
         <span className="v5-ride-title">{en.welcomeTitle}</span>
+        <span className="v5-coachline" aria-hidden />
         <Profile s={en} name={en.welcomeDriver} />
       </div>
       <div className="v5-welcome-low">
@@ -69,22 +70,25 @@ export function Welcome({ onBegin, secondsLeft }: { onBegin: (l: Lang) => void; 
 }
 
 /** Farewell: thanks, a belongings reminder, and one last easy way to tip. */
-export function Farewell({ s, tipped, tipButtons, phone }: {
+export function Farewell({ s, tipped, tipButtons, phone, prize }: {
   s: V5Strings;
   tipped: boolean;
   tipButtons: React.ReactNode;
   phone: string;
+  prize?: string | null; // tier name when a prize was won this ride
 }) {
   return (
     <div className="v5-ride v5-farewell" role="dialog" aria-label={s.farewellTitle}>
       <span className="v5-wordmark">LuxPro</span>
       <div className="v5-ride-head">
         <span className="v5-ride-title">{s.farewellTitle}</span>
+        <span className="v5-coachline" aria-hidden />
         <Profile s={s} />
         <span className="v5-ride-sub" style={{ display: "inline-flex", alignItems: "center", gap: 10, marginTop: 8 }}>
           <Icon name="hand" size={20} style={{ color: "var(--i-lemon)", flexShrink: 0 }} />
           {s.farewellBelongings}
         </span>
+        {prize && <span className="v5-ride-sub" style={{ color: "var(--gold)" }}>{s.farewellPrize.replace("{tier}", prize)}</span>}
       </div>
       {tipped ? (
         <span className="v5-title" style={{ color: "var(--gold)" }}>{s.farewellTipped}</span>

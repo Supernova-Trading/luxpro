@@ -242,15 +242,17 @@ export default function WordGame({ kind, s, lang, deck, prize, onAnswer, onTake,
 
       {/* Milestone: take the prize now, or keep playing for the next one */}
       {prize.status === "offer" && (
-        <div className="v5-prize-overlay" role="alertdialog" aria-label={s.wonPrize.replace("{tier}", tierName(prize.tier))}>
+        <div className="v5-prize-overlay" role="alertdialog" aria-label={(prize.lastCall ? s.lastCallTitle : s.wonPrize).replace("{tier}", tierName(prize.tier))}>
           <span className="v5-caption">{s.correctCount.replace("{n}", String(prize.correct))}</span>
           <span className="v5-prize-tier">{tierName(prize.tier)}</span>
-          <span className="v5-heading">{s.wonPrize.replace("{tier}", tierName(prize.tier))}</span>
+          <span className="v5-coachline" aria-hidden />
+          <span className="v5-heading">{(prize.lastCall ? s.lastCallTitle : s.wonPrize).replace("{tier}", tierName(prize.tier))}</span>
+          <span className="v5-sub">{s.prizeWhat}</span>
           <div className="v5-prize-actions">
             <button className="v5-next" data-gold disabled={!offerReady} onClick={() => { setJustClaimed(true); onTake(); }}>
               <Icon name="check" size={20} />{s.takePrize}
             </button>
-            {isTopTier(prize.tier) ? (
+            {prize.lastCall ? null : isTopTier(prize.tier) ? (
               <span className="v5-sub">{s.topPrize}</span>
             ) : (
               <>
@@ -267,7 +269,9 @@ export default function WordGame({ kind, s, lang, deck, prize, onAnswer, onTake,
       {prize.status === "claimed" && justClaimed && (
         <div className="v5-prize-overlay" role="alertdialog" aria-label={s.claimedTitle.replace("{tier}", tierName(prize.tier))}>
           <span className="v5-prize-tier">{tierName(prize.tier)}</span>
+          <span className="v5-coachline" aria-hidden />
           <span className="v5-heading">{s.claimedTitle.replace("{tier}", tierName(prize.tier))}</span>
+          <span className="v5-sub">{s.prizeWhat}</span>
           <div className="v5-prize-actions">
             <button className="v5-next" onClick={() => setJustClaimed(false)}>{s.done}</button>
           </div>
@@ -277,7 +281,7 @@ export default function WordGame({ kind, s, lang, deck, prize, onAnswer, onTake,
       {prize.status === "bust" && (
         <div className="v5-prize-overlay" role="alertdialog" aria-label={s.bustTitle}>
           <span className="v5-heading">{s.bustTitle}</span>
-          {prize.atRisk >= 0 && <span className="v5-label" style={{ color: "var(--i-red)" }}>{s.bustLost.replace("{tier}", tierName(prize.atRisk))}</span>}
+          {prize.atRisk >= 0 && <span className="v5-label">{s.bustLost.replace("{tier}", tierName(prize.atRisk))}</span>}
           <span className="v5-sub">{s.bustSub}</span>
           <div className="v5-prize-actions">
             <button className="v5-next" disabled={!bustReady} onClick={() => { onRestart(); next(true); }}>

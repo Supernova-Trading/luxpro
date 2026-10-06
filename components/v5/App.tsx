@@ -21,7 +21,7 @@ import { useDeck } from "./useDeck";
 import { nightFor, type NightMode } from "./night";
 import WordGame from "./WordGame";
 import GameBoundary from "./GameBoundary";
-import { newPrize, answer as prizeAnswer, take as prizeTake, keepPlaying, restart as prizeRestart, TIER_KEYS } from "./games/prize";
+import { newPrize, answer as prizeAnswer, take as prizeTake, keepPlaying, restart as prizeRestart, lastCall as prizeLastCall, TIER_KEYS } from "./games/prize";
 import type { MinesSave } from "./games/MinesGame";
 import type { SnakeSave } from "./games/SnakeGame";
 import type { BlocksSave } from "./games/BlocksGame";
@@ -415,6 +415,12 @@ export default function V5App() {
     setNearly(true);
     speech.announce("announce", ANNOUNCE.nearly, lang);
     setEndAt(Date.now() + END_TRIP_MS);
+    // A prize passed up or still waiting: offer it once more before arriving
+    const lc = prizeLastCall(prize);
+    if (lc !== prize) {
+      setPrize(lc);
+      if (game !== "quiz" && game !== "riddles") setGame("quiz");
+    }
   }
 
   function cancelEnd() {
@@ -566,7 +572,7 @@ export default function V5App() {
 
         {/* ── Play: five games, one tap each (built from v5.3) ─────────── */}
         <section aria-label={s.gamesTitle}>
-          <SectionHead title={s.gamesTitle} />
+          <SectionHead title={s.gamesTitle} hint={s.gamesHint} />
           <div className="v5-grid5">
             {GAMES.map((g) => (
               <Circle key={g.key} icon={g.icon} color={g.color} label={resumable[g.key] ? s.resume : s.games[g.key]}
@@ -763,13 +769,14 @@ export default function V5App() {
             </div>
           )}
           {!qrFailed && <span className="v5-label" style={{ fontWeight: 400, color: "var(--body)", maxWidth: 420 }}>{s.qrSub}</span>}
-          <button className="v5-pill" style={{ minWidth: 160, height: 56 }} onClick={() => setQr(false)}>{s.done}</button>
+          <button className="v5-pill" style={{ minWidth: 160, height: 56 }} onClick={() => setQr(false)}>{s.backToRide}</button>
         </div>
       )}
 
       {nearly && stage === "ride" && <NearlyBanner s={s} onClose={() => setNearly(false)} />}
       {stage === "welcome" && <Welcome onBegin={beginRide} secondsLeft={welcomeLeft} />}
-      {stage === "farewell" && <Farewell s={s} tipped={!!tip} tipButtons={tipOpts} phone={AMISH_PHONE.shown} />}
+      {stage === "farewell" && <Farewell s={s} tipped={!!tip} tipButtons={tipOpts} phone={AMISH_PHONE.shown}
+        prize={prize.status === "claimed" ? s.tiers[TIER_KEYS[prize.tier]] : null} />}
       {driverOpen && (
         <Driver
           stage={stage}
