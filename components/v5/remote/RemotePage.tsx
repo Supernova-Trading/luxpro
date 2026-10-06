@@ -247,21 +247,34 @@ export default function RemotePage() {
         {note ? note.text : "Each button shows here when the tablet has done it."}
       </div>
 
-      <section className="v5-remote-card">
-        <span className="v5-caption">Passenger asked for</span>
+      {/* What the passenger asked for: icons only, one row (owner, v5.28) */}
+      <section className="v5-rm-row" aria-label="Passenger asked for">
+        <span className="v5-caption">Asked</span>
         {asked.length === 0 ? (
-          <span className="v5-sub">Nothing at the moment.</span>
+          <span className="v5-sub">Nothing</span>
         ) : (
-          <ul className="v5-rm-asked">
-            {asked.map((a) => <li key={a.key}><Icon name={a.icon} size={20} />{a.text}</li>)}
+          <ul className="v5-rm-icons">
+            {asked.map((a) => (
+              <li key={a.key} title={a.text} aria-label={a.text}><Icon name={a.icon} size={22} /></li>
+            ))}
           </ul>
         )}
       </section>
 
-      <dl className="v5-rm-facts">
-        <div><dt>Tip</dt><dd>{st?.tip ? `${en.tip[st.tip as TipKey]?.label ?? st.tip} · ${en.tip[st.tip as TipKey]?.sub ?? ""}` : "None yet"}</dd></div>
-        <div><dt>Quiz prize</dt><dd>{!st ? "—" : st.prize.status === "claimed" ? `${tierName} won (${st.prize.correct} correct)` : `${st.prize.correct} correct`}</dd></div>
-        <div><dt>Music</dt><dd>{st?.music.title ? `${st.music.playing ? "Playing" : "Paused"} · ${st.music.title}` : "Nothing playing"}</dd></div>
+      {/* Tip · quiz prize · music in one row of three small cells */}
+      <dl className="v5-rm-mini">
+        <div title={st?.tip ? `Tip: ${en.tip[st.tip as TipKey]?.label} (${en.tip[st.tip as TipKey]?.sub})` : "No tip yet"}>
+          <dt><Icon name="cash" size={18} /><span className="v5-sr">Tip</span></dt>
+          <dd>{st?.tip ? en.tip[st.tip as TipKey]?.label ?? st.tip : "—"}</dd>
+        </div>
+        <div title={st ? (st.prize.status === "claimed" ? `Quiz prize won: ${tierName} (${st.prize.correct} correct)` : `Quiz: ${st.prize.correct} correct answers`) : "Quiz"}>
+          <dt><Icon name="lightbulb" size={18} /><span className="v5-sr">Quiz prize</span></dt>
+          <dd>{!st ? "—" : st.prize.status === "claimed" ? tierName : `${st.prize.correct} ✓`}</dd>
+        </div>
+        <div title={st?.music.title ? `${st.music.playing ? "Playing" : "Paused"}: ${st.music.title}` : "Nothing playing"}>
+          <dt><Icon name="music-note" size={18} /><span className="v5-sr">Music</span></dt>
+          <dd>{st?.music.title ? (st.music.playing ? "Playing" : "Paused") : "—"}</dd>
+        </div>
       </dl>
 
       <button className="v5-rm-unpair" onClick={forget}>Unpair this phone</button>
