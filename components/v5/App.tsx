@@ -276,8 +276,8 @@ export default function V5App() {
     else if (cmd === "end_trip") endTrip();
     else if (cmd === "cancel_end") cancelEnd();
     // Amish's phone can turn the music up or down in 10% steps (v5.25)
-    else if (cmd === "vol_up") music.setVolume(music.volume + 10);
-    else if (cmd === "vol_down") music.setVolume(music.volume - 10);
+    else if (cmd === "vol_up") music.nudgeVolume(10);
+    else if (cmd === "vol_down") music.nudgeVolume(-10);
   });
 
   // Hold the wordmark to open Amish's Driver panel (a tap does nothing).

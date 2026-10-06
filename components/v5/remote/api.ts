@@ -41,6 +41,10 @@ export const remote = {
   unpair: (car: string, secret: string) => rpc<boolean>("luxpro_tablet_unpair", { p_car: car, p_secret: secret }),
   sync: (car: string, secret: string, state: TabletState) =>
     rpc<{ commands: { id: number; cmd: RemoteCmd }[]; paired: boolean } | null>("luxpro_tablet_sync", { p_car: car, p_secret: secret, p_state: state }),
+  /** v5.31: commands stay pending until the tablet acks them (ack = last id it ran),
+   *  so a reply lost on a bad signal is sent again instead of vanishing. */
+  sync2: (car: string, secret: string, state: TabletState, ack: number) =>
+    rpc<{ commands: { id: number; cmd: RemoteCmd }[]; paired: boolean } | null>("luxpro_tablet_sync2", { p_car: car, p_secret: secret, p_state: state, p_ack: ack }),
   phonePair: (code: string) => rpc<{ car: string; token: string } | null>("luxpro_phone_pair", { p_code: code }),
   phoneCommand: (car: string, token: string, cmd: RemoteCmd) => rpc<boolean>("luxpro_phone_command", { p_car: car, p_token: token, p_cmd: cmd }),
   /** Like phoneCommand, but returns the command's id (null = not paired) so the phone can wait for the tablet. */

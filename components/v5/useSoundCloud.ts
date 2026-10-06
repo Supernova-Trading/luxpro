@@ -46,6 +46,22 @@ function loadApi(): Promise<ScApi> {
 export type Track = { title: string; artist: string; artwork: string };
 
 const PLAYED_KEY = "luxpro.v5.songs";
+// What the player did, newest last, shown on /v5/diag so a tablet test can
+// show why a playlist was silent (v5.31; superpowers
+// verification-before-completion: evidence from the device, not guesses).
+export const SC_LOG_KEY = "luxpro.v5.scLog";
+const SC_LOG_MAX = 40;
+function scLog(event: string, detail = "") {
+  try {
+    const log: string[] = JSON.parse(localStorage.getItem(SC_LOG_KEY) || "[]");
+    const t = new Date();
+    log.push(`${t.toTimeString().slice(0, 8)} ${event}${detail ? " " + detail : ""}`);
+    localStorage.setItem(SC_LOG_KEY, JSON.stringify(log.slice(-SC_LOG_MAX)));
+  } catch { /* storage blocked */ }
+}
+// How long after Play the song must have moved before the "tap once" card
+// shows. 3 s gave false alarms on slow buffering (council); 7 s now.
+const START_CHECK_MS = 7000;
 
 /** A random song index this playlist hasn't played yet (remembered on the tablet). */
 function drawSong(url: string, size: number, current: number): number {
@@ -78,20 +94,25 @@ export function useSoundCloud() {
   const [track, setTrack] = useState<Track | null>(null);
   // Android Chrome sometimes reports "playing" while a hidden cross-origin
   // player makes no sound until it is tapped once. If the song hasn't moved
-  // 3 s after Play, the app shows the player for one tap (v5.23).
+  // START_CHECK_MS after Play, the app shows the player for one tap (v5.23).
   const [needsTap, setNeedsTap] = useState(false);
   const wantPlay = useRef(false);
   const checkTimer = useRef<ReturnType<typeof setTimeout>>();
 
-  /** After a Play: if the position is still at 0 three seconds later, ask for a tap. */
+  const moved = useRef(false); // a PLAY_PROGRESS arrived since the last Play
+  /** After a Play: if the song still hasn't moved START_CHECK_MS later, ask for a tap. */
   const checkStarted = useCallback(() => {
     wantPlay.current = true;
+    moved.current = false;
     clearTimeout(checkTimer.current);
     checkTimer.current = setTimeout(() => {
       const w = widgetRef.current;
-      if (!w || !wantPlay.current) return;
-      w.getPosition((ms) => { if (wantPlay.current && (ms ?? 0) < 300) setNeedsTap(true); });
-    }, 3000);
+      if (!w || !wantPlay.current || moved.current) return;
+      w.getPosition((ms) => {
+        scLog("check", `pos=${Math.round(ms ?? 0)}ms`);
+        if (wantPlay.current && !moved.current && (ms ?? 0) < 300) { setNeedsTap(true); scLog("needs-tap"); }
+      });
+    }, START_CHECK_MS);
   }, []);
 
   /** Jump to a random unheard song and play it. */
@@ -134,22 +155,27 @@ export function useSoundCloud() {
           if (cancelled) return;
           clearTimeout(timeout);
           setReady(true);
+          scLog("ready", urlRef.current.split("/").slice(-2).join("/"));
           widget!.setVolume(volumeRef.current);
           refresh();
           // Chosen with a tap: start straight on a random song
           if (autoplayRef.current) { shuffledRef.current = true; jumpRandom(widget!); }
         });
-        widget.bind(E.PLAY, () => { if (!cancelled) { setPlaying(true); refresh(); } });
+        widget.bind(E.PLAY, () => { if (!cancelled) { setPlaying(true); refresh(); scLog("play"); } });
         // (A blocked start also fires PAUSE, so this must not cancel the
         // "did it really start?" check — only our own pause() does.)
-        widget.bind(E.PAUSE, () => { if (!cancelled) setPlaying(false); });
+        widget.bind(E.PAUSE, () => { if (!cancelled) { setPlaying(false); scLog("pause"); } });
         // The song really is moving: the one-tap prompt can go.
-        widget.bind(E.PLAY_PROGRESS, () => { if (!cancelled) setNeedsTap(false); });
+        widget.bind(E.PLAY_PROGRESS, () => {
+          if (cancelled) return;
+          if (!moved.current) { moved.current = true; scLog("sound-moving"); }
+          setNeedsTap(false);
+        });
         // End of a song: carry on with another random one
         widget.bind(E.FINISH, () => { if (!cancelled) { setPlaying(false); jumpRandom(widget!); } });
-        widget.bind(E.ERROR, () => { if (!cancelled) setFailed(true); });
+        widget.bind(E.ERROR, () => { if (!cancelled) { setFailed(true); scLog("error"); } });
       })
-      .catch(() => { if (!cancelled) setFailed(true); });
+      .catch(() => { if (!cancelled) { setFailed(true); scLog("api-failed"); } });
 
     return () => {
       cancelled = true;

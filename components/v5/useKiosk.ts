@@ -8,15 +8,24 @@ import { useEffect } from "react";
 export function useKiosk(on: boolean) {
   // Keep the screen awake for the whole ride (re-taken whenever the page shows).
   useEffect(() => {
-    type Lock = { release: () => Promise<void> };
+    type Lock = { release: () => Promise<void>; released?: boolean };
     const wl = (navigator as Navigator & { wakeLock?: { request: (t: "screen") => Promise<Lock> } }).wakeLock;
     if (!wl) return;
     let lock: Lock | null = null;
     const take = () => { wl.request("screen").then((l) => { lock = l; }).catch(() => {}); };
     const onShow = () => { if (document.visibilityState === "visible") take(); };
+    // Android's battery saver can drop the lock while the page stays open:
+    // take it again on the next touch (v5.31; impeccable reference/optimize.md,
+    // test on low-end Android).
+    const onTouch = () => { if (!lock || lock.released) take(); };
     take();
     document.addEventListener("visibilitychange", onShow);
-    return () => { document.removeEventListener("visibilitychange", onShow); lock?.release().catch(() => {}); };
+    window.addEventListener("pointerdown", onTouch);
+    return () => {
+      document.removeEventListener("visibilitychange", onShow);
+      window.removeEventListener("pointerdown", onTouch);
+      lock?.release().catch(() => {});
+    };
   }, []);
 
   useEffect(() => {

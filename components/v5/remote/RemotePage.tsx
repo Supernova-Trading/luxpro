@@ -18,6 +18,12 @@ const PHONE_KEY = "luxpro.v5.phone";
 const EVERY_MS = 2500;
 const STALE_S = 20;        // no news from the tablet for this long: show it as offline
 const NO_PICKUP_MS = 15_000; // a command the tablet hasn't run by then gets a warning
+const EXPIRE_MS = 120_000;    // the server drops commands after 2 minutes (luxpro_tablet_sync2)
+
+/** "40 s" / "3 min": how long the tablet has been silent, in words (v5.31). */
+function since(s: number): string {
+  return s < 90 ? `${s} s` : `${Math.round(s / 60)} min`;
+}
 
 type Pairing = { car: string; token: string };
 type Note = { text: string; tone: "wait" | "ok" | "err" };
@@ -51,6 +57,7 @@ export default function RemotePage() {
   const [age, setAge] = useState<number | null>(null);
   const [note, setNote] = useState<Note | null>(null);
   const [armed, setArmed] = useState(false);
+  const [unpairArmed, setUnpairArmed] = useState(false); // "Unpair" needs a second tap (v5.31)
   const [sending, setSending] = useState(false);
   const armTimer = useRef<ReturnType<typeof setTimeout>>();
   const pending = useRef<{ id: number; label: string; at: number; warned: boolean } | null>(null);
@@ -79,6 +86,8 @@ export default function RemotePage() {
     let stop = false;
     let t: ReturnType<typeof setTimeout>;
     const tick = async () => {
+      clearTimeout(t);
+      if (document.visibilityState !== "visible") return; // phone screen off: no data used
       try {
         const r = await remote.phoneState(pairing.car, pairing.token);
         if (r === null) {
@@ -96,6 +105,9 @@ export default function RemotePage() {
         if (p && st && (st.lastCmd ?? 0) >= p.id) {
           setNote({ text: `${p.label}: done on the tablet ✓`, tone: "ok" });
           pending.current = null;
+        } else if (p && Date.now() - p.at > EXPIRE_MS) {
+          setNote({ text: `${p.label}: not done. The tablet was offline for 2 minutes. Tap again if it's still needed.`, tone: "err" });
+          pending.current = null;
         } else if (p && !p.warned && Date.now() - p.at > NO_PICKUP_MS) {
           p.warned = true;
           setNote({ text: `${p.label}: the tablet hasn't picked it up yet. Is its screen on, with LuxPro open and online?`, tone: "err" });
@@ -103,8 +115,10 @@ export default function RemotePage() {
       } catch { setAge(null); }
       if (!stop) t = setTimeout(tick, EVERY_MS);
     };
+    const onShow = () => { if (document.visibilityState === "visible" && !stop) void tick(); };
+    document.addEventListener("visibilitychange", onShow);
     void tick();
-    return () => { stop = true; clearTimeout(t); };
+    return () => { stop = true; clearTimeout(t); document.removeEventListener("visibilitychange", onShow); };
   }, [pairing]);
 
   async function pair() {
@@ -147,6 +161,12 @@ export default function RemotePage() {
   }
 
   function forget() {
+    if (!unpairArmed) {
+      setUnpairArmed(true);
+      setTimeout(() => setUnpairArmed(false), 4000);
+      return;
+    }
+    setUnpairArmed(false);
     try { localStorage.removeItem(PHONE_KEY); } catch { /* fine */ }
     setPairing(null); setState(null); setNote(null);
   }
@@ -184,13 +204,13 @@ export default function RemotePage() {
       <header className="v5-rm-head">
         <span className="v5-wordmark">LuxPro</span>
         <span className="v5-rm-status">
-          <span className="v5-rm-dot" data-tone={live ? "ok" : age === null ? "wait" : "bad"}
-            title={live ? "Tablet connected" : age === null ? "Connecting…" : `Tablet offline (${age}s)`}>
-            <i />Tablet
+          {/* Words, not just colours (v5.31): phones never show title tooltips */}
+          <span className="v5-rm-dot" data-tone={live ? "ok" : age === null ? "wait" : "bad"}>
+            <i />{live ? "Tablet" : age === null ? "Connecting…" : `Offline ${since(age)}`}
           </span>
-          <span className="v5-rm-dot" data-tone={!st ? "wait" : endsAt ? "gold" : st.stage === "ride" ? "ok" : "bad"}
+          <span className="v5-rm-dot" data-tone={!st ? "wait" : endsAt ? "gold" : st.stage === "ride" ? "ok" : "idle"}
             title={stageText}>
-            <i />Ride
+            <i />{!st || st.stage === "ride" || endsAt ? "Ride" : st.stage === "welcome" ? "Waiting" : "Ended"}
           </span>
           <span className="v5-rm-lang" title={st ? `Passenger language: ${LANG_NAME[st.lang] ?? st.lang}` : ""}>
             {st ? st.lang.toUpperCase() : "—"}
@@ -277,7 +297,9 @@ export default function RemotePage() {
         </div>
       </dl>
 
-      <button className="v5-rm-unpair" onClick={forget}>Unpair this phone</button>
+      <button className="v5-rm-unpair" data-armed={unpairArmed} onClick={forget}>
+        {unpairArmed ? "Tap again to unpair this phone" : "Unpair this phone"}
+      </button>
     </div>
   );
 }

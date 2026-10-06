@@ -1,12 +1,23 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { SC_LOG_KEY } from "@/components/v5/useSoundCloud";
 
 // One-off device check at /v5/diag (moved from /lab/diag in P6): open on the tablet, photograph, send. Tells us the
 // real viewport and whether this Chrome supports what the new design uses
 // (oklch / color-mix need Chrome 111+, dvh needs 108+).
 export default function Diag() {
   const [rows, setRows] = useState<[string, string][]>([]);
+  const [scLog, setScLog] = useState<string[]>([]);
+  // Playlist player events from the last rides on this tablet (v5.31)
+  useEffect(() => {
+    try { setScLog(JSON.parse(localStorage.getItem(SC_LOG_KEY) || "[]")); } catch { /* storage blocked */ }
+    // The app's global style locks scrolling; this page is longer than the screen.
+    const els = [document.documentElement, document.body];
+    const before = els.map((e) => [e.style.overflow, e.style.height]);
+    els.forEach((e) => { e.style.overflow = "auto"; e.style.height = "auto"; });
+    return () => els.forEach((e, i) => { e.style.overflow = before[i][0]; e.style.height = before[i][1]; });
+  }, []);
 
   useEffect(() => {
     const measure = () => {
@@ -47,6 +58,9 @@ export default function Diag() {
           ))}
         </tbody>
       </table>
+      <h2 style={{ fontSize: 20, margin: "24px 0 8px" }}>Playlist player, last events</h2>
+      <p style={{ fontSize: 14, opacity: 0.7, marginBottom: 8 }}>&quot;sound-moving&quot; means the song really played. &quot;needs-tap&quot; means it didn&apos;t start.</p>
+      <pre style={{ fontSize: 14, lineHeight: 1.5, whiteSpace: "pre-wrap", margin: 0 }}>{scLog.length ? scLog.slice(-20).join("\n") : "No playlist played on this tablet yet."}</pre>
     </div>
   );
 }

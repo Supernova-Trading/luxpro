@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import { useRadio } from "@/hooks/useRadio";
+import { useRadio } from "./useRadio";
 import { PLAYLISTS } from "./playlists";
 import type { RadioStation } from "@/lib/radios";
 import type { Lang } from "@/lib/translations";
@@ -13,8 +13,8 @@ const DEFAULT_VOLUME = 60;
 const DUCK_RATIO = 0.3; // music dips to 30% while the tablet speaks to Amish
 const STALL_MS = 10_000; // a station still loading after 10 s counts as offline (roadmap P3/P6)
 
-// One place for everything audio. useRadio is the live app's hook, imported
-// unchanged; SoundCloud runs through v5's own driver.
+// One place for everything audio. useRadio is v5's copy of the live app's
+// hook with a dropout watchdog (v5.31); SoundCloud runs through v5's own driver.
 export function useMusic(radios: RadioStation[], lang: Lang) {
   const radio = useRadio();
   const sc = useSoundCloud();
@@ -71,6 +71,10 @@ export function useMusic(radios: RadioStation[], lang: Lang) {
     if (!duckedRef.current) apply(c);
   }, [apply]);
 
+  // Relative steps read the ref, so two phone presses in one check-in add up
+  // (+20) instead of both starting from the same stale value (v5.31).
+  const nudgeVolume = useCallback((delta: number) => setVolume(volumeRef.current + delta), [setVolume]);
+
   const duck = useCallback((on: boolean) => {
     if (duckedRef.current === on) return;
     duckedRef.current = on;
@@ -126,7 +130,7 @@ export function useMusic(radios: RadioStation[], lang: Lang) {
     setVolume(DEFAULT_VOLUME);
   }
 
-  return { radio, sc, stalled, online, source, setSource, plIdx, volume, setVolume, duck, choosePlaylist, chooseStation, togglePlay, step, reset };
+  return { radio, sc, stalled, online, source, setSource, plIdx, volume, setVolume, nudgeVolume, duck, choosePlaylist, chooseStation, togglePlay, step, reset };
 }
 
 export type Music = ReturnType<typeof useMusic>;

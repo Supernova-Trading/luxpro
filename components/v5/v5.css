@@ -282,11 +282,12 @@ a.v5-row { color: inherit; text-decoration: none; }
 /* Phone remote layout (v5.23): actions at the top, a status line, then the ride */
 .v5-rm-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 36px; }
 .v5-rm-status { display: flex; align-items: center; gap: 12px; font-size: 14px; font-weight: 600; color: var(--body); }
-.v5-rm-dot { display: inline-flex; align-items: center; gap: 6px; }
+.v5-rm-dot { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
 .v5-rm-dot > i { width: 10px; height: 10px; border-radius: 9999px; background: var(--muted-soft); }
 .v5-rm-dot[data-tone="ok"] > i { background: var(--i-green); }
 .v5-rm-dot[data-tone="bad"] > i { background: var(--i-red); }
 .v5-rm-dot[data-tone="gold"] > i { background: var(--gold); }
+.v5-rm-dot[data-tone="bad"] { color: var(--i-red); }
 .v5-rm-lang { padding: 3px 8px; border-radius: 9999px; border: 1px solid var(--line-strong); font-size: 12.5px; letter-spacing: 0.06em; color: var(--ink); }
 .v5-rm-stage { display: grid; gap: 2px; padding: 10px 14px; border-radius: 16px; background: var(--s1); border: 1px solid var(--line); }
 .v5-rm-stage[data-stage="ride"] { border-color: var(--gold-line); }
@@ -334,6 +335,7 @@ a.v5-row { color: inherit; text-decoration: none; }
 .v5-rm-facts dd { margin: 0; font-size: 15px; color: var(--ink); overflow-wrap: anywhere; }
 .v5-rm-asked > li svg { color: var(--gold); flex-shrink: 0; }
 .v5-rm-unpair { align-self: center; padding: 10px 16px; font-size: 14px; color: var(--muted); text-decoration: underline; text-underline-offset: 3px; }
+.v5-rm-unpair[data-armed="true"] { color: var(--i-red); }
 .v5-remote-steps { margin: 0; padding-inline-start: 20px; display: grid; gap: 6px; color: var(--body); font-size: 16px; line-height: 1.4; }
 .v5-remote-code { height: 64px; border-radius: 16px; border: 1px solid var(--line-strong); background: var(--s1); color: var(--ink); font-size: 28px; font-weight: 600; letter-spacing: 0.15em; text-align: center; text-transform: uppercase; }
 
